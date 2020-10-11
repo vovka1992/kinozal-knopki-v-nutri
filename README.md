@@ -1,7 +1,7 @@
 
-<img width="1280" alt="Картинка" src="https://github.com/vovka1992/kinozal-knopki-v-nutri/blob/main/image.jpg">
-
 # Kinozal.tv/me/guru - Кнопки скачивания внутри раздачи
+
+<img width="1280" alt="Картинка" src="https://github.com/vovka1992/kinozal-knopki-v-nutri/blob/main/image.jpg">
 
 > **Magnet** - Скачать без учёта рейтинга/скачивания
 
