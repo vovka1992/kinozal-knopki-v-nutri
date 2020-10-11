@@ -3,22 +3,26 @@
 
 <img width="1280" alt="Картинка" src="https://github.com/vovka1992/kinozal-knopki-v-nutri/blob/main/image.jpg">
 
-> **Magnet** - Скачать без учёта рейтинга/скачивания
+**Magnet** - Скачать без учёта рейтинга/скачивания
 
-> **AceStream** - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона )
+**AceStream** - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона )
 
-> **НОВОЕ! Появились Настройки** - можете убрать ненужное (кнопки,подтверждение).
+**НОВОЕ! Появились Настройки** - можете убрать ненужное (кнопки,подтверждение).
 
-**Кнопки для быстрого скачивания/копирования**
+## Кнопки для быстрого скачивания/копирования
 Кнопка | Действие
 ------------ | -------------
 **SHIFT** + **1** | _Скачать торрент файл_
 **SHIFT** + **2** | _Скачать через Magnet_
 **SHIFT** + **3** | _Скопировать для AceStream_
 
-FAQ. Как установить?:
+## FAQ. Как установить?:
 1. Установите приложение [Tampermonkey](https://www.tampermonkey.net) для браузера [Google](https://chrome.google.com/webstore/detail/dhdgffkkebhmkfjojejmpbldmpobfkfo), [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/) или [Opera](https://addons.opera.com/en/extensions/details/tampermonkey-beta/)
-2. [Скачайте и Установите скрипт](https://github.com/vovka1992/kinozal-magnet-buttons-inside/raw/main/kinozal-script.user.js)
+1. [Скачайте и Установите скрипт](https://github.com/vovka1992/kinozal-magnet-buttons-inside/raw/main/kinozal-script.user.js)
 
-### Если есть пожелания или проблемы, пишите в коментариях!
-Так же другие мои скрипты можете найти на платформе [**greasyfork.org**](https://greasyfork.org/ru/users/173690)
+## Другие скрипты
+1. [Кнопки скачивания внутри раздачи (**github.com**)](https://github.com/vovka1992/kinozal-knopki-v-nutri)
+1. [Кнопки скачивания в поисковой системе / раздачи персоны (**github.com**)](https://github.com/vovka1992/kinozal-knopki-v-poiske)
+1. [Другие мои скрипты можете найти на платформе (**greasyfork.org**)](https://greasyfork.org/ru/users/173690)
+
+## Если есть пожелания или проблемы, пишите в коментариях!
