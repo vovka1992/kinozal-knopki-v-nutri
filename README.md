@@ -5,4 +5,4 @@ FAQ. Как установить?:
 2. [Скачайте и Установите скрипт](https://github.com/vovka1992/kinozal-magnet-buttons-inside/raw/main/kinozal-script.user.js)
 
 
-<img width="640" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/image.jpg?token=AO2HVFKVLQS7SQJP6XQ3RGC7QMJ34">
+<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/image.jpg?token=AO2HVFKVLQS7SQJP6XQ3RGC7QMJ34">
