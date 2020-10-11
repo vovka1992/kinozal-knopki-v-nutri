@@ -3,8 +3,8 @@
 // @description Magnet - Скачать без учёта рейтинга/скачивания / AceStream - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона ) / (НОВОЕ!) Появились Настройки, можете убрать ненужное (кнопки,подтверждение).
 // @namespace none
 // @version 0.5.5
-// @homepageURL  https://github.com/vovka1992/kinozal-magnet-buttons-inside
-// @downloadURL  https://github.com/vovka1992/kinozal-magnet-buttons-inside/raw/master/kinozal-magnet-buttons-inside.user.js
+// @homepageURL  https://github.com/vovka1992/kinozal-knopki-v-nutri
+// @downloadURL  https://github.com/vovka1992/kinozal-knopki-v-nutri/raw/master/kinozal-script.user.js
 // @author https://greasyfork.org/ru/users/173690
 // @author https://greasyfork.org/scripts/40843
 // @icon data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAAAD1BMVEU7R4CAAAD4+/z9787///8A0Su5AAAASUlEQVR4AXWPAQrEMBACzen/33wdkGILFZQdSFxWkZKoyWBsd5JXvFgMfC6ZLBs0pq8Mtq8f0Bcbw9N3HvuI8i14sAt/e8/73j/4FwHuDyR5AQAAAABJRU5ErkJggg==
