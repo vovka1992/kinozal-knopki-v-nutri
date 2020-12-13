@@ -98,9 +98,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 				if (GM_getValue("ShowTorrentButton") == undefined) {
 					GM_setValue("ShowTorrentButton", true);
 				}
-				if (GM_getValue("ShowLibTorrentButton") == undefined) {
-					GM_setValue("ShowLibTorrentButton", true);
-				}
 				if (GM_getValue("ShowMagnetButton") == undefined) {
 					GM_setValue("ShowMagnetButton", true);
 				}
@@ -109,9 +106,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 				}
 				if (GM_getValue("ConfirmDownloadTorrent") == undefined) {
 					GM_setValue("ConfirmDownloadTorrent", true);
-				}
-				if (GM_getValue("ConfirmDownloadLibTorrent") == undefined) {
-					GM_setValue("ConfirmDownloadLibTorrent", true);
 				}
 				if (GM_getValue("ConfirmDownloadMagnet") == undefined) {
 					GM_setValue("ConfirmDownloadMagnet", true);
@@ -128,11 +122,9 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 				this.settings = {
 					ShowImagesButton: GM_getValue('ShowImagesButton', true),
 					ShowTorrentButton: GM_getValue('ShowTorrentButton', true),
-					ShowLibTorrentButton: GM_getValue('ShowLibTorrentButton', true),
 					ShowMagnetButton: GM_getValue('ShowMagnetButton', true),
 					ShowAcestreamButton: GM_getValue('ShowAcestreamButton', true),
 					ConfirmDownloadTorrent: GM_getValue('ConfirmDownloadTorrent', true),
-					ConfirmDownloadLibTorrent: GM_getValue('ConfirmDownloadLibTorrent', true),
 					ConfirmDownloadMagnet: GM_getValue('ConfirmDownloadMagnet', true),
 					ChangeIconsToText: GM_getValue('ChangeIconsToText', false),
 					ShowMarkTorrents: GM_getValue('ShowMarkTorrents', false),
@@ -149,9 +141,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 				if (this.settings.ShowTorrentButton) {
 					$('#ShowTorrentButton').attr('checked', true);
 				}
-				if (this.settings.ShowLibTorrentButton) {
-					$('#ShowLibTorrentButton').attr('checked', true);
-				}
 				if (this.settings.ShowMagnetButton) {
 					$('#ShowMagnetButton').attr('checked', true);
 				}
@@ -160,9 +149,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 				}
 				if (this.settings.ConfirmDownloadTorrent) {
 					$('#ConfirmDownloadTorrent').attr('checked', true);
-				}
-				if (this.settings.ConfirmDownloadLibTorrent) {
-					$('#ConfirmDownloadLibTorrent').attr('checked', true);
 				}
 				if (this.settings.ConfirmDownloadMagnet) {
 					$('#ConfirmDownloadMagnet').attr('checked', true);
@@ -229,17 +215,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 	</div>
 	<div class="fields">
 		<div class="row">
-			<div class="title">LibTorrent настройки</div>
-			<div class="col1">Включить кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowLibTorrentButton"></div>
-		</div>
-		<div class="row">
-			<div class="col1">Включить подтверждение?</div>
-			<div class="col2"><input type="checkbox" id="ConfirmDownloadLibTorrent"></div>
-		</div>
-	</div>
-	<div class="fields">
-		<div class="row">
 			<div class="title">Остальное</div>
 			<div class="col1">Сделать кнопки текстом ?</div>
 			<div class="col2"><input type="checkbox" id="ChangeIconsToText"></div>
@@ -264,8 +239,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 					GM_setValue('ShowImagesButton', $('#ShowImagesButton').is(':checked'));
 					GM_setValue('ShowTorrentButton', $('#ShowTorrentButton').is(':checked'));
 					GM_setValue('ConfirmDownloadTorrent', $('#ConfirmDownloadTorrent').is(':checked'));
-					GM_setValue('ShowLibTorrentButton', $('#ShowLibTorrentButton').is(':checked'));
-					GM_setValue('ConfirmDownloadLibTorrent', $('#ConfirmDownloadLibTorrent').is(':checked'));
 					GM_setValue('ShowMagnetButton', $('#ShowMagnetButton').is(':checked'));
 					GM_setValue('ConfirmDownloadMagnet', $('#ConfirmDownloadMagnet').is(':checked'));
 					GM_setValue('ShowAcestreamButton', $('#ShowAcestreamButton').is(':checked'));
@@ -290,7 +263,7 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 				var table = $('.t_peer');
 				var h = table.find('.mn');
 				var signup = "Чтобы скачать, нужно зайти на сайт!";
-				h.prepend((obj.settings.ShowAcestreamButton ? '<td class="z"></td>' : '') + (obj.settings.ShowMagnetButton ? '<td class="z"></td>' : '') + (obj.settings.ShowTorrentButton ? '<td class="z"></td>' : '') + (obj.settings.ShowLibTorrentButton ? '<td class="z"></td>' : '') + (obj.settings.ShowImagesButton ? '<td class="z"></td>' : ''));
+				h.prepend((obj.settings.ShowAcestreamButton ? '<td class="z"></td>' : '') + (obj.settings.ShowMagnetButton ? '<td class="z"></td>' : '') + (obj.settings.ShowTorrentButton ? '<td class="z"></td>' : '') + (obj.settings.ShowImagesButton ? '<td class="z"></td>' : ''));
 				table.find('tr').not(h).each(function(i, e) {
 					var url = $(e).find('.nam a').attr('href');
 					var uArgs = url.split('?')[1].split('&');
@@ -303,23 +276,13 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 					if (id !== null) {
 						var film_name = $(e).find('.nam a').text().split(" / ");
 						if (obj.settings.ShowImagesButton) {
-							var td5 = document.createElement('td');
-							var button5 = document.createElement('button');
-							$(e).prepend(td5);
-							button5.setAttribute("id", "images_" + id);
-							button5.setAttribute("class", "btnimg");
-							button5.setAttribute("title", "Скриншоты");
-							button5.innerHTML = '<i class="fas fa-question"></i>';
-							td5.appendChild(button5);
-						}
-						if (obj.settings.ShowLibTorrentButton) {
 							var td4 = document.createElement('td');
 							var button4 = document.createElement('button');
 							$(e).prepend(td4);
-							button4.setAttribute("id", "lib_" + id);
-							button4.setAttribute("class", "btndt");
-							button4.setAttribute("title", "Копировать для просмотра через LibTorrent");
-							button4.innerHTML = (!obj.settings.ChangeIconsToText ? '<i class="fas fa-copy"></i>' : 'L');
+							button4.setAttribute("id", "images_" + id);
+							button4.setAttribute("class", "btnimg");
+							button4.setAttribute("title", "Скриншоты");
+							button4.innerHTML = '<i class="fas fa-question"></i>';
 							td4.appendChild(button4);
 						}
 						if (obj.settings.ShowAcestreamButton) {
@@ -747,54 +710,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 								})
 							}
 						});
-						$("#lib_" + id).click(function() {
-							if (obj.settings.ConfirmDownloadLibTorrent) {
-								Swal.fire({
-									title: "Скачать через LibTorrent?",
-									html: "Раздача:<br><b>" + film_name[0].toUpperCase() + "</b><br><br>Ваш рейтинг не упадёт, можете скачивать бесконечно!",
-									icon: 'question',
-									showCancelButton: true,
-									confirmButtonColor: '#4fc823',
-									cancelButtonColor: '#d33',
-									confirmButtonText: 'Да',
-									cancelButtonText: 'Нет'
-								}).then(function(result) {
-									if (result.value) {
-										$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-											var hash = (s.toString().match(mgt_reg))[0];
-											if (s.toString().indexOf("signup.php") != -1) {
-												Toast.fire({
-													icon: 'warning',
-													html: signup
-												})
-											} else {
-												copy("\r\n#EXTINF:-1," + film_name[0].toUpperCase() + "\r\nlibtorrent://0,magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986));
-												Toast.fire({
-													icon: 'success',
-													title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скопирована!'
-												})
-											}
-										});
-									}
-								})
-							} else {
-								$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-									var hash = (s.toString().match(mgt_reg))[0];
-									if (s.toString().indexOf("signup.php") != -1) {
-										Toast.fire({
-											icon: 'warning',
-											html: signup
-										})
-									} else {
-										copy("\r\n#EXTINF:-1," + film_name[0].toUpperCase() + "\r\nlibtorrent://0,magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986));
-										Toast.fire({
-											icon: 'success',
-											title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скопирована!'
-										})
-									}
-								});
-							}
-						});
 					}
 				});
 			}
@@ -812,11 +727,9 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 			this.loadSettings = function() {
 				this.settings = {
 					ShowTorrentButton: GM_getValue('ShowTorrentButton', true),
-					ShowLibTorrentButton: GM_getValue('ShowLibTorrentButton', true),
 					ShowMagnetButton: GM_getValue('ShowMagnetButton', true),
 					ShowAcestreamButton: GM_getValue('ShowAcestreamButton', true),
 					ConfirmDownloadTorrent: GM_getValue('ConfirmDownloadTorrent', true),
-					ConfirmDownloadLibTorrent: GM_getValue('ConfirmDownloadLibTorrent', true),
 					ConfirmDownloadMagnet: GM_getValue('ConfirmDownloadMagnet', true),
 					ShowHelpButton: GM_getValue('ShowHelpButton', true),
 					DetailedInfoButtons: GM_getValue('DetailedInfoButtons', true)
@@ -829,9 +742,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 				if (this.settings.ShowTorrentButton) {
 					$('#ShowTorrentButton').attr('checked', true);
 				}
-				if (this.settings.ShowLibTorrentButton) {
-					$('#ShowLibTorrentButton').attr('checked', true);
-				}
 				if (this.settings.ShowMagnetButton) {
 					$('#ShowMagnetButton').attr('checked', true);
 				}
@@ -840,9 +750,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 				}
 				if (this.settings.ConfirmDownloadTorrent) {
 					$('#ConfirmDownloadTorrent').attr('checked', true);
-				}
-				if (this.settings.ConfirmDownloadLibTorrent) {
-					$('#ConfirmDownloadLibTorrent').attr('checked', true);
 				}
 				if (this.settings.ConfirmDownloadMagnet) {
 					$('#ConfirmDownloadMagnet').attr('checked', true);
@@ -892,17 +799,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 	</div>
 	<div class="fields">
 		<div class="row">
-			<div class="title">LibTorrent настройки</div>
-			<div class="col1">Включить кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowLibTorrentButton"></div>
-		</div>
-		<div class="row">
-			<div class="col1">Включить подтверждение?</div>
-			<div class="col2"><input type="checkbox" id="ConfirmDownloadLibTorrent"></div>
-		</div>
-	</div>
-	<div class="fields">
-		<div class="row">
 			<div class="title">Acestream настройки</div>
 			<div class="col1">Включить кнопку ?</div>
 			<div class="col2"><input type="checkbox" id="ShowAcestreamButton"></div>
@@ -929,8 +825,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 				$('#acemgn_script_save_settings').live('click', function() {
 					GM_setValue('ShowTorrentButton', $('#ShowTorrentButton').is(':checked'));
 					GM_setValue('ConfirmDownloadTorrent', $('#ConfirmDownloadTorrent').is(':checked'));
-					GM_setValue('ShowLibTorrentButton', $('#ShowLibTorrentButton').is(':checked'));
-					GM_setValue('ConfirmDownloadLibTorrent', $('#ConfirmDownloadLibTorrent').is(':checked'));
 					GM_setValue('ShowMagnetButton', $('#ShowMagnetButton').is(':checked'));
 					GM_setValue('ConfirmDownloadMagnet', $('#ConfirmDownloadMagnet').is(':checked'));
 					GM_setValue('ShowAcestreamButton', $('#ShowAcestreamButton').is(':checked'));
@@ -960,7 +854,6 @@ BUTTON.btnca:focus,BUTTON.btnca:active,BUTTON.btnca:visited{color:#fff;backgroun
 	<tr>
 		<td class="nw">
 		${obj.settings.ShowTorrentButton ? ' <button id="Torrent" type="button" class="btndt">TORRENT</button>' : ''}
-		${obj.settings.ShowLibTorrentButton ? ' <button id="LibTorrent" type="button" class="btndt">LIBTORRENT</button>' : ''}
 		${obj.settings.ShowMagnetButton ? ' <button id="Magnet" type="button" class="btndm">MAGNET</button>' : ''}
 		${obj.settings.ShowAcestreamButton ? ' <button id="acestream" type="button" class="btnca">ACESTREAM</button>' : ''}
 		</td>
@@ -1301,57 +1194,6 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 								}
 							});
 						}
-					} else if (target.id === 'LibTorrent') {
-						var year1 = film_name[1].replace(/(.*)/gi, "$1");
-						var year2 = film_name[2].replace(/(.*)/gi, "$1");
-						var get_year = new RegExp('^[0-9]+$').exec(film_name[2]);
-						var filmname = (get_year) ? film_name[0].toUpperCase() + " / " + year2 : film_name[0].toUpperCase() + " / " + year1;
-						if (obj.settings.ConfirmDownloadLibTorrent) {
-							Swal.fire({
-								title: "Скачать через LibTorrent?",
-								html: "Раздача:<br><b>" + film_name[0].toUpperCase() + "</b>",
-								icon: 'question',
-								showCancelButton: true,
-								confirmButtonColor: '#4fc823',
-								cancelButtonColor: '#d33',
-								confirmButtonText: 'Да',
-								cancelButtonText: 'Нет'
-							}).then(function(result) {
-								if (result.value) {
-									$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-										var hash = (s.toString().match(mgt_reg))[0];
-										if (s.toString().indexOf("signup.php") != -1) {
-											Toast.fire({
-												icon: 'warning',
-												html: signup
-											})
-										} else {
-											copy("\r\n#EXTINF:-1," + filmname.toUpperCase() + "\r\nlibtorrent://0,magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986));
-											Toast.fire({
-												icon: 'success',
-												title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скопирована!'
-											})
-										}
-									});
-								}
-							})
-						} else {
-							$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-								var hash = (s.toString().match(mgt_reg))[0];
-								if (s.toString().indexOf("signup.php") != -1) {
-									Toast.fire({
-										icon: 'warning',
-										html: signup
-									})
-								} else {
-									copy("\r\n#EXTINF:-1," + filmname.toUpperCase() + "\r\nlibtorrent://0,magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986));
-									Toast.fire({
-										icon: 'success',
-										title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скопирована!'
-									})
-								}
-							});
-						}
 					}
 				}, false);
 			}
@@ -1382,9 +1224,6 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 				if (GM_getValue("ShowTorrentButton") == undefined) {
 					GM_setValue("ShowTorrentButton", true);
 				}
-				if (GM_getValue("ShowLibTorrentButton") == undefined) {
-					GM_setValue("ShowLibTorrentButton", true);
-				}
 				if (GM_getValue("ShowMagnetButton") == undefined) {
 					GM_setValue("ShowMagnetButton", true);
 				}
@@ -1393,9 +1232,6 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 				}
 				if (GM_getValue("ConfirmDownloadTorrent") == undefined) {
 					GM_setValue("ConfirmDownloadTorrent", true);
-				}
-				if (GM_getValue("ConfirmDownloadLibTorrent") == undefined) {
-					GM_setValue("ConfirmDownloadLibTorrent", true);
 				}
 				if (GM_getValue("ConfirmDownloadMagnet") == undefined) {
 					GM_setValue("ConfirmDownloadMagnet", true);
@@ -1411,11 +1247,9 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 				}
 				this.settings = {
 					ShowTorrentButton: GM_getValue('ShowTorrentButton', true),
-					ShowLibTorrentButton: GM_getValue('ShowLibTorrentButton', true),
 					ShowMagnetButton: GM_getValue('ShowMagnetButton', true),
 					ShowAcestreamButton: GM_getValue('ShowAcestreamButton', true),
 					ConfirmDownloadTorrent: GM_getValue('ConfirmDownloadTorrent', true),
-					ConfirmDownloadLibTorrent: GM_getValue('ConfirmDownloadLibTorrent', true),
 					ConfirmDownloadMagnet: GM_getValue('ConfirmDownloadMagnet', true),
 					ChangeIconsToText: GM_getValue('ChangeIconsToText', false),
 					ShowMarkTorrents: GM_getValue('ShowMarkTorrents', false),
@@ -1429,9 +1263,6 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 				if (this.settings.ShowTorrentButton) {
 					$('#ShowTorrentButton').attr('checked', true);
 				}
-				if (this.settings.ShowLibTorrentButton) {
-					$('#ShowLibTorrentButton').attr('checked', true);
-				}
 				if (this.settings.ShowMagnetButton) {
 					$('#ShowMagnetButton').attr('checked', true);
 				}
@@ -1440,9 +1271,6 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 				}
 				if (this.settings.ConfirmDownloadTorrent) {
 					$('#ConfirmDownloadTorrent').attr('checked', true);
-				}
-				if (this.settings.ConfirmDownloadLibTorrent) {
-					$('#ConfirmDownloadLibTorrent').attr('checked', true);
 				}
 				if (this.settings.ConfirmDownloadMagnet) {
 					$('#ConfirmDownloadMagnet').attr('checked', true);
@@ -1502,17 +1330,6 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 	</div>
 	<div class="fields">
 		<div class="row">
-			<div class="title">LibTorrent настройки</div>
-			<div class="col1">Включить кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowLibTorrentButton"></div>
-		</div>
-		<div class="row">
-			<div class="col1">Включить подтверждение?</div>
-			<div class="col2"><input type="checkbox" id="ConfirmDownloadLibTorrent"></div>
-		</div>
-	</div>
-	<div class="fields">
-		<div class="row">
 			<div class="title">Остальное</div>
 			<div class="col1">Сделать кнопки текстом ?</div>
 			<div class="col2"><input type="checkbox" id="ChangeIconsToText"></div>
@@ -1536,8 +1353,6 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 				$('#acemgn_script_save_settings').live('click', function() {
 					GM_setValue('ShowTorrentButton', $('#ShowTorrentButton').is(':checked'));
 					GM_setValue('ConfirmDownloadTorrent', $('#ConfirmDownloadTorrent').is(':checked'));
-					GM_setValue('ShowLibTorrentButton', $('#ShowLibTorrentButton').is(':checked'));
-					GM_setValue('ConfirmDownloadLibTorrent', $('#ConfirmDownloadLibTorrent').is(':checked'));
 					GM_setValue('ShowMagnetButton', $('#ShowMagnetButton').is(':checked'));
 					GM_setValue('ConfirmDownloadMagnet', $('#ConfirmDownloadMagnet').is(':checked'));
 					GM_setValue('ShowAcestreamButton', $('#ShowAcestreamButton').is(':checked'));
@@ -1753,33 +1568,6 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 							Toast.fire({
 								icon: 'success',
 								title: 'Раздача ( ' + filmname.toUpperCase() + ' ) скачивается через Magnet!'
-							})
-						}
-					} else if (target.id === 'LibTorrent') {
-						if (obj.settings.ConfirmDownloadLibTorrent) {
-							Swal.fire({
-								title: "Смотреть через LibTorrent?",
-								html: "Раздача:<br><b>" + filmname.toUpperCase() + "</b>",
-								icon: 'question',
-								showCancelButton: true,
-								confirmButtonColor: '#4fc823',
-								cancelButtonColor: '#d33',
-								confirmButtonText: 'Да',
-								cancelButtonText: 'Нет'
-							}).then(function(result) {
-								if (result.value) {
-									copy("\r\n#EXTINF:-1," + filmname.toUpperCase() + "\r\nlibtorrent://0,magnet:?xt=urn:btih:" + hash_result + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986));
-									Toast.fire({
-										icon: 'success',
-										title: 'Раздача ( ' + filmname.toUpperCase() + ' ) скопирована!'
-									})
-								}
-							})
-						} else {
-							copy("\r\n#EXTINF:-1," + filmname.toUpperCase() + "\r\nlibtorrent://0,magnet:?xt=urn:btih:" + hash_result + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986));
-							Toast.fire({
-								icon: 'success',
-								title: 'Раздача ( ' + filmname.toUpperCase() + ' ) скопирована!'
 							})
 						}
 					}
