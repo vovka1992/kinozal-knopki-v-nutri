@@ -1,11 +1,11 @@
 
 # Kinozal.tv - Кнопки скачивания внутри раздачи, в поисковике
 
-<img width="1280" alt="Картинка" src="https://github.com/vovka1992/kinozal-knopki-v-nutri/blob/main/image.jpg">
+<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/image.jpg">
 
 # Rutor.ORG - Кнопки скачивания внутри раздачи
 
-<img width="1280" alt="Картинка" src="https://github.com/vovka1992/kinozal-knopki-v-nutri/blob/main/2020-12-13_163611.jpg">
+<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/2020-12-13_163611.jpg">
 
 **Magnet** - Скачать без учёта рейтинга/скачивания
 
