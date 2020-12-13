@@ -2,7 +2,7 @@
 // @name Kinozal.tv/me/guru 2020 | Кнопки скачивания внутри раздачи.
 // @description Magnet - Скачать без учёта рейтинга/скачивания / AceStream - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона ) / (НОВОЕ!) Появились Настройки, можете убрать ненужное (кнопки,подтверждение).
 // @namespace none
-// @version 0.5.5
+// @version 1.0.0
 // @homepageURL  https://github.com/vovka1992/kinozal-knopki-v-nutri
 // @downloadURL  https://github.com/vovka1992/kinozal-knopki-v-nutri/raw/master/kinozal-script.user.js
 // @author https://github.com/vovka1992
