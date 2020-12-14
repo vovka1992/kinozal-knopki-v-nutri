@@ -1,6 +1,4 @@
-(function() {
-	'use strict';
-	GM_addStyle(`
+GM_addStyle(`
 @import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css";
 @import "https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css";
 BUTTON.btndt{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;background-color:#dc3545;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
@@ -1564,4 +1562,3 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 		}
 		(new RutorScriptSettingsScript()).init();
 	}
-})();
