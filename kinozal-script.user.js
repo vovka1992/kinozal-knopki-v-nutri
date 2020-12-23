@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name Kinozal+Rutor | Кнопки скачивания (Torrent/Magnet/Acestream)
-// @description Torrent - Всего лишь заменяет старую кнопку на новую / Magnet - Скачать без учёта рейтинга/скачивания / AceStream - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона ) / Настройки - Можете убрать ненужное / ( Новое ! ) Появилась кнопка в поисковике ( Информация о раздаче, что бы не заходить в раздачу )
+// @description Torrent - Всего лишь заменяет старую кнопку на новую / Magnet - Скачать без учёта рейтинга/скачивания / AceStream - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона ) / Настройки - Настраивайте под себя, какие кнопки показывать, а какие убрать, выделение раздачи ( 4K 2160p 1080p ). 
 // @namespace none
-// @version 1.0.1
+// @version 1.0.8
 // @author https://greasyfork.org/ru/users/173690
 // @author https://greasyfork.org/scripts/40843
 // @icon data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAAAD1BMVEU7R4CAAAD4+/z9787///8A0Su5AAAASUlEQVR4AXWPAQrEMBACzen/33wdkGILFZQdSFxWkZKoyWBsd5JXvFgMfC6ZLBs0pq8Mtq8f0Bcbw9N3HvuI8i14sAt/e8/73j/4FwHuDyR5AQAAAABJRU5ErkJggg==
 // @include /(https?:\/\/)?(www\.)?kinozal\.(me|tv|guru|website)\/*/
-// @include /(https?:\/\/)?(www\.)?kinozal-tv\.appspot\.com\/*/
+// @include /(https?:\/\/)?(www\.)?kino-zal\.site\/*/
 // @include /(https?:\/\/)?(www\.)?rutor\.(info|is)\/*/
 // @require https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js
@@ -22,8 +22,11 @@
 	GM_addStyle(`
 @import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css";
 @import "https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css";
+@font-face{font-family:"Open Sans";font-style:normal;font-weight:400;src:local("Open Sans"),local(OpenSans),url(https://themes.googleusercontent.com/static/fonts/opensans/v6/K88pR3goAWT7BTt32Z01mz8E0i7KZn-EPnyo3HZu7kw.woff) format("woff")}
 
+.t_peer td.swalbtn {width: 45px;text-align:center;}
 .swal2-styled.swal2-cancel,.swal2-styled.swal2-confirm,.swal2-styled.swal2-deny,.swal2-styled.swal2-deny{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
+.swal2-content {font-size: 14px;font-family: "Open Sans";font-style:normal;text-align: left;color: #000;}
 
 BUTTON.btndt,BUTTON.btnytb,BUTTON.btncnc{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;background-color:#d92638;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
 BUTTON.btndt:hover,BUTTON.btnytb:hover,BUTTON.btncnc:hover{color:#fff;background-color:#c32232;}
@@ -37,16 +40,15 @@ BUTTON.btnace{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;ou
 BUTTON.btnace:hover{color:#fff;background-color:#47B41F;}
 BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;background-color:#3fa01c;}
 
-@font-face{font-family:"Open Sans";font-style:normal;font-weight:400;src:local("Open Sans"),local(OpenSans),url(https://themes.googleusercontent.com/static/fonts/opensans/v6/K88pR3goAWT7BTt32Z01mz8E0i7KZn-EPnyo3HZu7kw.woff) format("woff")}
 #acemgn_script_settings{padding:5px;font-family:tahoma,arial,verdana,sans-serif,Lucida Sans;position:fixed;left:0;top:0;background-color:#fff;border:1px solid #000;border-radius:4px 4px 4px 4px;-moz-border-radius:4px;-webkit-border-radius:4px 4px 4px 4px;-webkit-box-shadow:0 0 0 1px #000;-moz-box-shadow:0 0 0 1px #000;box-shadow:0 0 0 1px #000}
 #acemgn_script_settings .header{font-size:16px;padding:5px;color:red;font-weight:700;text-align:center}
 #acemgn_script_settings .title{text-transform:uppercase;font-size:14px;color:#000;font-weight:700;text-align:center}
 #acemgn_script_settings .fields{font-size:14px;text-transform:uppercase}
 #acemgn_script_settings .fields .row{clear:both;padding:5px 0}
 #acemgn_script_settings .fields .row .col1{width:250px;float:left;padding:0 20px}
-#acemgn_script_settings .fields .row .col2{width:130px;float:left}
+#acemgn_script_settings .fields .row .col2{width:150px;float:left}
 #acemgn_script_settings .knzl-color{max-width:70px;max-height:20px}
-#acemgn_script_settings input[type=text]{width:85%}
+#acemgn_script_settings input[type=text]{width:90%}
 #acemgn_script_settings input[type=checkbox]::after{font-size:14px;position:relative;left:17px;content:"НЕТ";top:-3px}
 #acemgn_script_settings input[type=checkbox]:checked::after{font-size:14px;content:"ДА";top:-3px}
 `);
@@ -61,6 +63,11 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 		document.body.removeChild(tmp);
 		focus.focus();
 	}
+
+	function truncString(str, max, add) {
+		add = add || '...';
+		return (typeof str === 'string' && str.length > max ? str.substring(0, max) + add : str);
+	};
 
 	function declOfNum(n, text_forms) {
 		n = Math.abs(n) % 100;
@@ -80,84 +87,115 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 		toast: true,
 		position: 'bottom-start',
 		showConfirmButton: false,
-		timer: 3000,
+		timer: 5000,
 		timerProgressBar: true,
 		didOpen: (toast) => {
 			toast.addEventListener('mouseenter', Swal.stopTimer)
 			toast.addEventListener('mouseleave', Swal.resumeTimer)
 		}
-	})
+	});
 	var get_url = location.href;
-	var reg_kinozal_search = new RegExp('kinozal.(me|tv|guru|website)\/(browse|persons).php', 'i');
-	var mirror_kinozal_search = new RegExp('appspot.com\/(browse|persons).php', 'i');
-	var reg_kinozal_detailed = new RegExp('kinozal.(me|tv|guru|website)\/(details|comment).php', 'i');
-	var mirror_kinozal_detailed = new RegExp('appspot.com\/(details|comment).php', 'i');
+	var reg_kinozal_search = new RegExp('(kinozal.(me|tv|guru|website)|kino-zal.site)\/(browse|persons).php', 'i');
+	var reg_kinozal_detailed = new RegExp('(kinozal.(me|tv|guru|website)|kino-zal.site)\/(details|comment).php', 'i');
 	var reg_rutor = new RegExp('rutor.(info|is)/torrent/*', 'i');
-	if (reg_kinozal_search.test(get_url) || mirror_kinozal_search.test(get_url)) {
+	if (reg_kinozal_search.test(get_url)) {
 		function KinozalSearchSettingsScript() {
 			this.settings = {};
 			this.loadSettings = function() {
-				if (GM_getValue("ShowTorrentButton") == undefined) {
-					GM_setValue("ShowTorrentButton", false);
+				if (GM_getValue("ShowAboutFile") == undefined) {
+					GM_setValue("ShowAboutFile", true);
 				}
-				if (GM_getValue("ShowTorrentInfo") == undefined) {
-					GM_setValue("ShowTorrentInfo", true);
+				if (GM_getValue("ShowMainInfo") == undefined) {
+					GM_setValue("ShowMainInfo", true);
 				}
-				if (GM_getValue("ShowMagnetButton") == undefined) {
-					GM_setValue("ShowMagnetButton", true);
+				if (GM_getValue("ShowRelease") == undefined) {
+					GM_setValue("ShowRelease", true);
 				}
-				if (GM_getValue("ShowMagnetInfo") == undefined) {
-					GM_setValue("ShowMagnetInfo", true);
+				if (GM_getValue("ShowScreenshots") == undefined) {
+					GM_setValue("ShowScreenshots", true);
 				}
-				if (GM_getValue("ShowAcestreamButton") == undefined) {
-					GM_setValue("ShowAcestreamButton", false);
+				if (GM_getValue("ShowTorrentButtonS") == undefined) {
+					GM_setValue("ShowTorrentButtonS", false);
 				}
-				if (GM_getValue("ChangeIconsToText") == undefined) {
-					GM_setValue("ChangeIconsToText", false);
+				if (GM_getValue("ShowTorrentInfoS") == undefined) {
+					GM_setValue("ShowTorrentInfoS", true);
 				}
-				if (GM_getValue("ShowMarkTorrents") == undefined) {
-					GM_setValue("ShowMarkTorrents", false);
+				if (GM_getValue("ShowMagnetButtonS") == undefined) {
+					GM_setValue("ShowMagnetButtonS", true);
 				}
-				if (GM_getValue("MarkValue") == undefined) {
-					GM_setValue("MarkValue", '4K 2160P');
+				if (GM_getValue("ShowMagnetInfoS") == undefined) {
+					GM_setValue("ShowMagnetInfoS", true);
+				}
+				if (GM_getValue("ShowAcestreamButtonS") == undefined) {
+					GM_setValue("ShowAcestreamButtonS", false);
+				}
+				if (GM_getValue("ChangeIconsToTextS") == undefined) {
+					GM_setValue("ChangeIconsToTextS", false);
+				}
+				if (GM_getValue("ShowMarkTorrentsS") == undefined) {
+					GM_setValue("ShowMarkTorrentsS", false);
+				}
+				if (GM_getValue("MarkValueS") == undefined) {
+					GM_setValue("MarkValueS", '4K 2160P');
+				}
+				if (GM_getValue("SwalDetailedInfoWidthS") == undefined) {
+					GM_setValue("SwalDetailedInfoWidthS", '800px');
 				}
 				this.settings = {
-					ShowTorrentButton: GM_getValue('ShowTorrentButton', false),
-					ShowTorrentInfo: GM_getValue('ShowTorrentInfo', true),
-					ShowMagnetButton: GM_getValue('ShowMagnetButton', true),
-					ShowMagnetInfo: GM_getValue('ShowMagnetInfo', true),
-					ShowAcestreamButton: GM_getValue('ShowAcestreamButton', false),
-					ChangeIconsToText: GM_getValue('ChangeIconsToText', false),
-					ShowMarkTorrents: GM_getValue('ShowMarkTorrents', false),
-					MarkValue: GM_getValue('MarkValue', '4K 2160P')
+					ShowAboutFile: GM_getValue('ShowAboutFile', true),
+					ShowMainInfo: GM_getValue('ShowMainInfo', true),
+					ShowRelease: GM_getValue('ShowRelease', true),
+					ShowScreenshots: GM_getValue('ShowScreenshots', true),
+					ShowTorrentButtonS: GM_getValue('ShowTorrentButtonS', false),
+					ShowTorrentInfoS: GM_getValue('ShowTorrentInfoS', true),
+					ShowMagnetButtonS: GM_getValue('ShowMagnetButtonS', true),
+					ShowMagnetInfoS: GM_getValue('ShowMagnetInfoS', true),
+					ShowAcestreamButtonS: GM_getValue('ShowAcestreamButtonS', false),
+					ChangeIconsToTextS: GM_getValue('ChangeIconsToTextS', false),
+					ShowMarkTorrentsS: GM_getValue('ShowMarkTorrentsS', false),
+					MarkValueS: GM_getValue('MarkValueS', '4K 2160P'),
+					SwalDetailedInfoWidthS: GM_getValue('SwalDetailedInfoWidthS', '800px')
 				};
 			}
 			this.toggleSettings = function() {
 				var $sett_wnd = $('#acemgn_script_settings'),
 					x = parseInt(($(window).width() - $sett_wnd.width()) / 2),
 					y = parseInt(($(window).height() - $sett_wnd.height()) / 2);
-				if (this.settings.ShowTorrentButton) {
-					$('#ShowTorrentButton').attr('checked', true);
+				if (this.settings.ShowAboutFile) {
+					$('#ShowAboutFile').attr('checked', true);
 				}
-				if (this.settings.ShowTorrentInfo) {
-					$('#ShowTorrentInfo').attr('checked', true);
+				if (this.settings.ShowMainInfo) {
+					$('#ShowMainInfo').attr('checked', true);
 				}
-				if (this.settings.ShowMagnetButton) {
-					$('#ShowMagnetButton').attr('checked', true);
+				if (this.settings.ShowRelease) {
+					$('#ShowRelease').attr('checked', true);
 				}
-				if (this.settings.ShowMagnetInfo) {
-					$('#ShowMagnetInfo').attr('checked', true);
+				if (this.settings.ShowScreenshots) {
+					$('#ShowScreenshots').attr('checked', true);
 				}
-				if (this.settings.ShowAcestreamButton) {
-					$('#ShowAcestreamButton').attr('checked', true);
+				if (this.settings.ShowTorrentButtonS) {
+					$('#ShowTorrentButtonS').attr('checked', true);
 				}
-				if (this.settings.ChangeIconsToText) {
-					$('#ChangeIconsToText').attr('checked', true);
+				if (this.settings.ShowTorrentInfoS) {
+					$('#ShowTorrentInfoS').attr('checked', true);
 				}
-				if (this.settings.ShowMarkTorrents) {
-					$('#ShowMarkTorrents').attr('checked', true);
+				if (this.settings.ShowMagnetButtonS) {
+					$('#ShowMagnetButtonS').attr('checked', true);
 				}
-				$('#MarkValue').val(this.settings.MarkValue);
+				if (this.settings.ShowMagnetInfoS) {
+					$('#ShowMagnetInfoS').attr('checked', true);
+				}
+				if (this.settings.ShowAcestreamButtonS) {
+					$('#ShowAcestreamButtonS').attr('checked', true);
+				}
+				if (this.settings.ChangeIconsToTextS) {
+					$('#ChangeIconsToTextS').attr('checked', true);
+				}
+				if (this.settings.ShowMarkTorrentsS) {
+					$('#ShowMarkTorrentsS').attr('checked', true);
+				}
+				$('#MarkValueS').val(this.settings.MarkValueS);
+				$('#SwalDetailedInfoWidthS').val(this.settings.SwalDetailedInfoWidthS);
 				$('#acemgn_script_settings').css({
 					'left': x,
 					'top': y
@@ -179,44 +217,70 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 		<div class="row">
 			<div class="title">Торрент кнопка</div>
 			<div class="col1">Показать кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowTorrentButton"></div>
+			<div class="col2"><input type="checkbox" id="ShowTorrentButtonS"></div>
 		</div>
 		<div class="row">
 			<div class="col1">Показать информацию?</div>
-			<div class="col2"><input type="checkbox" id="ShowTorrentInfo"></div>
+			<div class="col2"><input type="checkbox" id="ShowTorrentInfoS"></div>
 		</div>
 	</div>
 	<div class="fields">
 		<div class="row">
 			<div class="title">Магнит кнопка</div>
 			<div class="col1">Включить кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowMagnetButton"></div>
+			<div class="col2"><input type="checkbox" id="ShowMagnetButtonS"></div>
 		</div>
 		<div class="row">
 			<div class="col1">Показать информацию?</div>
-			<div class="col2"><input type="checkbox" id="ShowMagnetInfo"></div>
+			<div class="col2"><input type="checkbox" id="ShowMagnetInfoS"></div>
 		</div>
 	</div>
 	<div class="fields">
 		<div class="row">
 			<div class="title">Acestream кнопка</div>
 			<div class="col1">Включить кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowAcestreamButton"></div>
+			<div class="col2"><input type="checkbox" id="ShowAcestreamButtonS"></div>
+		</div>
+	</div>
+	<div class="fields">
+		<div class="row">
+			<div class="title">Выделение раздач</div>
+			<div class="col1">Выделять раздачи ?</div>
+			<div class="col2"><input type="checkbox" id="ShowMarkTorrentsS"></div>
+		</div>
+		<div class="row">
+			<div class="col1">Текст выделения <b>через пробел</b></div>
+			<div class="col2"><input type="text" placeholder="Пример: 4K 2160P" id="MarkValueS"></div>
 		</div>
 	</div>
 	<div class="fields">
 		<div class="row">
 			<div class="title">Остальные настройки</div>
 			<div class="col1">Поменять кнопки текстом ?</div>
-			<div class="col2"><input type="checkbox" id="ChangeIconsToText"></div>
+			<div class="col2"><input type="checkbox" id="ChangeIconsToTextS"></div>
 		</div>
 		<div class="row">
-			<div class="col1">Выделять раздачи ?</div>
-			<div class="col2"><input type="checkbox" id="ShowMarkTorrents"></div>
+			<div class="col1">Ширина окна информации<br>(100% на вест экран)</div>
+			<div class="col2"><input type="text" placeholder="Пример: 800px или 100%" id="SwalDetailedInfoWidthS"></div>
+		</div>
+	</div>
+	<div class="fields">
+		<div class="row">
+			<div class="title">Информация о раздаче</div>
+			<div class="col1">Показать описание?</div>
+			<div class="col2"><input type="checkbox" id="ShowAboutFile"></div>
 		</div>
 		<div class="row">
-			<div class="col1">Текст выделения <b>через пробел</b></div>
-			<div class="col2"><input type="text" placeholder="Пример: 4K 2160P" id="MarkValue"></div>
+			<div class="col1">Показать техданные?</div>
+			<div class="col2"><input type="checkbox" id="ShowMainInfo"></div>
+		</div>
+		<div class="row">
+			<div class="col1">Показать релиз?</div>
+			<div class="col2"><input type="checkbox" id="ShowRelease"></div>
+		</div>
+		<div class="row">
+			<div class="col1">Показать скриншоты?</div>
+			<div class="col2"><input type="checkbox" id="ShowScreenshots"></div>
 		</div>
 	</div>
 	<div class="fields">
@@ -227,14 +291,19 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 </div>`);
 				$('body').append($wnd);
 				$('#acemgn_script_save_settings').live('click', function() {
-					GM_setValue('ShowTorrentButton', $('#ShowTorrentButton').is(':checked'));
-					GM_setValue('ShowTorrentInfo', $('#ShowTorrentInfo').is(':checked'));
-					GM_setValue('ShowMagnetButton', $('#ShowMagnetButton').is(':checked'));
-					GM_setValue('ShowMagnetInfo', $('#ShowMagnetInfo').is(':checked'));
-					GM_setValue('ShowAcestreamButton', $('#ShowAcestreamButton').is(':checked'));
-					GM_setValue('ChangeIconsToText', $('#ChangeIconsToText').is(':checked'));
-					GM_setValue('ShowMarkTorrents', $('#ShowMarkTorrents').is(':checked'));
-					GM_setValue('MarkValue', $('#MarkValue').val());
+					GM_setValue('ShowAboutFile', $('#ShowAboutFile').is(':checked'));
+					GM_setValue('ShowMainInfo', $('#ShowMainInfo').is(':checked'));
+					GM_setValue('ShowRelease', $('#ShowRelease').is(':checked'));
+					GM_setValue('ShowScreenshots', $('#ShowScreenshots').is(':checked'));
+					GM_setValue('ShowTorrentButtonS', $('#ShowTorrentButtonS').is(':checked'));
+					GM_setValue('ShowTorrentInfoS', $('#ShowTorrentInfoS').is(':checked'));
+					GM_setValue('ShowMagnetButtonS', $('#ShowMagnetButtonS').is(':checked'));
+					GM_setValue('ShowMagnetInfoS', $('#ShowMagnetInfoS').is(':checked'));
+					GM_setValue('ShowAcestreamButtonS', $('#ShowAcestreamButtonS').is(':checked'));
+					GM_setValue('ChangeIconsToTextS', $('#ChangeIconsToTextS').is(':checked'));
+					GM_setValue('ShowMarkTorrentsS', $('#ShowMarkTorrentsS').is(':checked'));
+					GM_setValue('MarkValueS', $('#MarkValueS').val());
+					GM_setValue('SwalDetailedInfoWidthS', $('#SwalDetailedInfoWidthS').val());
 					obj.loadSettings();
 					$('#acemgn_script_settings').toggle('fast');
 					location.reload();
@@ -244,19 +313,19 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 				var obj = this;
 				var domain = get_url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:[^.]+\.)?([^:\/\n\?\=]+)/im)[0];
 				var mgt_reg = new RegExp('[a-zA-Z0-9]{40}', 'i');
-				var film_name = $('H1 a').text().split(" / ");
+				var gfname = $('H1 a').text().split(" / ");
 				var film_full_name = $('H1 a').text();
-				var swal_width = "95%";
+				var swal_width = obj.settings.SwalDetailedInfoWidthS;
 				var SwalConfirmText = "СКАЧАТЬ";
 				var SwalCancelText = "ОТМЕНА";
-				if (obj.settings.ShowMarkTorrents) {
+				if (obj.settings.ShowMarkTorrentsS) {
 					var mark_instance = new Mark(document.querySelectorAll("a.r0,a.r1,a.r2,a.r3,a.r4,a.r5,a.r6"));
-					mark_instance.mark(obj.settings.MarkValue);
+					mark_instance.mark(obj.settings.MarkValueS);
 				}
 				var table = $('.t_peer');
 				var h = table.find('.mn');
 				var signup = "Чтобы скачать, нужно зайти на сайт!";
-				h.prepend((obj.settings.ShowAcestreamButton ? '<td class="z"></td>' : '') + (obj.settings.ShowMagnetButton ? '<td class="z"></td>' : '') + (obj.settings.ShowTorrentButton ? '<td class="z"></td>' : ''));
+				h.prepend((obj.settings.ShowAcestreamButtonS ? '<td class="z"></td>' : '') + (obj.settings.ShowMagnetButtonS ? '<td class="z"></td>' : '') + (obj.settings.ShowTorrentButtonS ? '<td class="z"></td>' : ''));
 				table.find('tr').not(h).each(function(i, e) {
 					var url = $(e).find('.nam a').attr('href');
 					var uArgs = url.split('?')[1].split('&');
@@ -267,1045 +336,348 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 						}
 					});
 					if (id !== null) {
-						var film_name = $(e).find('.nam a').text().split(" / ");
-						if (obj.settings.ShowAcestreamButton) {
+						var ssh_af = obj.settings.ShowAboutFile;
+						var ssh_mi = obj.settings.ShowMainInfo;
+						var ssh_rel = obj.settings.ShowRelease;
+						var ssh_scr = obj.settings.ShowScreenshots;
+						var ssh_aceb = obj.settings.ShowAcestreamButtonS;
+						var ssh_mgbtn = obj.settings.ShowMagnetButtonS;
+						var ssh_mgi = obj.settings.ShowMagnetInfoS;
+						var ssh_trbtn = obj.settings.ShowTorrentButtonS;
+						var ssh_tri = obj.settings.ShowTorrentInfoS;
+						var gfname = $(e).find('.nam a').text().split(" / ");
+						var getfname = gfname[0].toUpperCase();
+						var getfnames = gfname[1].toUpperCase();
+						if (ssh_aceb) {
 							var td3 = document.createElement('td');
 							var button3 = document.createElement('button');
 							$(e).prepend(td3);
 							button3.setAttribute("id", "ace_" + id);
 							button3.setAttribute("class", "btnace");
 							button3.setAttribute("title", "Копировать для просмотра через AceStream");
-							button3.innerHTML = (!obj.settings.ChangeIconsToText ? '<i class="fas fa-copy"></i>' : 'A');
+							button3.innerHTML = (!obj.settings.ChangeIconsToTextS ? '<i class="fas fa-copy"></i>' : 'A');
+							td3.setAttribute("class", "swalbtn");
 							td3.appendChild(button3);
 						}
-						if (obj.settings.ShowMagnetButton) {
+						if (ssh_mgbtn) {
 							var td2 = document.createElement('td');
 							var button2 = document.createElement('button');
 							$(e).prepend(td2);
 							button2.setAttribute("id", "magnet_" + id);
 							button2.setAttribute("class", "btndm");
 							button2.setAttribute("title", "Скачать через Magnet");
-							button2.innerHTML = (!obj.settings.ChangeIconsToText ? '<i class="fas fa-magnet"></i>' : 'M');
+							button2.innerHTML = (!obj.settings.ChangeIconsToTextS ? '<i class="fas fa-magnet"></i>' : 'M');
+							td2.setAttribute("class", "swalbtn");
 							td2.appendChild(button2);
 						}
-						if (obj.settings.ShowTorrentButton) {
+						if (ssh_trbtn) {
 							var td1 = document.createElement('td');
 							var button1 = document.createElement('button');
 							$(e).prepend(td1);
 							button1.setAttribute("id", "torrent_" + id);
 							button1.setAttribute("class", "btndt");
 							button1.setAttribute("title", "Скачать Торрент файл");
-							button1.innerHTML = (!obj.settings.ChangeIconsToText ? '<i class="fas fa-file-download"></i>' : 'T');
+							button1.innerHTML = (!obj.settings.ChangeIconsToTextS ? '<i class="fas fa-file-download"></i>' : 'T');
+							td1.setAttribute("class", "swalbtn");
 							td1.appendChild(button1);
 						}
 						$("#torrent_" + id).click(function() {
-							if (obj.settings.ShowTorrentInfo) {
-								$.ajax({
-									url: '/details.php?id=' + id,
-									type: "GET",
-									dataType: "html",
-									success: function(data, status, xhr) {
-										var obj1 = $(data);
-										var getinfo = obj1.find('#tabs').html();
-										var grel = obj1.find(".lis li:contains(Релиз)").html();
-										var gsrc = obj1.find(".lis li:contains(Скриншоты)").html();
-										var grel_id = [];
-										var gsrc_id = [];
-										var year1 = film_name[1].replace(/(.*)/gi, "$1");
-										var year2 = film_name[2].replace(/(.*)/gi, "$1");
-										var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-										var filmname = (get_year) ? "Название: <font color='red'>" + film_name[0] + "</font><br>Год выпуска: <font color='red'>" + year1 + "</font>" : "Название: <font color='red'>" + film_name[0] + "</font><br>Оригинальное название: <font color='red'>" + film_name[1] + "</font><br>Год выпуска: <font color='red'>" + year2 + "</font>";
-										var filmname_youtube = (get_year) ? film_name[0] + " " + year1 : film_name[0] + " " + film_name[1] + " " + year2;
-										if (grel !== null && gsrc !== null) {
-											grel_id = grel.match(/\d+/g)[1];
-											gsrc_id = gsrc.match(/\d+/g)[1];
-											$.ajax({
-												url: '/get_srv_details.php?id=' + id + '&pagesd=' + grel_id,
-												type: "GET",
-												dataType: "html",
-												success: function(drel, status, xhr) {
-													$.ajax({
-														url: '/get_srv_details.php?id=' + id + '&pagesd=' + gsrc_id,
-														type: "GET",
-														dataType: "html",
-														success: function(dscr, status, xhr) {
-															Swal.fire({
-																width: swal_width,
-																title: "Скачать Торрент файл?",
-																html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>${drel}<br><br>\n<b style="color:red;">Скриншоты:</b><br>${dscr}<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button>`,
-																showCancelButton: true,
-																confirmButtonColor: '#4fc823',
-																cancelButtonColor: '#d33',
-																confirmButtonText: SwalConfirmText,
-																cancelButtonText: SwalCancelText,
-																footer: `<b style="color:red;">Внимание! Этот метод скачивания не актуален для тех, кто недавно создал аккаунт..<br> При скачивании ваш рейтинг может понизится, так же количество скачивании торрентов уменьшится!</b>`
-															}).then(function(result) {
-																if (result.value) {
-																	$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																		if (s.toString().indexOf("signup.php") != -1) {
-																			Toast.fire({
-																				icon: 'warning',
-																				html: signup
-																			})
-																		} else {
-																			window.location.href = "/download.php?id=" + id;
-																			Toast.fire({
-																				icon: 'success',
-																				title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Торрент!'
-																			})
-																		}
-																	});
-																}
-															})
-														},
-														error: function(jqXhr, textStatus, errorMessage) {
-															console.log('Error: ' + errorMessage);
-														}
-													});
-												},
-												error: function(jqXhr, textStatus, errorMessage) {
-													console.log('Error: ' + errorMessage);
-												}
-											});
-										} else if (grel !== null && gsrc == null) {
-											grel_id = grel.match(/\d+/g)[1];
-											$.ajax({
-												url: '/get_srv_details.php?id=' + id + '&pagesd=' + grel_id,
-												type: "GET",
-												dataType: "html",
-												success: function(drel, status, xhr) {
-													Swal.fire({
-														width: swal_width,
-														title: "Скачать Торрент файл?",
-														html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>${drel}<br><br>\n<b style="color:red;">Скриншоты:</b><br>Нет данных<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button>`,
-														showCancelButton: true,
-														confirmButtonColor: '#4fc823',
-														cancelButtonColor: '#d33',
-														confirmButtonText: SwalConfirmText,
-														cancelButtonText: SwalCancelText,
-														footer: `<b style="color:red;">Внимание! Этот метод скачивания не актуален для тех, кто недавно создал аккаунт..<br> При скачивании ваш рейтинг может понизится, так же количество скачивании торрентов уменьшится</b>`
-													}).then(function(result) {
-														if (result.value) {
-															$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																if (s.toString().indexOf("signup.php") != -1) {
-																	Toast.fire({
-																		icon: 'warning',
-																		html: signup
-																	})
-																} else {
-																	window.location.href = "/download.php?id=" + id;
-																	Toast.fire({
-																		icon: 'success',
-																		title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Торрент!'
-																	})
-																}
-															});
-														}
-													})
-												},
-												error: function(jqXhr, textStatus, errorMessage) {
-													console.log('Error: ' + errorMessage);
-												}
-											});
-										} else if (grel == null && gsrc !== null) {
-											gsrc_id = gsrc.match(/\d+/g)[1];
-											$.ajax({
-												url: '/get_srv_details.php?id=' + id + '&pagesd=' + gsrc_id,
-												type: "GET",
-												dataType: "html",
-												success: function(dscr, status, xhr) {
-													Swal.fire({
-														width: swal_width,
-														title: "Скачать Торрент файл?",
-														html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>Нет данных<br><br>\n<b style="color:red;">Скриншоты:</b><br>${dscr}<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button>`,
-														showCancelButton: true,
-														confirmButtonColor: '#4fc823',
-														cancelButtonColor: '#d33',
-														confirmButtonText: SwalConfirmText,
-														cancelButtonText: SwalCancelText,
-														footer: `<b style="color:red;">Внимание! Этот метод скачивания не актуален для тех, кто недавно создал аккаунт..<br> При скачивании ваш рейтинг может понизится, так же количество скачивании торрентов уменьшится</b>`
-													}).then(function(result) {
-														if (result.value) {
-															$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																if (s.toString().indexOf("signup.php") != -1) {
-																	Toast.fire({
-																		icon: 'warning',
-																		html: signup
-																	})
-																} else {
-																	window.location.href = "/download.php?id=" + id;
-																	Toast.fire({
-																		icon: 'success',
-																		title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Торрент!'
-																	})
-																}
-															});
-														}
-													})
-												},
-												error: function(jqXhr, textStatus, errorMessage) {
-													console.log('Error: ' + errorMessage);
-												}
-											});
-										} else if (grel == null && gsrc == null) {
+							$.ajax({
+								url: domain + '/get_srv_details.php?id=' + id + '&action=2'
+							}).done(function(s) {
+								if (s.toString().indexOf("signup.php") != -1) {
+									Toast.fire({
+										icon: 'warning',
+										html: signup
+									});
+								} else {
+									if (ssh_tri) {
+										$.ajax({
+											url: '/details.php?id=' + id
+										}).done(function(data) {
+											var obj1 = $(data);
+											var getinfo = obj1.find('#tabs').html();
+											var grel = obj1.find(".lis li:contains(Релиз)").html();
+											var gscr = obj1.find(".lis li:contains(Скриншоты)").html();
+											var gaboutfile = obj1.find("div.bx1.justify p").html();
+											var gaboutfile1 = obj1.find("div.bx1.justify h2").html();
+											var g_movie = gaboutfile.indexOf("О фильме:") !== -1;
+											var gimg = '<img src="' + (obj1.find("li.img").html().match(/img.*?src=("|')(.*?)\1/i)[2]) + '" style="display: block;width:250px;" alt="">';
+											var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
+											var fname_youtube = (gyear) ? getfname + " " + getfnames : getfname + " " + getfnames + " " + gfname[1];
+											var fname = '<h2 class="swal2-title" style="font-weight:bold;font-family:Open Sans;text-transform:uppercase;font-size:35px;color: hsl(0deg 70% 55%);text-shadow: -1px -1px 0 hsl(0deg 70% 35%), -2px -2px 1px hsl(0deg 70% 35%);">' + getfname + '</h2>';
+											var get_ajax_rel;
+											var get_ajax_scr;
+											if (grel !== null) {
+												var grel_id = grel.match(/\d+/g)[1];
+												$.ajax({
+													url: '/get_srv_details.php?id=' + id + '&pagesd=' + grel_id,
+													async: false
+												}).done(function(drel) {
+													get_ajax_rel = drel;
+													return get_ajax_rel;
+												});
+											} else {
+												get_ajax_rel = null;
+											}
+											if (gscr !== null) {
+												var gscr_id = gscr.match(/\d+/g)[1];
+												$.ajax({
+													url: '/get_srv_details.php?id=' + id + '&pagesd=' + gscr_id,
+													async: false
+												}).done(function(dscr) {
+													get_ajax_scr = dscr;
+													return get_ajax_scr;
+												});
+											} else {
+												get_ajax_scr = null;
+											}
 											Swal.fire({
 												width: swal_width,
-												title: "Скачать Торрент файл?",
-												html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>Нет данных<br><br>\n<b style="color:red;">Скриншоты:</b><br>Нет данных<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button>`,
+												html: `
+${fname}
+<table>
+<tr>
+<td colspan="2" style="vertical-align:top;padding:10px;font-size: 12px;width:270px;">
+${gimg}<br>
+${(ssh_mi ? '<b>Техданные:</b><br>'+getinfo : '')}
+${(g_movie ? '<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query='+encodeURIComponent(fname_youtube + ' трейлер русский')+'\')" style="display: block;margin-left: auto;margin-right: auto;">ТРЕЙЛЕР</button>' : '')}</td>
+<td style="vertical-align:top;padding:10px;font-size: 12px;">
+${gaboutfile1}<br>
+${(ssh_af ? truncString(gaboutfile,300,'...')+'<br><br>' : '')}
+${(ssh_rel && get_ajax_rel !== null ? '<b>Релиз:</b><br>'+get_ajax_rel+'<br><br>' : '')}
+${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_scr+'<br><br>' : '')}
+</td>
+</tr>
+</table>`,
 												showCancelButton: true,
 												confirmButtonColor: '#4fc823',
 												cancelButtonColor: '#d33',
-												confirmButtonText: SwalConfirmText,
+												confirmButtonText: SwalConfirmText + " ТОРРЕНТ ФАЙЛ",
 												cancelButtonText: SwalCancelText,
-												footer: `<b style="color:red;">Внимание! Этот метод скачивания не актуален для тех, кто недавно создал аккаунт..<br> При скачивании ваш рейтинг может понизится, так же количество скачивании торрентов уменьшится</b>`
+												footer: `<center><b style="color:#000099;">Скачивание через торрент</b><br><b style="color:#990000;">Внимание! Этот метод скачивания не актуален для тех, кому важен рейтинг. Так как при скачивании, ваш рейтинг может понизится, тем самым возможен блок аккаунта!</b></center>`
 											}).then(function(result) {
 												if (result.value) {
-													$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-														if (s.toString().indexOf("signup.php") != -1) {
-															Toast.fire({
-																icon: 'warning',
-																html: signup
-															})
-														} else {
-															window.location.href = "/download.php?id=" + id;
-															Toast.fire({
-																icon: 'success',
-																title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Торрент!'
-															})
-														}
+													window.location.href = "/download.php?id=" + id;
+													Toast.fire({
+														icon: 'success',
+														title: getfname + ' скачивается через Торрент!'
 													});
 												}
-											})
-										}
-									},
-									error: function(jqXhr, textStatus, errorMessage) {
-										console.log('Error: ' + errorMessage);
-									}
-								});
-							} else {
-								$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-									if (s.toString().indexOf("signup.php") != -1) {
-										Toast.fire({
-											icon: 'warning',
-											html: signup
-										})
+											});
+										});
 									} else {
 										window.location.href = "/download.php?id=" + id;
 										Toast.fire({
 											icon: 'success',
-											title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Торрент!'
-										})
+											title: getfname + ' скачивается через Торрент!'
+										});
 									}
-								});
-							}
+								}
+							});
 						});
 						$("#magnet_" + id).click(function() {
-							if (obj.settings.ShowMagnetInfo) {
-								$.ajax({
-									url: '/details.php?id=' + id,
-									type: "GET",
-									dataType: "html",
-									success: function(data, status, xhr) {
-										var obj1 = $(data);
-										var getinfo = obj1.find('#tabs').html();
-										var grel = obj1.find(".lis li:contains(Релиз)").html();
-										var gsrc = obj1.find(".lis li:contains(Скриншоты)").html();
-										var grel_id = [];
-										var gsrc_id = [];
-										var year1 = film_name[1].replace(/(.*)/gi, "$1");
-										var year2 = film_name[2].replace(/(.*)/gi, "$1");
-										var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-										var filmname = (get_year) ? "Название: <font color='red'>" + film_name[0] + "</font><br>Год выпуска: <font color='red'>" + year1 + "</font>" : "Название: <font color='red'>" + film_name[0] + "</font><br>Оригинальное название: <font color='red'>" + film_name[1] + "</font><br>Год выпуска: <font color='red'>" + year2 + "</font>";
-										var filmname_youtube = (get_year) ? film_name[0] + " " + year1 : film_name[0] + " " + film_name[1] + " " + year2;
-										if (grel !== null && gsrc !== null) {
-											grel_id = grel.match(/\d+/g)[1];
-											gsrc_id = gsrc.match(/\d+/g)[1];
-											$.ajax({
-												url: '/get_srv_details.php?id=' + id + '&pagesd=' + grel_id,
-												type: "GET",
-												dataType: "html",
-												success: function(drel, status, xhr) {
-													$.ajax({
-														url: '/get_srv_details.php?id=' + id + '&pagesd=' + gsrc_id,
-														type: "GET",
-														dataType: "html",
-														success: function(dscr, status, xhr) {
-															Swal.fire({
-																width: swal_width,
-																title: "Скачать через Magnet?",
-																html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>${drel}<br><br>\n<b style="color:red;">Скриншоты:</b><br>${dscr}<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button>`,
-																showCancelButton: true,
-																confirmButtonColor: '#4fc823',
-																cancelButtonColor: '#d33',
-																confirmButtonText: SwalConfirmText,
-																cancelButtonText: SwalCancelText,
-																footer: `<b style="color:#009900;">Ваш рейтинг не упадёт, можете скачивать бесконечно!</b>`
-															}).then(function(result) {
-																if (result.value) {
-																	$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																		if (s.toString().indexOf("signup.php") != -1) {
-																			Toast.fire({
-																				icon: 'warning',
-																				html: signup
-																			})
-																		} else {
-																			window.location.href = "/download.php?id=" + id;
-																			Toast.fire({
-																				icon: 'success',
-																				title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Торрент!'
-																			})
-																		}
-																	});
-																}
-															})
-														},
-														error: function(jqXhr, textStatus, errorMessage) {
-															console.log('Error: ' + errorMessage);
-														}
-													});
-												},
-												error: function(jqXhr, textStatus, errorMessage) {
-													console.log('Error: ' + errorMessage);
-												}
-											});
-										} else if (grel !== null && gsrc == null) {
-											grel_id = grel.match(/\d+/g)[1];
-											$.ajax({
-												url: '/get_srv_details.php?id=' + id + '&pagesd=' + grel_id,
-												type: "GET",
-												dataType: "html",
-												success: function(drel, status, xhr) {
-													Swal.fire({
-														width: swal_width,
-														title: "Скачать через Magnet?",
-														html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>${drel}<br><br>\n<b style="color:red;">Скриншоты:</b><br>Нет данных<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button>`,
-														showCancelButton: true,
-														confirmButtonColor: '#4fc823',
-														cancelButtonColor: '#d33',
-														confirmButtonText: SwalConfirmText,
-														cancelButtonText: SwalCancelText,
-														footer: `<b style="color:#009900;">Ваш рейтинг не упадёт, можете скачивать бесконечно!</b>`
-													}).then(function(result) {
-														if (result.value) {
-															$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																if (s.toString().indexOf("signup.php") != -1) {
-																	Toast.fire({
-																		icon: 'warning',
-																		html: signup
-																	})
-																} else {
-																	window.location.href = "/download.php?id=" + id;
-																	Toast.fire({
-																		icon: 'success',
-																		title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Торрент!'
-																	})
-																}
-															});
-														}
-													})
-												},
-												error: function(jqXhr, textStatus, errorMessage) {
-													console.log('Error: ' + errorMessage);
-												}
-											});
-										} else if (grel == null && gsrc !== null) {
-											gsrc_id = gsrc.match(/\d+/g)[1];
-											$.ajax({
-												url: '/get_srv_details.php?id=' + id + '&pagesd=' + gsrc_id,
-												type: "GET",
-												dataType: "html",
-												success: function(dscr, status, xhr) {
-													Swal.fire({
-														width: swal_width,
-														title: "Скачать через Magnet?",
-														html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>Нет данных<br><br>\n<b style="color:red;">Скриншоты:</b><br>${dscr}<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button>`,
-														showCancelButton: true,
-														confirmButtonColor: '#4fc823',
-														cancelButtonColor: '#d33',
-														confirmButtonText: SwalConfirmText,
-														cancelButtonText: SwalCancelText,
-														footer: `<b style="color:#009900;">Ваш рейтинг не упадёт, можете скачивать бесконечно!</b>`
-													}).then(function(result) {
-														if (result.value) {
-															$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																if (s.toString().indexOf("signup.php") != -1) {
-																	Toast.fire({
-																		icon: 'warning',
-																		html: signup
-																	})
-																} else {
-																	window.location.href = "/download.php?id=" + id;
-																	Toast.fire({
-																		icon: 'success',
-																		title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Торрент!'
-																	})
-																}
-															});
-														}
-													})
-												},
-												error: function(jqXhr, textStatus, errorMessage) {
-													console.log('Error: ' + errorMessage);
-												}
-											});
-										} else if (grel == null && gsrc == null) {
+							$.ajax({
+								url: domain + '/get_srv_details.php?id=' + id + '&action=2'
+							}).done(function(s) {
+								if (s.toString().indexOf("signup.php") != -1) {
+									Toast.fire({
+										icon: 'warning',
+										html: signup
+									});
+								} else {
+									if (ssh_mgi) {
+										$.ajax({
+											url: '/details.php?id=' + id
+										}).done(function(data) {
+											var obj1 = $(data);
+											var getinfo = obj1.find('#tabs').html();
+											var grel = obj1.find(".lis li:contains(Релиз)").html();
+											var gscr = obj1.find(".lis li:contains(Скриншоты)").html();
+											var gaboutfile = obj1.find("div.bx1.justify p").html();
+											var gaboutfile1 = obj1.find("div.bx1.justify h2").html();
+											var g_movie = gaboutfile.indexOf("О фильме:") !== -1;
+											var gimg = '<img src="' + (obj1.find("li.img").html().match(/img.*?src=("|')(.*?)\1/i)[2]) + '" style="display: block;width:250px;" alt="">';
+											var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
+											var fname_youtube = (gyear) ? getfname + " " + getfnames : getfname + " " + getfnames + " " + gfname[1];
+											var fname = '<h2 class="swal2-title" style="font-weight:bold;font-family:Open Sans;text-transform:uppercase;font-size:35px;color: hsl(0deg 70% 55%);text-shadow: -1px -1px 0 hsl(0deg 70% 35%), -2px -2px 1px hsl(0deg 70% 35%);">' + getfname + '</h2>';
+											var get_ajax_rel;
+											var get_ajax_scr;
+											if (grel !== null) {
+												var grel_id = grel.match(/\d+/g)[1];
+												$.ajax({
+													url: '/get_srv_details.php?id=' + id + '&pagesd=' + grel_id,
+													async: false
+												}).done(function(drel) {
+													get_ajax_rel = drel;
+													return get_ajax_rel;
+												});
+											} else {
+												get_ajax_rel = null;
+											}
+											if (gscr !== null) {
+												var gscr_id = gscr.match(/\d+/g)[1];
+												$.ajax({
+													url: '/get_srv_details.php?id=' + id + '&pagesd=' + gscr_id,
+													async: false
+												}).done(function(dscr) {
+													get_ajax_scr = dscr;
+													return get_ajax_scr;
+												});
+											} else {
+												get_ajax_scr = null;
+											}
 											Swal.fire({
 												width: swal_width,
-												title: "Скачать через Magnet?",
-												html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>Нет данных<br><br>\n<b style="color:red;">Скриншоты:</b><br>Нет данных<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button>`,
+												html: `
+${fname}
+<table>
+<tr>
+<td colspan="2" style="vertical-align:top;padding:10px;font-size: 12px;width:270px;">
+${gimg}<br>
+${(ssh_mi ? '<b>Техданные:</b><br>'+getinfo : '')}
+${(g_movie ? '<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query='+encodeURIComponent(fname_youtube + ' трейлер русский')+'\')" style="display: block;margin-left: auto;margin-right: auto;">ТРЕЙЛЕР</button>' : '')}</td>
+<td style="vertical-align:top;padding:10px;font-size: 12px;">
+${gaboutfile1}<br>
+${(ssh_af ? truncString(gaboutfile,300,'...')+'<br><br>' : '')}
+${(ssh_rel && get_ajax_rel !== null ? '<b>Релиз:</b><br>'+get_ajax_rel+'<br><br>' : '')}
+${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_scr+'<br><br>' : '')}
+</td>
+</tr>
+</table>`,
 												showCancelButton: true,
 												confirmButtonColor: '#4fc823',
 												cancelButtonColor: '#d33',
-												confirmButtonText: SwalConfirmText,
+												confirmButtonText: SwalConfirmText + " ЧЕРЕЗ MAGNET",
 												cancelButtonText: SwalCancelText,
-												footer: `<b style="color:#009900;">Ваш рейтинг не упадёт, можете скачивать бесконечно!</b>`
+												footer: `<center><b style="color:#000099;">Скачивание через MAGNET</b><br><b style="color:#009900;">Ваш рейтинг не упадёт, можете скачивать бесконечно!</b></center>`
 											}).then(function(result) {
 												if (result.value) {
 													$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-														var hash = (s.toString().match(mgt_reg))[0];
 														if (s.toString().indexOf("signup.php") != -1) {
 															Toast.fire({
 																icon: 'warning',
 																html: signup
-															})
+															});
 														} else {
+															var hash = (s.toString().match(mgt_reg))[0];
 															window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986);
 															Toast.fire({
 																icon: 'success',
-																title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Magnet!'
-															})
+																title: getfname + ' скачивается через Magnet!'
+															});
 														}
 													});
 												}
-											})
-										}
-									},
-									error: function(jqXhr, textStatus, errorMessage) {
-										console.log('Error: ' + errorMessage);
-									}
-								});
-							} else {
-								$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-									var hash = (s.toString().match(mgt_reg))[0];
-									if (s.toString().indexOf("signup.php") != -1) {
-										Toast.fire({
-											icon: 'warning',
-											html: signup
-										})
+											});
+										});
 									} else {
+										var hash = (s.toString().match(mgt_reg))[0];
 										window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986);
 										Toast.fire({
 											icon: 'success',
-											title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Magnet!'
-										})
+											title: getfname + ' скачивается через Magnet!'
+										});
 									}
-								});
-							}
+								}
+							});
 						});
 						$("#ace_" + id).click(async function() {
-							if (film_name[0].match(/серии|сезон|(выпуск)|этапы|(логия)/g)) {
-								if (film_name[0].match(/(логия)/gi)) {
-									var selbtn1 = "НЕСКОЛЬКО ФИЛЬМОВ";
-									var selbtn2 = "ОДИН ФИЛЬМ";
-								} else if (film_name[0].match(/(выпуск)/gi)) {
-									var selbtn1 = "НЕСКОЛЬКО ВЫПУСКОВ";
-									var selbtn2 = "ОДИН ВЫПУСК";
-								} else if (film_name[0].match(/серии|сезон/gi)) {
-									var selbtn1 = "НЕСКОЛЬКО СЕРИЙ";
-									var selbtn2 = "ОДНА СЕРИЯ";
-								} else if (film_name[0].match(/этапы/gi)) {
-									var selbtn1 = "НЕСКОЛЬКО ЭТАПОВ";
-									var selbtn2 = "ОДИН ЭТАП";
-								}
-								$.ajax({
-									url: '/details.php?id=' + id,
-									type: "GET",
-									dataType: "html",
-									success: function(data, status, xhr) {
-										var obj1 = $(data);
-										var getinfo = obj1.find('#tabs').html();
-										var grel = obj1.find(".lis li:contains(Релиз)").html();
-										var gsrc = obj1.find(".lis li:contains(Скриншоты)").html();
-										var grel_id = [];
-										var gsrc_id = [];
-										var year1 = film_name[1].replace(/(.*)/gi, "$1");
-										var year2 = film_name[2].replace(/(.*)/gi, "$1");
-										var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-										var filmname = (get_year) ? "Название: <font color='red'>" + film_name[0] + "</font><br>Год выпуска: <font color='red'>" + year1 + "</font>" : "Название: <font color='red'>" + film_name[0] + "</font><br>Оригинальное название: <font color='red'>" + film_name[1] + "</font><br>Год выпуска: <font color='red'>" + year2 + "</font>";
-										var filmname_youtube = (get_year) ? film_name[0] + " " + year1 : film_name[0] + " " + film_name[1] + " " + year2;
-										if (grel !== null && gsrc !== null) {
-											grel_id = grel.match(/\d+/g)[1];
-											gsrc_id = gsrc.match(/\d+/g)[1];
-											$.ajax({
-												url: '/get_srv_details.php?id=' + id + '&pagesd=' + grel_id,
-												type: "GET",
-												dataType: "html",
-												success: function(drel, status, xhr) {
-													$.ajax({
-														url: '/get_srv_details.php?id=' + id + '&pagesd=' + gsrc_id,
-														type: "GET",
-														dataType: "html",
-														success: function(dscr, status, xhr) {
-															Swal.fire({
-																width: swal_width,
-																title: "Копирование для просмотра через AceStream",
-																html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>${drel}<br><br>\n<b style="color:red;">Скриншоты:</b><br>${dscr}<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button><br>\n<button type="button" id="1" class="btnconfirm swal2-styled">${selbtn1}</button>\n<button type="button" id="2" class="btnconfirm swal2-styled">${selbtn2}</button><br>\n<button type="button" id="cancel" class="btncnc">ОТМЕНА</button>`,
-																showCancelButton: false,
-																showConfirmButton: false
-															})
-															$("#1").on("click", async function(e) {
-																const {
-																	value: formValues
-																} = await Swal.fire({
-																	title: film_name[0].toUpperCase(),
-																	html: 'Введите количество серий, фильмов, выпусков, этапов',
-																	input: 'text',
-																	inputPlaceholder: 'Кол-во',
-																	inputAttributes: {
-																		min: 1,
-																		max: 400,
-																		maxlength: 3
-																	},
-																	showCancelButton: true,
-																	inputValidator: (value) => {
-																		return new Promise((resolve) => {
-																			if (!value) {
-																				resolve('Введите цифру!')
-																			} else if (isNaN(value)) {
-																				resolve('Ввести можно только цифры!')
-																			} else if (value < 1 || value > 400) {
-																				resolve('Ввести можно только с 1 до 400!')
-																			} else {
-																				resolve()
-																			}
-																		})
-																	},
-																	showCloseButton: false,
-																	showCancelButton: false,
-																	showConfirmButton: true,
-																	confirmButtonColor: '#3085d6',
-																	confirmButtonText: 'Копировать'
-																})
-																if (formValues) {
-																	var year1 = film_name[1].replace(/(.*)/gi, "$1");
-																	var year2 = film_name[2].replace(/(.*)/gi, "$1");
-																	var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-																	if (film_name[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
-																		var search_film_name = film_name[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
-																	} else {
-																		var search_film_name = film_name[0].toUpperCase();
-																	}
-																	var filmname = (get_year) ? search_film_name + " / " + year1 : search_film_name + " / " + year2;
-																	$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																		if (s.toString().indexOf("signup.php") != -1) {
-																			Toast.fire({
-																				icon: 'warning',
-																				html: signup
-																			})
-																		} else {
-																			if (film_name[0].match(/(логия)/gi)) {
-																				var number_copy = formValues + " " + declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
-																			} else if (film_name[0].match(/(выпуск)/gi)) {
-																				var number_copy = formValues + " " + declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
-																			} else if (film_name[0].match(/серии|сезон/gi)) {
-																				var number_copy = formValues + " " + declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
-																			} else if (film_name[0].match(/этапы/gi)) {
-																				var number_copy = formValues + " " + declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
-																			}
-																			var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-																			var copy_text = "";
-																			var i = 0;
-																			while (i < formValues) {
-																				var set_i = 1 + i;
-																				if (film_name[0].match(/(логия)/gi)) {
-																					var copyname = filmname + " / " + set_i + "-й ФИЛЬМ";
-																				} else if (film_name[0].match(/(выпуск)/gi)) {
-																					var copyname = filmname + " / " + set_i + " ВЫПУСК";
-																				} else if (film_name[0].match(/серии|сезон/gi)) {
-																					var copyname = filmname + " / " + set_i + " СЕРИЯ";
-																				} else if (film_name[0].match(/этапы/gi)) {
-																					var copyname = filmname + " / " + set_i + " ЭТАП";
-																				}
-																				copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
-																				i++;
-																			}
-																			copy(copy_text);
-																			Toast.fire({
-																				icon: 'success',
-																				title: 'СКОПИРОВАНО ' + number_copy + ' !'
-																			})
-																		}
-																	});
-																}
-															});
-															$("#2").on("click", async function(e) {
-																const {
-																	value: formValues
-																} = await Swal.fire({
-																	title: film_name[0].toUpperCase(),
-																	html: 'Введите серию / фильм / выпуск / этап',
-																	input: 'text',
-																	inputPlaceholder: 'Цифра',
-																	inputAttributes: {
-																		min: 1,
-																		maxlength: 5
-																	},
-																	showCancelButton: true,
-																	inputValidator: (value) => {
-																		return new Promise((resolve) => {
-																			if (!value) {
-																				resolve('Введите цифру!')
-																			} else if (isNaN(value)) {
-																				resolve('Только цифры!')
-																			} else {
-																				resolve()
-																			}
-																		})
-																	},
-																	showCloseButton: false,
-																	showCancelButton: false,
-																	showConfirmButton: true,
-																	confirmButtonColor: '#3085d6',
-																	confirmButtonText: 'Копировать'
-																})
-																if (formValues) {
-																	var year1 = film_name[1].replace(/(.*)/gi, "$1");
-																	var year2 = film_name[2].replace(/(.*)/gi, "$1");
-																	var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-																	if (film_name[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
-																		var search_film_name = film_name[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
-																	} else {
-																		var search_film_name = film_name[0].toUpperCase();
-																	}
-																	filmname = (get_year) ? search_film_name + " / " + year1 : search_film_name + " / " + year2;
-																	$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																		if (s.toString().indexOf("signup.php") != -1) {
-																			Toast.fire({
-																				icon: 'warning',
-																				html: signup
-																			})
-																		} else {
-																			var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-																			var set_i = formValues - 1;
-																			if (film_name[0].match(/(логия)/gi)) {
-																				var number_copy = formValues + "-й ФИЛЬМ СКОПИРОВАН !";
-																			} else if (film_name[0].match(/(выпуск)/gi)) {
-																				var number_copy = formValues + " ВЫПУСК СКОПИРОВАН !";
-																			} else if (film_name[0].match(/серии|сезон/gi)) {
-																				var number_copy = formValues + " СЕРИЯ СКОПИРОВАНА !";
-																			} else if (film_name[0].match(/этапы/gi)) {
-																				var number_copy = formValues + " ЭТАП СКОПИРОВАН !";
-																			}
-																			if (film_name[0].match(/(логия)/gi)) {
-																				var copyname = filmname + " / " + formValues + "-й ФИЛЬМ";
-																			} else if (film_name[0].match(/(выпуск)/gi)) {
-																				var copyname = filmname + " / " + formValues + " ВЫПУСК";
-																			} else if (film_name[0].match(/серии|сезон/gi)) {
-																				var copyname = filmname + " / " + formValues + " СЕРИЯ";
-																			} else if (film_name[0].match(/этапы/gi)) {
-																				var copyname = filmname + " / " + formValues + " ЭТАП";
-																			}
-																			copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
-																			Toast.fire({
-																				icon: 'success',
-																				title: number_copy
-																			})
-																		}
-																	});
-																}
-															});
-															$("#cancel").on("click", function(e) {
-																Swal.close();
-															});
-														},
-														error: function(jqXhr, textStatus, errorMessage) {
-															console.log('Error: ' + errorMessage);
-														}
-													});
-												},
-												error: function(jqXhr, textStatus, errorMessage) {
-													console.log('Error: ' + errorMessage);
-												}
-											});
-										} else if (grel !== null && gsrc == null) {
-											grel_id = grel.match(/\d+/g)[1];
-											$.ajax({
-												url: '/get_srv_details.php?id=' + id + '&pagesd=' + grel_id,
-												type: "GET",
-												dataType: "html",
-												success: function(drel, status, xhr) {
-													Swal.fire({
-														width: swal_width,
-														title: "Копирование для просмотра через AceStream",
-														html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>${drel}<br><br>\n<b style="color:red;">Скриншоты:</b><br>Нет данных<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button><br>\n<button type="button" id="1" class="btnconfirm swal2-styled">${selbtn1}</button>\n<button type="button" id="2" class="btnconfirm swal2-styled">${selbtn2}</button><br>\n<button type="button" id="cancel" class="btncnc swal2-styled">ОТМЕНА</button>`,
-														showCancelButton: false,
-														showConfirmButton: false
-													})
-													$("#1").on("click", async function(e) {
-														const {
-															value: formValues
-														} = await Swal.fire({
-															title: film_name[0].toUpperCase(),
-															html: 'Введите количество серий, фильмов, выпусков, этапов',
-															input: 'text',
-															inputPlaceholder: 'Кол-во',
-															inputAttributes: {
-																min: 1,
-																max: 400,
-																maxlength: 3
-															},
-															showCancelButton: true,
-															inputValidator: (value) => {
-																return new Promise((resolve) => {
-																	if (!value) {
-																		resolve('Введите цифру!')
-																	} else if (isNaN(value)) {
-																		resolve('Ввести можно только цифры!')
-																	} else if (value < 1 || value > 400) {
-																		resolve('Ввести можно только с 1 до 400!')
-																	} else {
-																		resolve()
-																	}
-																})
-															},
-															showCloseButton: false,
-															showCancelButton: false,
-															showConfirmButton: true,
-															confirmButtonColor: '#3085d6',
-															confirmButtonText: 'Копировать'
-														})
-														if (formValues) {
-															var year1 = film_name[1].replace(/(.*)/gi, "$1");
-															var year2 = film_name[2].replace(/(.*)/gi, "$1");
-															var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-															if (film_name[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
-																var search_film_name = film_name[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
-															} else {
-																var search_film_name = film_name[0].toUpperCase();
-															}
-															var filmname = (get_year) ? search_film_name + " / " + year1 : search_film_name + " / " + year2;
-															$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																if (s.toString().indexOf("signup.php") != -1) {
-																	Toast.fire({
-																		icon: 'warning',
-																		html: signup
-																	})
-																} else {
-																	if (film_name[0].match(/(логия)/gi)) {
-																		var number_copy = formValues + " " + declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
-																	} else if (film_name[0].match(/(выпуск)/gi)) {
-																		var number_copy = formValues + " " + declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
-																	} else if (film_name[0].match(/серии|сезон/gi)) {
-																		var number_copy = formValues + " " + declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
-																	} else if (film_name[0].match(/этапы/gi)) {
-																		var number_copy = formValues + " " + declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
-																	}
-																	var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-																	var copy_text = "";
-																	var i = 0;
-																	while (i < formValues) {
-																		var set_i = 1 + i;
-																		if (film_name[0].match(/(логия)/gi)) {
-																			var copyname = filmname + " / " + set_i + "-й ФИЛЬМ";
-																		} else if (film_name[0].match(/(выпуск)/gi)) {
-																			var copyname = filmname + " / " + set_i + " ВЫПУСК";
-																		} else if (film_name[0].match(/серии|сезон/gi)) {
-																			var copyname = filmname + " / " + set_i + " СЕРИЯ";
-																		} else if (film_name[0].match(/этапы/gi)) {
-																			var copyname = filmname + " / " + set_i + " ЭТАП";
-																		}
-																		copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
-																		i++;
-																	}
-																	copy(copy_text);
-																	Toast.fire({
-																		icon: 'success',
-																		title: 'СКОПИРОВАНО ' + number_copy + ' !'
-																	})
-																}
-															});
-														}
-													});
-													$("#2").on("click", async function(e) {
-														const {
-															value: formValues
-														} = await Swal.fire({
-															title: film_name[0].toUpperCase(),
-															html: 'Введите серию / фильм / выпуск / этап',
-															input: 'text',
-															inputPlaceholder: 'Цифра',
-															inputAttributes: {
-																min: 1,
-																maxlength: 5
-															},
-															showCancelButton: true,
-															inputValidator: (value) => {
-																return new Promise((resolve) => {
-																	if (!value) {
-																		resolve('Введите цифру!')
-																	} else if (isNaN(value)) {
-																		resolve('Только цифры!')
-																	} else {
-																		resolve()
-																	}
-																})
-															},
-															showCloseButton: false,
-															showCancelButton: false,
-															showConfirmButton: true,
-															confirmButtonColor: '#3085d6',
-															confirmButtonText: 'Копировать'
-														})
-														if (formValues) {
-															var year1 = film_name[1].replace(/(.*)/gi, "$1");
-															var year2 = film_name[2].replace(/(.*)/gi, "$1");
-															var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-															if (film_name[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
-																var search_film_name = film_name[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
-															} else {
-																var search_film_name = film_name[0].toUpperCase();
-															}
-															filmname = (get_year) ? search_film_name + " / " + year1 : search_film_name + " / " + year2;
-															$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																if (s.toString().indexOf("signup.php") != -1) {
-																	Toast.fire({
-																		icon: 'warning',
-																		html: signup
-																	})
-																} else {
-																	var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-																	var set_i = formValues - 1;
-																	if (film_name[0].match(/(логия)/gi)) {
-																		var number_copy = formValues + "-й ФИЛЬМ СКОПИРОВАН !";
-																	} else if (film_name[0].match(/(выпуск)/gi)) {
-																		var number_copy = formValues + " ВЫПУСК СКОПИРОВАН !";
-																	} else if (film_name[0].match(/серии|сезон/gi)) {
-																		var number_copy = formValues + " СЕРИЯ СКОПИРОВАНА !";
-																	} else if (film_name[0].match(/этапы/gi)) {
-																		var number_copy = formValues + " ЭТАП СКОПИРОВАН !";
-																	}
-																	if (film_name[0].match(/(логия)/gi)) {
-																		var copyname = filmname + " / " + formValues + "-й ФИЛЬМ";
-																	} else if (film_name[0].match(/(выпуск)/gi)) {
-																		var copyname = filmname + " / " + formValues + " ВЫПУСК";
-																	} else if (film_name[0].match(/серии|сезон/gi)) {
-																		var copyname = filmname + " / " + formValues + " СЕРИЯ";
-																	} else if (film_name[0].match(/этапы/gi)) {
-																		var copyname = filmname + " / " + formValues + " ЭТАП";
-																	}
-																	copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
-																	Toast.fire({
-																		icon: 'success',
-																		title: number_copy
-																	})
-																}
-															});
-														}
-													});
-													$("#cancel").on("click", function(e) {
-														Swal.close();
-													});
-												},
-												error: function(jqXhr, textStatus, errorMessage) {
-													console.log('Error: ' + errorMessage);
-												}
-											});
-										} else if (grel == null && gsrc !== null) {
-											gsrc_id = gsrc.match(/\d+/g)[1];
-											$.ajax({
-												url: '/get_srv_details.php?id=' + id + '&pagesd=' + gsrc_id,
-												type: "GET",
-												dataType: "html",
-												success: function(dscr, status, xhr) {
-													Swal.fire({
-														width: swal_width,
-														title: "Копирование для просмотра через AceStream",
-														html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>Нет данных<br><br>\n<b style="color:red;">Скриншоты:</b><br>${dscr}<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button><br>\n<button type="button" id="1" class="btnconfirm swal2-styled">${selbtn1}</button>\n<button type="button" id="2" class="btnconfirm swal2-styled">${selbtn2}</button><br>\n<button type="button" id="cancel" class="btncnc swal2-styled">ОТМЕНА</button>`,
-														showCancelButton: false,
-														showConfirmButton: false
-													})
-													$("#1").on("click", async function(e) {
-														const {
-															value: formValues
-														} = await Swal.fire({
-															title: film_name[0].toUpperCase(),
-															html: 'Введите количество серий, фильмов, выпусков, этапов',
-															input: 'text',
-															inputPlaceholder: 'Кол-во',
-															inputAttributes: {
-																min: 1,
-																max: 400,
-																maxlength: 3
-															},
-															showCancelButton: true,
-															inputValidator: (value) => {
-																return new Promise((resolve) => {
-																	if (!value) {
-																		resolve('Введите цифру!')
-																	} else if (isNaN(value)) {
-																		resolve('Ввести можно только цифры!')
-																	} else if (value < 1 || value > 400) {
-																		resolve('Ввести можно только с 1 до 400!')
-																	} else {
-																		resolve()
-																	}
-																})
-															},
-															showCloseButton: false,
-															showCancelButton: false,
-															showConfirmButton: true,
-															confirmButtonColor: '#3085d6',
-															confirmButtonText: 'Копировать'
-														})
-														if (formValues) {
-															var year1 = film_name[1].replace(/(.*)/gi, "$1");
-															var year2 = film_name[2].replace(/(.*)/gi, "$1");
-															var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-															if (film_name[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
-																var search_film_name = film_name[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
-															} else {
-																var search_film_name = film_name[0].toUpperCase();
-															}
-															var filmname = (get_year) ? search_film_name + " / " + year1 : search_film_name + " / " + year2;
-															$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																if (s.toString().indexOf("signup.php") != -1) {
-																	Toast.fire({
-																		icon: 'warning',
-																		html: signup
-																	})
-																} else {
-																	if (film_name[0].match(/(логия)/gi)) {
-																		var number_copy = formValues + " " + declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
-																	} else if (film_name[0].match(/(выпуск)/gi)) {
-																		var number_copy = formValues + " " + declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
-																	} else if (film_name[0].match(/серии|сезон/gi)) {
-																		var number_copy = formValues + " " + declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
-																	} else if (film_name[0].match(/этапы/gi)) {
-																		var number_copy = formValues + " " + declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
-																	}
-																	var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-																	var copy_text = "";
-																	var i = 0;
-																	while (i < formValues) {
-																		var set_i = 1 + i;
-																		if (film_name[0].match(/(логия)/gi)) {
-																			var copyname = filmname + " / " + set_i + "-й ФИЛЬМ";
-																		} else if (film_name[0].match(/(выпуск)/gi)) {
-																			var copyname = filmname + " / " + set_i + " ВЫПУСК";
-																		} else if (film_name[0].match(/серии|сезон/gi)) {
-																			var copyname = filmname + " / " + set_i + " СЕРИЯ";
-																		} else if (film_name[0].match(/этапы/gi)) {
-																			var copyname = filmname + " / " + set_i + " ЭТАП";
-																		}
-																		copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
-																		i++;
-																	}
-																	copy(copy_text);
-																	Toast.fire({
-																		icon: 'success',
-																		title: 'СКОПИРОВАНО ' + number_copy + ' !'
-																	})
-																}
-															});
-														}
-													});
-													$("#2").on("click", async function(e) {
-														const {
-															value: formValues
-														} = await Swal.fire({
-															title: film_name[0].toUpperCase(),
-															html: 'Введите серию / фильм / выпуск / этап',
-															input: 'text',
-															inputPlaceholder: 'Цифра',
-															inputAttributes: {
-																min: 1,
-																maxlength: 5
-															},
-															showCancelButton: true,
-															inputValidator: (value) => {
-																return new Promise((resolve) => {
-																	if (!value) {
-																		resolve('Введите цифру!')
-																	} else if (isNaN(value)) {
-																		resolve('Только цифры!')
-																	} else {
-																		resolve()
-																	}
-																})
-															},
-															showCloseButton: false,
-															showCancelButton: false,
-															showConfirmButton: true,
-															confirmButtonColor: '#3085d6',
-															confirmButtonText: 'Копировать'
-														})
-														if (formValues) {
-															var year1 = film_name[1].replace(/(.*)/gi, "$1");
-															var year2 = film_name[2].replace(/(.*)/gi, "$1");
-															var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-															if (film_name[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
-																var search_film_name = film_name[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
-															} else {
-																var search_film_name = film_name[0].toUpperCase();
-															}
-															filmname = (get_year) ? search_film_name + " / " + year1 : search_film_name + " / " + year2;
-															$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-																if (s.toString().indexOf("signup.php") != -1) {
-																	Toast.fire({
-																		icon: 'warning',
-																		html: signup
-																	})
-																} else {
-																	var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-																	var set_i = formValues - 1;
-																	if (film_name[0].match(/(логия)/gi)) {
-																		var number_copy = formValues + "-й ФИЛЬМ СКОПИРОВАН !";
-																	} else if (film_name[0].match(/(выпуск)/gi)) {
-																		var number_copy = formValues + " ВЫПУСК СКОПИРОВАН !";
-																	} else if (film_name[0].match(/серии|сезон/gi)) {
-																		var number_copy = formValues + " СЕРИЯ СКОПИРОВАНА !";
-																	} else if (film_name[0].match(/этапы/gi)) {
-																		var number_copy = formValues + " ЭТАП СКОПИРОВАН !";
-																	}
-																	if (film_name[0].match(/(логия)/gi)) {
-																		var copyname = filmname + " / " + formValues + "-й ФИЛЬМ";
-																	} else if (film_name[0].match(/(выпуск)/gi)) {
-																		var copyname = filmname + " / " + formValues + " ВЫПУСК";
-																	} else if (film_name[0].match(/серии|сезон/gi)) {
-																		var copyname = filmname + " / " + formValues + " СЕРИЯ";
-																	} else if (film_name[0].match(/этапы/gi)) {
-																		var copyname = filmname + " / " + formValues + " ЭТАП";
-																	}
-																	copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
-																	Toast.fire({
-																		icon: 'success',
-																		title: number_copy
-																	})
-																}
-															});
-														}
-													});
-													$("#cancel").on("click", function(e) {
-														Swal.close();
-													});
-												},
-												error: function(jqXhr, textStatus, errorMessage) {
-													console.log('Error: ' + errorMessage);
-												}
-											});
-										} else if (grel == null && gsrc == null) {
+							$.ajax({
+								url: domain + '/get_srv_details.php?id=' + id + '&action=2'
+							}).done(function(s) {
+								if (s.toString().indexOf("signup.php") != -1) {
+									Toast.fire({
+										icon: 'warning',
+										html: signup
+									});
+								} else {
+									if (gfname[0].match(/серии|сезон|(выпуск)|этапы|(логия)/g)) {
+										if (gfname[0].match(/(логия)/gi)) {
+											var selbtn1 = "НЕСКОЛЬКО ФИЛЬМОВ";
+											var selbtn2 = "ОДИН ФИЛЬМ";
+										} else if (gfname[0].match(/(выпуск)/gi)) {
+											var selbtn1 = "НЕСКОЛЬКО ВЫПУСКОВ";
+											var selbtn2 = "ОДИН ВЫПУСК";
+										} else if (gfname[0].match(/серии|сезон/gi)) {
+											var selbtn1 = "НЕСКОЛЬКО СЕРИЙ";
+											var selbtn2 = "ОДНА СЕРИЯ";
+										} else if (gfname[0].match(/этапы/gi)) {
+											var selbtn1 = "НЕСКОЛЬКО ЭТАПОВ";
+											var selbtn2 = "ОДИН ЭТАП";
+										}
+										$.ajax({
+											url: '/details.php?id=' + id
+										}).done(function(data) {
+											var obj1 = $(data);
+											var getinfo = obj1.find('#tabs').html();
+											var grel = obj1.find(".lis li:contains(Релиз)").html();
+											var gscr = obj1.find(".lis li:contains(Скриншоты)").html();
+											var gaboutfile = obj1.find("div.bx1.justify p").html();
+											var gaboutfile1 = obj1.find("div.bx1.justify h2").html();
+											var g_movie = gaboutfile.indexOf("О фильме:") !== -1;
+											var gimg = '<img src="' + (obj1.find("li.img").html().match(/img.*?src=("|')(.*?)\1/i)[2]) + '" style="display: block;width:250px;" alt="">';
+											var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
+											var fname_youtube = (gyear) ? getfname + " " + getfnames : getfname + " " + getfnames + " " + gfname[1];
+											var fname = '<h2 class="swal2-title" style="font-weight:bold;font-family:Open Sans;text-transform:uppercase;font-size:35px;color: hsl(0deg 70% 55%);text-shadow: -1px -1px 0 hsl(0deg 70% 35%), -2px -2px 1px hsl(0deg 70% 35%);">' + getfname + '</h2>';
+											var get_ajax_rel;
+											var get_ajax_scr;
+											if (grel !== null) {
+												var grel_id = grel.match(/\d+/g)[1];
+												$.ajax({
+													url: '/get_srv_details.php?id=' + id + '&pagesd=' + grel_id,
+													async: false
+												}).done(function(drel) {
+													get_ajax_rel = drel;
+													return get_ajax_rel;
+												});
+											} else {
+												get_ajax_rel = null;
+											}
+											if (gscr !== null) {
+												var gscr_id = gscr.match(/\d+/g)[1];
+												$.ajax({
+													url: '/get_srv_details.php?id=' + id + '&pagesd=' + gscr_id,
+													async: false
+												}).done(function(dscr) {
+													get_ajax_scr = dscr;
+													return get_ajax_scr;
+												});
+											} else {
+												get_ajax_scr = null;
+											}
 											Swal.fire({
 												width: swal_width,
-												title: "Копирование для просмотра через AceStream",
-												html: `<b style="color:red;">Раздача:</b><br>${filmname.toUpperCase()}<br><br>\n<b style="color:red;">Информация:</b><br>${getinfo}<br><br>\n<b style="color:red;">Релиз:</b><br>Нет данных<br><br>\n<b style="color:red;">Скриншоты:</b><br>Нет данных<br><br>\n<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=${encodeURIComponent(filmname_youtube + " трейлер русский")}\')">ТРЕЙЛЕР</button><br>\n<button type="button" id="1" class="btnconfirm swal2-styled">${selbtn1}</button>\n<button type="button" id="2" class="btnconfirm swal2-styled">${selbtn2}</button><br>\n<button type="button" id="cancel" class="btncnc swal2-styled">ОТМЕНА</button>`,
+												html: `
+${fname}
+<table>
+<tr>
+<td colspan="2" style="vertical-align:top;padding:10px;font-size: 12px;width:270px;">
+${gimg}<br>
+${(ssh_mi ? '<b>Техданные:</b><br>'+getinfo : '')}
+${(g_movie ? '<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query='+encodeURIComponent(fname_youtube + ' трейлер русский')+'\')" style="display: block;margin-left: auto;margin-right: auto;">ТРЕЙЛЕР</button>' : '')}</td>
+<td style="vertical-align:top;padding:10px;font-size: 12px;">
+${gaboutfile1}<br>
+${(ssh_af ? truncString(gaboutfile,300,'...')+'<br><br>' : '')}
+${(ssh_rel && get_ajax_rel !== null ? '<b>Релиз:</b><br>'+get_ajax_rel+'<br><br>' : '')}
+${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_scr+'<br><br>' : '')}
+</td>
+</tr>
+</table>
+<center>
+<button type="button" id="1" class="btnconfirm swal2-styled">${selbtn1}</button>
+<button type="button" id="2" class="btnconfirm swal2-styled">${selbtn2}</button>
+<button type="button" id="cancel" class="btncnc">ОТМЕНА</button>
+</center>`,
 												showCancelButton: false,
-												showConfirmButton: false
-											})
+												showConfirmButton: false,
+												footer: `<center><b style="color:#000099;">Копирование для просмотра через AceStream</b><br><b style="color:#009900;">Ваш рейтинг не упадёт, можете скачивать бесконечно!</b></center>`
+											});
 											$("#1").on("click", async function(e) {
 												const {
 													value: formValues
 												} = await Swal.fire({
-													title: film_name[0].toUpperCase(),
+													title: getfname,
 													html: 'Введите количество серий, фильмов, выпусков, этапов',
 													input: 'text',
 													inputPlaceholder: 'Кол-во',
@@ -1326,38 +698,38 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 															} else {
 																resolve()
 															}
-														})
+														});
 													},
 													showCloseButton: false,
 													showCancelButton: false,
 													showConfirmButton: true,
 													confirmButtonColor: '#3085d6',
 													confirmButtonText: 'Копировать'
-												})
+												});
 												if (formValues) {
-													var year1 = film_name[1].replace(/(.*)/gi, "$1");
-													var year2 = film_name[2].replace(/(.*)/gi, "$1");
-													var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-													if (film_name[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
-														var search_film_name = film_name[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
+													var year1 = gfname[1].replace(/(.*)/gi, "$1");
+													var year2 = gfname[2].replace(/(.*)/gi, "$1");
+													var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
+													if (gfname[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
+														var search_gfname = gfname[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
 													} else {
-														var search_film_name = film_name[0].toUpperCase();
+														var search_gfname = getfname;
 													}
-													var filmname = (get_year) ? search_film_name + " / " + year1 : search_film_name + " / " + year2;
+													var fname = (gyear) ? search_gfname + " / " + year1 : search_gfname + " / " + year2;
 													$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
 														if (s.toString().indexOf("signup.php") != -1) {
 															Toast.fire({
 																icon: 'warning',
 																html: signup
-															})
+															});
 														} else {
-															if (film_name[0].match(/(логия)/gi)) {
+															if (gfname[0].match(/(логия)/gi)) {
 																var number_copy = formValues + " " + declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
-															} else if (film_name[0].match(/(выпуск)/gi)) {
+															} else if (gfname[0].match(/(выпуск)/gi)) {
 																var number_copy = formValues + " " + declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
-															} else if (film_name[0].match(/серии|сезон/gi)) {
+															} else if (gfname[0].match(/серии|сезон/gi)) {
 																var number_copy = formValues + " " + declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
-															} else if (film_name[0].match(/этапы/gi)) {
+															} else if (gfname[0].match(/этапы/gi)) {
 																var number_copy = formValues + " " + declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
 															}
 															var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
@@ -1365,14 +737,14 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 															var i = 0;
 															while (i < formValues) {
 																var set_i = 1 + i;
-																if (film_name[0].match(/(логия)/gi)) {
-																	var copyname = filmname + " / " + set_i + "-й ФИЛЬМ";
-																} else if (film_name[0].match(/(выпуск)/gi)) {
-																	var copyname = filmname + " / " + set_i + " ВЫПУСК";
-																} else if (film_name[0].match(/серии|сезон/gi)) {
-																	var copyname = filmname + " / " + set_i + " СЕРИЯ";
-																} else if (film_name[0].match(/этапы/gi)) {
-																	var copyname = filmname + " / " + set_i + " ЭТАП";
+																if (gfname[0].match(/(логия)/gi)) {
+																	var copyname = fname + " / " + set_i + "-й ФИЛЬМ";
+																} else if (gfname[0].match(/(выпуск)/gi)) {
+																	var copyname = fname + " / " + set_i + " ВЫПУСК";
+																} else if (gfname[0].match(/серии|сезон/gi)) {
+																	var copyname = fname + " / " + set_i + " СЕРИЯ";
+																} else if (gfname[0].match(/этапы/gi)) {
+																	var copyname = fname + " / " + set_i + " ЭТАП";
 																}
 																copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
 																i++;
@@ -1381,7 +753,7 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 															Toast.fire({
 																icon: 'success',
 																title: 'СКОПИРОВАНО ' + number_copy + ' !'
-															})
+															});
 														}
 													});
 												}
@@ -1390,7 +762,7 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 												const {
 													value: formValues
 												} = await Swal.fire({
-													title: film_name[0].toUpperCase(),
+													title: getfname,
 													html: 'Введите серию / фильм / выпуск / этап',
 													input: 'text',
 													inputPlaceholder: 'Цифра',
@@ -1408,56 +780,56 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 															} else {
 																resolve()
 															}
-														})
+														});
 													},
 													showCloseButton: false,
 													showCancelButton: false,
 													showConfirmButton: true,
 													confirmButtonColor: '#3085d6',
 													confirmButtonText: 'Копировать'
-												})
+												});
 												if (formValues) {
-													var year1 = film_name[1].replace(/(.*)/gi, "$1");
-													var year2 = film_name[2].replace(/(.*)/gi, "$1");
-													var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-													if (film_name[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
-														var search_film_name = film_name[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
+													var year1 = gfname[1].replace(/(.*)/gi, "$1");
+													var year2 = gfname[2].replace(/(.*)/gi, "$1");
+													var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
+													if (gfname[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
+														var search_gfname = gfname[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
 													} else {
-														var search_film_name = film_name[0].toUpperCase();
+														var search_gfname = getfname;
 													}
-													filmname = (get_year) ? search_film_name + " / " + year1 : search_film_name + " / " + year2;
+													fname = (gyear) ? search_gfname + " / " + year1 : search_gfname + " / " + year2;
 													$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
 														if (s.toString().indexOf("signup.php") != -1) {
 															Toast.fire({
 																icon: 'warning',
 																html: signup
-															})
+															});
 														} else {
 															var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
 															var set_i = formValues - 1;
-															if (film_name[0].match(/(логия)/gi)) {
+															if (gfname[0].match(/(логия)/gi)) {
 																var number_copy = formValues + "-й ФИЛЬМ СКОПИРОВАН !";
-															} else if (film_name[0].match(/(выпуск)/gi)) {
+															} else if (gfname[0].match(/(выпуск)/gi)) {
 																var number_copy = formValues + " ВЫПУСК СКОПИРОВАН !";
-															} else if (film_name[0].match(/серии|сезон/gi)) {
+															} else if (gfname[0].match(/серии|сезон/gi)) {
 																var number_copy = formValues + " СЕРИЯ СКОПИРОВАНА !";
-															} else if (film_name[0].match(/этапы/gi)) {
+															} else if (gfname[0].match(/этапы/gi)) {
 																var number_copy = formValues + " ЭТАП СКОПИРОВАН !";
 															}
-															if (film_name[0].match(/(логия)/gi)) {
-																var copyname = filmname + " / " + formValues + "-й ФИЛЬМ";
-															} else if (film_name[0].match(/(выпуск)/gi)) {
-																var copyname = filmname + " / " + formValues + " ВЫПУСК";
-															} else if (film_name[0].match(/серии|сезон/gi)) {
-																var copyname = filmname + " / " + formValues + " СЕРИЯ";
-															} else if (film_name[0].match(/этапы/gi)) {
-																var copyname = filmname + " / " + formValues + " ЭТАП";
+															if (gfname[0].match(/(логия)/gi)) {
+																var copyname = fname + " / " + formValues + "-й ФИЛЬМ";
+															} else if (gfname[0].match(/(выпуск)/gi)) {
+																var copyname = fname + " / " + formValues + " ВЫПУСК";
+															} else if (gfname[0].match(/серии|сезон/gi)) {
+																var copyname = fname + " / " + formValues + " СЕРИЯ";
+															} else if (gfname[0].match(/этапы/gi)) {
+																var copyname = fname + " / " + formValues + " ЭТАП";
 															}
 															copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
 															Toast.fire({
 																icon: 'success',
 																title: number_copy
-															})
+															});
 														}
 													});
 												}
@@ -1465,33 +837,22 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 											$("#cancel").on("click", function(e) {
 												Swal.close();
 											});
-										}
-									},
-									error: function(jqXhr, textStatus, errorMessage) {
-										console.log('Error: ' + errorMessage);
-									}
-								});
-							} else {
-								var year1 = film_name[1].replace(/(.*)/gi, "$1");
-								var year2 = film_name[2].replace(/(.*)/gi, "$1");
-								var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-								var filmname = (get_year) ? film_name[0].toUpperCase() + " / " + year1 : film_name[0].toUpperCase() + " / " + year2;
-								$.get("/get_srv_details.php?id=" + id + "&action=2", function(s) {
-									if (s.toString().indexOf("signup.php") != -1) {
-										Toast.fire({
-											icon: 'warning',
-											html: signup
-										})
+										});
 									} else {
+										var year1 = gfname[1].replace(/(.*)/gi, "$1");
+										var year2 = gfname[2].replace(/(.*)/gi, "$1");
+										var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
+										var getfname = gfname[0].toUpperCase();
+										var fname = (gyear) ? getfname + " / " + year1 : getfname + " / " + year2;
 										Toast.fire({
 											icon: 'success',
-											title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скопирована!'
-										})
+											title: 'Раздача ( ' + getfname + ' ) скопирована!'
+										});
 										var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-										copy("\r\n#EXTINF:-1," + filmname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result + "&playlist_output_format_vod=hls&_idx=0&.mp4");
+										copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result + "&playlist_output_format_vod=hls&_idx=0&.mp4");
 									}
-								})
-							}
+								}
+							});
 						});
 					}
 				});
@@ -1504,65 +865,65 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 		}
 		(new KinozalSearchSettingsScript()).init();
 	}
-	if (reg_kinozal_detailed.test(get_url) || mirror_kinozal_detailed.test(get_url)) {
+	if (reg_kinozal_detailed.test(get_url)) {
 		function KinozalDetailSettingsScript() {
 			this.settings = {};
 			this.loadSettings = function() {
-				if (GM_getValue("ShowTorrentButton") == undefined) {
-					GM_setValue("ShowTorrentButton", false);
+				if (GM_getValue("ShowTorrentButtonD") == undefined) {
+					GM_setValue("ShowTorrentButtonD", false);
 				}
-				if (GM_getValue("ConfirmDownloadTorrent") == undefined) {
-					GM_setValue("ConfirmDownloadTorrent", true);
+				if (GM_getValue("ConfirmDownloadTorrentD") == undefined) {
+					GM_setValue("ConfirmDownloadTorrentD", true);
 				}
-				if (GM_getValue("ShowMagnetButton") == undefined) {
-					GM_setValue("ShowMagnetButton", true);
+				if (GM_getValue("ShowMagnetButtonD") == undefined) {
+					GM_setValue("ShowMagnetButtonD", true);
 				}
-				if (GM_getValue("ConfirmDownloadMagnet") == undefined) {
-					GM_setValue("ConfirmDownloadMagnet", true);
+				if (GM_getValue("ConfirmDownloadMagnetD") == undefined) {
+					GM_setValue("ConfirmDownloadMagnetD", true);
 				}
-				if (GM_getValue("ShowAcestreamButton") == undefined) {
-					GM_setValue("ShowAcestreamButton", false);
+				if (GM_getValue("ShowAcestreamButtonD") == undefined) {
+					GM_setValue("ShowAcestreamButtonD", false);
 				}
-				if (GM_getValue("ShowHelpButton") == undefined) {
-					GM_setValue("ShowHelpButton", false);
+				if (GM_getValue("ShowHelpButtonD") == undefined) {
+					GM_setValue("ShowHelpButtonD", false);
 				}
-				if (GM_getValue("DetailedInfoButtons") == undefined) {
-					GM_setValue("DetailedInfoButtons", false);
+				if (GM_getValue("DetailedInfoButtonsD") == undefined) {
+					GM_setValue("DetailedInfoButtonsD", false);
 				}
 				this.settings = {
-					ShowTorrentButton: GM_getValue('ShowTorrentButton', false),
-					ConfirmDownloadTorrent: GM_getValue('ConfirmDownloadTorrent', true),
-					ShowMagnetButton: GM_getValue('ShowMagnetButton', true),
-					ConfirmDownloadMagnet: GM_getValue('ConfirmDownloadMagnet', true),
-					ShowAcestreamButton: GM_getValue('ShowAcestreamButton', false),
-					ShowHelpButton: GM_getValue('ShowHelpButton', true),
-					DetailedInfoButtons: GM_getValue('DetailedInfoButtons', true)
+					ShowTorrentButtonD: GM_getValue('ShowTorrentButtonD', false),
+					ConfirmDownloadTorrentD: GM_getValue('ConfirmDownloadTorrentD', true),
+					ShowMagnetButtonD: GM_getValue('ShowMagnetButtonD', true),
+					ConfirmDownloadMagnetD: GM_getValue('ConfirmDownloadMagnetD', true),
+					ShowAcestreamButtonD: GM_getValue('ShowAcestreamButtonD', false),
+					ShowHelpButtonD: GM_getValue('ShowHelpButtonD', true),
+					DetailedInfoButtonsD: GM_getValue('DetailedInfoButtonsD', true)
 				};
 			}
 			this.toggleSettings = function() {
 				var $sett_wnd = $('#acemgn_script_settings'),
 					x = parseInt(($(window).width() - $sett_wnd.width()) / 2),
 					y = parseInt(($(window).height() - $sett_wnd.height()) / 2);
-				if (this.settings.ShowTorrentButton) {
-					$('#ShowTorrentButton').attr('checked', true);
+				if (this.settings.ShowTorrentButtonD) {
+					$('#ShowTorrentButtonD').attr('checked', true);
 				}
-				if (this.settings.ShowMagnetButton) {
-					$('#ShowMagnetButton').attr('checked', true);
+				if (this.settings.ShowMagnetButtonD) {
+					$('#ShowMagnetButtonD').attr('checked', true);
 				}
-				if (this.settings.ShowAcestreamButton) {
-					$('#ShowAcestreamButton').attr('checked', true);
+				if (this.settings.ShowAcestreamButtonD) {
+					$('#ShowAcestreamButtonD').attr('checked', true);
 				}
-				if (this.settings.ConfirmDownloadTorrent) {
-					$('#ConfirmDownloadTorrent').attr('checked', true);
+				if (this.settings.ConfirmDownloadTorrentD) {
+					$('#ConfirmDownloadTorrentD').attr('checked', true);
 				}
-				if (this.settings.ConfirmDownloadMagnet) {
-					$('#ConfirmDownloadMagnet').attr('checked', true);
+				if (this.settings.ConfirmDownloadMagnetD) {
+					$('#ConfirmDownloadMagnetD').attr('checked', true);
 				}
-				if (this.settings.ShowHelpButton) {
-					$('#ShowHelpButton').attr('checked', true);
+				if (this.settings.ShowHelpButtonD) {
+					$('#ShowHelpButtonD').attr('checked', true);
 				}
-				if (this.settings.DetailedInfoButtons) {
-					$('#DetailedInfoButtons').attr('checked', true);
+				if (this.settings.DetailedInfoButtonsD) {
+					$('#DetailedInfoButtonsD').attr('checked', true);
 				}
 				$('#acemgn_script_settings').css({
 					'left': x,
@@ -1583,40 +944,40 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 		<div class="row">
 			<div class="title">Торрент кнопка</div>
 			<div class="col1">Включить кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowTorrentButton"></div>
+			<div class="col2"><input type="checkbox" id="ShowTorrentButtonD"></div>
 		</div>
 		<div class="row">
 			<div class="col1">Включить подтверждение?</div>
-			<div class="col2"><input type="checkbox" id="ConfirmDownloadTorrent"></div>
+			<div class="col2"><input type="checkbox" id="ConfirmDownloadTorrentD"></div>
 		</div>
 	</div>
 	<div class="fields">
 		<div class="row">
 			<div class="title">Магнит кнопка</div>
 			<div class="col1">Включить кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowMagnetButton"></div>
+			<div class="col2"><input type="checkbox" id="ShowMagnetButtonD"></div>
 		</div>
 		<div class="row">
 			<div class="col1">Включить подтверждение?</div>
-			<div class="col2"><input type="checkbox" id="ConfirmDownloadMagnet"></div>
+			<div class="col2"><input type="checkbox" id="ConfirmDownloadMagnetD"></div>
 		</div>
 	</div>
 	<div class="fields">
 		<div class="row">
 			<div class="title">Acestream кнопка</div>
 			<div class="col1">Включить кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowAcestreamButton"></div>
+			<div class="col2"><input type="checkbox" id="ShowAcestreamButtonD"></div>
 		</div>
 	</div>
 	<div class="fields">
 		<div class="row">
 			<div class="title">Остальное</div>
 			<div class="col1">Показать кнопку "Помощь" ?</div>
-			<div class="col2"><input type="checkbox" id="ShowHelpButton"></div>
+			<div class="col2"><input type="checkbox" id="ShowHelpButtonD"></div>
 		</div>
 		<div class="row">
 			<div class="col1">Сделать простыми кнопки скачивания?</div>
-			<div class="col2"><input type="checkbox" id="DetailedInfoButtons"></div>
+			<div class="col2"><input type="checkbox" id="DetailedInfoButtonsD"></div>
 		</div>
 	</div>
 	<div class="fields">
@@ -1627,13 +988,13 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 </div>`);
 				$('body').append($wnd);
 				$('#acemgn_script_save_settings').live('click', function() {
-					GM_setValue('ShowTorrentButton', $('#ShowTorrentButton').is(':checked'));
-					GM_setValue('ConfirmDownloadTorrent', $('#ConfirmDownloadTorrent').is(':checked'));
-					GM_setValue('ShowMagnetButton', $('#ShowMagnetButton').is(':checked'));
-					GM_setValue('ConfirmDownloadMagnet', $('#ConfirmDownloadMagnet').is(':checked'));
-					GM_setValue('ShowAcestreamButton', $('#ShowAcestreamButton').is(':checked'));
-					GM_setValue('ShowHelpButton', $('#ShowHelpButton').is(':checked'));
-					GM_setValue('DetailedInfoButtons', $('#DetailedInfoButtons').is(':checked'));
+					GM_setValue('ShowTorrentButtonD', $('#ShowTorrentButtonD').is(':checked'));
+					GM_setValue('ConfirmDownloadTorrentD', $('#ConfirmDownloadTorrentD').is(':checked'));
+					GM_setValue('ShowMagnetButtonD', $('#ShowMagnetButtonD').is(':checked'));
+					GM_setValue('ConfirmDownloadMagnetD', $('#ConfirmDownloadMagnetD').is(':checked'));
+					GM_setValue('ShowAcestreamButtonD', $('#ShowAcestreamButtonD').is(':checked'));
+					GM_setValue('ShowHelpButtonD', $('#ShowHelpButtonD').is(':checked'));
+					GM_setValue('DetailedInfoButtonsD', $('#DetailedInfoButtonsD').is(':checked'));
 					obj.loadSettings();
 					$('#acemgn_script_settings').toggle('fast');
 					location.reload();
@@ -1641,12 +1002,12 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 			}
 			this.Kinozal_MainScript = function() {
 				var obj = this;
-				var set_buttons = document.querySelector("table.w100p");
 				var reg_id = new RegExp('id=[0-9]{6,10}', 'ig');
 				var id = (get_url.match(reg_id)[0]).substr(3);
 				var domain = get_url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:[^.]+\.)?([^:\/\n\?\=]+)/im)[0];
 				var mgt_reg = new RegExp('[a-zA-Z0-9]{40}', 'i');
-				var film_name = $('H1 a').text().split(" / ");
+				var gfname = $('H1 a').text().split(" / ");
+				var getfname = gfname[0].toUpperCase();
 				var film_full_name = $('.mn_wrap > div > h1 > a').text();
 				var SwalConfirmText = "СКАЧАТЬ";
 				var SwalCancelText = "ОТМЕНА";
@@ -1654,25 +1015,30 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 				var txt_dl_torrent_info = '<b><font color="#cc0000">Cкачать торрент-файл:</font></b><br>Для того, чтобы скачать эту раздачу - скачайте торрент-файл и запустите его при помощи клиента.';
 				var txt_dl_magnet_info = '<b><font color="#0000cc">Cкачать через Magnet:</font></b><br>Скачивайте сколько угодно, ваш рейтинг не изменится, так как данный метод не затрагивает ваш профиль!';
 				var txt_cp_acestream_info = '<b><font color="#00cc00">Смотреть через ACESTREAM:</font></b><br>Смотрите через Acestream ( На Android TV, в Планшете, в Телефоне )';
-				set_buttons.classList.add('bx1');
-				if (obj.settings.DetailedInfoButtons) {
-					set_buttons.innerHTML = `<tbody id="copy_form">
+				if (obj.settings.ShowTorrentButtonD || obj.settings.ShowMagnetButtonD || obj.settings.ShowAcestreamButtonD) {
+					if (obj.settings.DetailedInfoButtonsD) {
+						var set_buttons = document.querySelector("table.w100p");
+						set_buttons.classList.add('bx1');
+						set_buttons.innerHTML = `<tbody id="copy_form">
 	<tr>
 		<td class="nw">
-		${obj.settings.ShowTorrentButton ? ' <button id="TorrentButton" type="button" class="btndt">TORRENT</button>' : ''}
-		${obj.settings.ShowMagnetButton ? ' <button id="MagnetButton" type="button" class="btndm">MAGNET</button>' : ''}
-		${obj.settings.ShowAcestreamButton ? ' <button id="AceStreamButton" type="button" class="btnace">ACESTREAM</button>' : ''}
+		${obj.settings.ShowTorrentButtonD ? ' <button id="TorrentButton" type="button" class="btndt">TORRENT</button>' : ''}
+		${obj.settings.ShowMagnetButtonD ? ' <button id="MagnetButton" type="button" class="btndm">MAGNET</button>' : ''}
+		${obj.settings.ShowAcestreamButtonD ? ' <button id="AceStreamButton" type="button" class="btnace">ACESTREAM</button>' : ''}
 		</td>
 	</tr>
-${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#"><b id="help">Помощь</b></a> )</td></tr>' : ''}
+${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#"><b id="help">Помощь</b></a> )</td></tr>' : ''}
 </tbody>`;
-				} else {
-					set_buttons.innerHTML = `<tbody id="copy_form">
-	${obj.settings.ShowTorrentButton ? '<tr><td style="width: 400px;" class="nw"><button id="TorrentButton" type="button" class="btndt">Cкачать торрент-файл</button></td><td>' + txt_dl_torrent_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : ''}
-	${obj.settings.ShowMagnetButton ? '<tr><td style="width: 400px;" class="nw"><button id="MagnetButton" type="button" class="btndm">Cкачать через Magnet</button></td><td>' + txt_dl_magnet_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : ''}
-	${obj.settings.ShowAcestreamButton ? '<tr><td style="width: 400px;" class="nw"><button id="AceStreamButton" type="button" class="btnace">ACESTREAM</button></td><td>' + txt_cp_acestream_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : ''}
-	${obj.settings.ShowHelpButton ? '<tr><td style="height: 4px;text-align:right;">( <a href="#"><b id="help">Помощь</b></a> )</td></tr>' : ''}
+					} else {
+						var set_buttons = document.querySelector("table.w100p");
+						set_buttons.classList.add('bx1');
+						set_buttons.innerHTML = `<tbody id="copy_form">
+	${obj.settings.ShowTorrentButtonD ? '<tr><td style="width: 400px;" class="nw"><button id="TorrentButton" type="button" class="btndt">Cкачать торрент-файл</button></td><td>' + txt_dl_torrent_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : ''}
+	${obj.settings.ShowMagnetButtonD ? '<tr><td style="width: 400px;" class="nw"><button id="MagnetButton" type="button" class="btndm">Cкачать через Magnet</button></td><td>' + txt_dl_magnet_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : ''}
+	${obj.settings.ShowAcestreamButtonD ? '<tr><td style="width: 400px;" class="nw"><button id="AceStreamButton" type="button" class="btnace">ACESTREAM</button></td><td>' + txt_cp_acestream_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : ''}
+	${obj.settings.ShowHelpButtonD ? '<tr><td style="height: 4px;text-align:right;">( <a href="#"><b id="help">Помощь</b></a> )</td></tr>' : ''}
 </tbody>`;
+					}
 				}
 				document.getElementById('copy_form').addEventListener('click', async function(evt) {
 					var target = evt.target;
@@ -1698,308 +1064,308 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 							showCancelButton: false,
 							confirmButtonText: 'Понял <i class="fa fa-thumbs-up"></i>',
 							confirmButtonColor: '#3085d6'
-						})
+						});
 					} else if (target.id === 'AceStreamButton') {
-						if (film_name[0].match(/серии|сезон|(выпуск)|этапы|(логия)/g)) {
-							if (film_name[0].match(/(логия)/gi)) {
-								var selbtn1 = "НЕСКОЛЬКО ФИЛЬМОВ";
-								var selbtn2 = "ОДИН ФИЛЬМ";
-							} else if (film_name[0].match(/(выпуск)/gi)) {
-								var selbtn1 = "НЕСКОЛЬКО ВЫПУСКОВ";
-								var selbtn2 = "ОДИН ВЫПУСК";
-							} else if (film_name[0].match(/серии|сезон/gi)) {
-								var selbtn1 = "НЕСКОЛЬКО СЕРИЙ";
-								var selbtn2 = "ОДНА СЕРИЯ";
-							} else if (film_name[0].match(/этапы/gi)) {
-								var selbtn1 = "НЕСКОЛЬКО ЭТАПОВ";
-								var selbtn2 = "ОДИН ЭТАП";
-							}
-							Swal.fire({
-								title: film_name[0].toUpperCase(),
-								html: `Копировать для просмотра через AceStream<br>
+						$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
+							if (s.toString().indexOf("signup.php") != -1) {
+								Toast.fire({
+									icon: 'warning',
+									html: signup
+								});
+							} else {
+								if (gfname[0].match(/серии|сезон|(выпуск)|этапы|(логия)/g)) {
+									if (gfname[0].match(/(логия)/gi)) {
+										var selbtn1 = "НЕСКОЛЬКО ФИЛЬМОВ";
+										var selbtn2 = "ОДИН ФИЛЬМ";
+									} else if (gfname[0].match(/(выпуск)/gi)) {
+										var selbtn1 = "НЕСКОЛЬКО ВЫПУСКОВ";
+										var selbtn2 = "ОДИН ВЫПУСК";
+									} else if (gfname[0].match(/серии|сезон/gi)) {
+										var selbtn1 = "НЕСКОЛЬКО СЕРИЙ";
+										var selbtn2 = "ОДНА СЕРИЯ";
+									} else if (gfname[0].match(/этапы/gi)) {
+										var selbtn1 = "НЕСКОЛЬКО ЭТАПОВ";
+										var selbtn2 = "ОДИН ЭТАП";
+									}
+									Swal.fire({
+										title: getfname,
+										html: `Копировать для просмотра через AceStream<br>
 <button type="button" id="1" class="btnconfirm swal2-styled">${selbtn1}</button>
 <button type="button" id="2" class="btnconfirm swal2-styled">${selbtn2}</button><br>
 <button type="button" id="cancel" class="btncnc swal2-styled">ОТМЕНА</button>`,
-								showCancelButton: false,
-								showConfirmButton: false
-							})
-							$("#1").on("click", async function(e) {
-								const {
-									value: formValues
-								} = await Swal.fire({
-									title: film_name[0].toUpperCase(),
-									html: 'Введите количество серий, фильмов, выпусков, этапов',
-									input: 'text',
-									inputPlaceholder: 'Кол-во',
-									inputAttributes: {
-										min: 1,
-										max: 400,
-										maxlength: 3
-									},
-									showCancelButton: true,
-									inputValidator: (value) => {
-										return new Promise((resolve) => {
-											if (!value) {
-												resolve('Введите цифру!')
-											} else if (isNaN(value)) {
-												resolve('Ввести можно только цифры!')
-											} else if (value < 1 || value > 400) {
-												resolve('Ввести можно только с 1 до 400!')
+										showCancelButton: false,
+										showConfirmButton: false
+									});
+									$("#1").on("click", async function(e) {
+										const {
+											value: formValues
+										} = await Swal.fire({
+											title: getfname,
+											html: 'Введите количество серий, фильмов, выпусков, этапов',
+											input: 'text',
+											inputPlaceholder: 'Кол-во',
+											inputAttributes: {
+												min: 1,
+												max: 400,
+												maxlength: 3
+											},
+											showCancelButton: true,
+											inputValidator: (value) => {
+												return new Promise((resolve) => {
+													if (!value) {
+														resolve('Введите цифру!')
+													} else if (isNaN(value)) {
+														resolve('Ввести можно только цифры!')
+													} else if (value < 1 || value > 400) {
+														resolve('Ввести можно только с 1 до 400!')
+													} else {
+														resolve()
+													}
+												});
+											},
+											showCloseButton: false,
+											showCancelButton: false,
+											showConfirmButton: true,
+											confirmButtonColor: '#3085d6',
+											confirmButtonText: 'Копировать'
+										});
+										if (formValues) {
+											var year1 = gfname[1].replace(/(.*)/gi, "$1");
+											var year2 = gfname[2].replace(/(.*)/gi, "$1");
+											var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
+											if (gfname[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
+												var search_gfname = gfname[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
 											} else {
-												resolve()
+												var search_gfname = getfname;
 											}
-										})
-									},
-									showCloseButton: false,
-									showCancelButton: false,
-									showConfirmButton: true,
-									confirmButtonColor: '#3085d6',
-									confirmButtonText: 'Копировать'
-								})
-								if (formValues) {
-									var year1 = film_name[1].replace(/(.*)/gi, "$1");
-									var year2 = film_name[2].replace(/(.*)/gi, "$1");
-									var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-									if (film_name[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
-										var search_film_name = film_name[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
-									} else {
-										var search_film_name = film_name[0].toUpperCase();
-									}
-									var filmname = (get_year) ? search_film_name + " / " + year1 : search_film_name + " / " + year2;
-									$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-										if (s.toString().indexOf("signup.php") != -1) {
-											Toast.fire({
-												icon: 'warning',
-												html: signup
-											})
-										} else {
-											if (film_name[0].match(/(логия)/gi)) {
-												var number_copy = formValues + " " + declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
-											} else if (film_name[0].match(/(выпуск)/gi)) {
-												var number_copy = formValues + " " + declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
-											} else if (film_name[0].match(/серии|сезон/gi)) {
-												var number_copy = formValues + " " + declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
-											} else if (film_name[0].match(/этапы/gi)) {
-												var number_copy = formValues + " " + declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
-											}
-											var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-											var copy_text = "";
-											var i = 0;
-											while (i < formValues) {
-												var set_i = 1 + i;
-												if (film_name[0].match(/(логия)/gi)) {
-													var copyname = filmname + " / " + set_i + "-й ФИЛЬМ";
-												} else if (film_name[0].match(/(выпуск)/gi)) {
-													var copyname = filmname + " / " + set_i + " ВЫПУСК";
-												} else if (film_name[0].match(/серии|сезон/gi)) {
-													var copyname = filmname + " / " + set_i + " СЕРИЯ";
-												} else if (film_name[0].match(/этапы/gi)) {
-													var copyname = filmname + " / " + set_i + " ЭТАП";
+											var fname = (gyear) ? search_gfname + " / " + year1 : search_gfname + " / " + year2;
+											$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
+												if (s.toString().indexOf("signup.php") != -1) {
+													Toast.fire({
+														icon: 'warning',
+														html: signup
+													});
+												} else {
+													if (gfname[0].match(/(логия)/gi)) {
+														var number_copy = formValues + " " + declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
+													} else if (gfname[0].match(/(выпуск)/gi)) {
+														var number_copy = formValues + " " + declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
+													} else if (gfname[0].match(/серии|сезон/gi)) {
+														var number_copy = formValues + " " + declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
+													} else if (gfname[0].match(/этапы/gi)) {
+														var number_copy = formValues + " " + declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
+													}
+													var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
+													var copy_text = "";
+													var i = 0;
+													while (i < formValues) {
+														var set_i = 1 + i;
+														if (gfname[0].match(/(логия)/gi)) {
+															var copyname = fname + " / " + set_i + "-й ФИЛЬМ";
+														} else if (gfname[0].match(/(выпуск)/gi)) {
+															var copyname = fname + " / " + set_i + " ВЫПУСК";
+														} else if (gfname[0].match(/серии|сезон/gi)) {
+															var copyname = fname + " / " + set_i + " СЕРИЯ";
+														} else if (gfname[0].match(/этапы/gi)) {
+															var copyname = fname + " / " + set_i + " ЭТАП";
+														}
+														copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
+														i++;
+													}
+													copy(copy_text);
+													Toast.fire({
+														icon: 'success',
+														title: 'СКОПИРОВАНО ' + number_copy + ' !'
+													});
 												}
-												copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
-												i++;
-											}
-											copy(copy_text);
-											Toast.fire({
-												icon: 'success',
-												title: 'СКОПИРОВАНО ' + number_copy + ' !'
-											})
+											});
 										}
 									});
-								}
-							});
-							$("#2").on("click", async function(e) {
-								const {
-									value: formValues
-								} = await Swal.fire({
-									title: film_name[0].toUpperCase(),
-									html: 'Введите серию / фильм / выпуск / этап',
-									input: 'text',
-									inputPlaceholder: 'Цифра',
-									inputAttributes: {
-										min: 1,
-										maxlength: 5
-									},
-									showCancelButton: true,
-									inputValidator: (value) => {
-										return new Promise((resolve) => {
-											if (!value) {
-												resolve('Введите цифру!')
-											} else if (isNaN(value)) {
-												resolve('Только цифры!')
+									$("#2").on("click", async function(e) {
+										const {
+											value: formValues
+										} = await Swal.fire({
+											title: getfname,
+											html: 'Введите серию / фильм / выпуск / этап',
+											input: 'text',
+											inputPlaceholder: 'Цифра',
+											inputAttributes: {
+												min: 1,
+												maxlength: 5
+											},
+											showCancelButton: true,
+											inputValidator: (value) => {
+												return new Promise((resolve) => {
+													if (!value) {
+														resolve('Введите цифру!')
+													} else if (isNaN(value)) {
+														resolve('Только цифры!')
+													} else {
+														resolve()
+													}
+												});
+											},
+											showCloseButton: false,
+											showCancelButton: false,
+											showConfirmButton: true,
+											confirmButtonColor: '#3085d6',
+											confirmButtonText: 'Копировать'
+										});
+										if (formValues) {
+											var year1 = gfname[1].replace(/(.*)/gi, "$1");
+											var year2 = gfname[2].replace(/(.*)/gi, "$1");
+											var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
+											if (gfname[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
+												var search_gfname = gfname[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
 											} else {
-												resolve()
+												var search_gfname = getfname;
 											}
-										})
-									},
-									showCloseButton: false,
-									showCancelButton: false,
-									showConfirmButton: true,
-									confirmButtonColor: '#3085d6',
-									confirmButtonText: 'Копировать'
-								})
-								if (formValues) {
-									var year1 = film_name[1].replace(/(.*)/gi, "$1");
-									var year2 = film_name[2].replace(/(.*)/gi, "$1");
-									var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-									if (film_name[0].match(/серии|сезон|(выпуск)|этапы/gi)) {
-										var search_film_name = film_name[0].replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)").toUpperCase();
-									} else {
-										var search_film_name = film_name[0].toUpperCase();
-									}
-									filmname = (get_year) ? search_film_name + " / " + year1 : search_film_name + " / " + year2;
-									$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-										if (s.toString().indexOf("signup.php") != -1) {
-											Toast.fire({
-												icon: 'warning',
-												html: signup
-											})
-										} else {
-											var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-											var set_i = formValues - 1;
-											if (film_name[0].match(/(логия)/gi)) {
-												var number_copy = formValues + "-й ФИЛЬМ СКОПИРОВАН !";
-											} else if (film_name[0].match(/(выпуск)/gi)) {
-												var number_copy = formValues + " ВЫПУСК СКОПИРОВАН !";
-											} else if (film_name[0].match(/серии|сезон/gi)) {
-												var number_copy = formValues + " СЕРИЯ СКОПИРОВАНА !";
-											} else if (film_name[0].match(/этапы/gi)) {
-												var number_copy = formValues + " ЭТАП СКОПИРОВАН !";
-											}
-											if (film_name[0].match(/(логия)/gi)) {
-												var copyname = filmname + " / " + formValues + "-й ФИЛЬМ";
-											} else if (film_name[0].match(/(выпуск)/gi)) {
-												var copyname = filmname + " / " + formValues + " ВЫПУСК";
-											} else if (film_name[0].match(/серии|сезон/gi)) {
-												var copyname = filmname + " / " + formValues + " СЕРИЯ";
-											} else if (film_name[0].match(/этапы/gi)) {
-												var copyname = filmname + " / " + formValues + " ЭТАП";
-											}
-											copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
-											Toast.fire({
-												icon: 'success',
-												title: number_copy
-											})
+											fname = (gyear) ? search_gfname + " / " + year1 : search_gfname + " / " + year2;
+											$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
+												if (s.toString().indexOf("signup.php") != -1) {
+													Toast.fire({
+														icon: 'warning',
+														html: signup
+													});
+												} else {
+													var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
+													var set_i = formValues - 1;
+													if (gfname[0].match(/(логия)/gi)) {
+														var number_copy = formValues + "-й ФИЛЬМ СКОПИРОВАН !";
+													} else if (gfname[0].match(/(выпуск)/gi)) {
+														var number_copy = formValues + " ВЫПУСК СКОПИРОВАН !";
+													} else if (gfname[0].match(/серии|сезон/gi)) {
+														var number_copy = formValues + " СЕРИЯ СКОПИРОВАНА !";
+													} else if (gfname[0].match(/этапы/gi)) {
+														var number_copy = formValues + " ЭТАП СКОПИРОВАН !";
+													}
+													if (gfname[0].match(/(логия)/gi)) {
+														var copyname = fname + " / " + formValues + "-й ФИЛЬМ";
+													} else if (gfname[0].match(/(выпуск)/gi)) {
+														var copyname = fname + " / " + formValues + " ВЫПУСК";
+													} else if (gfname[0].match(/серии|сезон/gi)) {
+														var copyname = fname + " / " + formValues + " СЕРИЯ";
+													} else if (gfname[0].match(/этапы/gi)) {
+														var copyname = fname + " / " + formValues + " ЭТАП";
+													}
+													copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
+													Toast.fire({
+														icon: 'success',
+														title: number_copy
+													});
+												}
+											});
 										}
 									});
-								}
-							});
-							$("#cancel").on("click", function(e) {
-								Swal.close();
-							});
-						} else {
-							var year1 = film_name[1].replace(/(.*)/gi, "$1");
-							var year2 = film_name[2].replace(/(.*)/gi, "$1");
-							var get_year = new RegExp('^[0-9]+$').exec(film_name[1]);
-							var filmname = (get_year) ? film_name[0].toUpperCase() + " / " + year1 : film_name[0].toUpperCase() + " / " + year2;
-							$.get(domain + "/get_srv_details.php?id=" + id + "&action=2", function(s) {
-								if (s.toString().indexOf("signup.php") != -1) {
-									Toast.fire({
-										icon: 'warning',
-										html: signup
-									})
+									$("#cancel").on("click", function(e) {
+										Swal.close();
+									});
 								} else {
+									var year1 = gfname[1].replace(/(.*)/gi, "$1");
+									var year2 = gfname[2].replace(/(.*)/gi, "$1");
+									var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
+									var fname = (gyear) ? getfname + " / " + year1 : getfname + " / " + year2;
 									Toast.fire({
 										icon: 'success',
-										title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скопирована!'
-									})
+										title: 'Раздача ( ' + getfname + ' ) скопирована!'
+									});
 									var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-									copy("\r\n#EXTINF:-1," + filmname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result + "&playlist_output_format_vod=hls&_idx=0&.mp4");
+									copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result + "&playlist_output_format_vod=hls&_idx=0&.mp4");
 								}
-							})
-						}
+							}
+						});
 					} else if (target.id === 'MagnetButton') {
-						if (obj.settings.ConfirmDownloadMagnet) {
-							Swal.fire({
-								title: "Скачать через Magnet?",
-								html: "Раздача:<br><b>" + film_name[0].toUpperCase() + "</b><br><br>Ваш рейтинг не упадёт, можете скачивать бесконечно!",
-								icon: 'question',
-								showCancelButton: true,
-								confirmButtonColor: '#4fc823',
-								cancelButtonColor: '#d33',
-								confirmButtonText: SwalConfirmText,
-								cancelButtonText: SwalCancelText
-							}).then(function(result) {
-								if (result.value) {
+						$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
+							if (s.toString().indexOf("signup.php") != -1) {
+								Toast.fire({
+									icon: 'warning',
+									html: signup
+								});
+							} else {
+								if (obj.settings.ConfirmDownloadMagnetD) {
+									Swal.fire({
+										title: "Скачать через Magnet?",
+										html: "Раздача:<br><b>" + getfname + "</b><br><br>Ваш рейтинг не упадёт, можете скачивать бесконечно!",
+										icon: 'question',
+										showCancelButton: true,
+										confirmButtonColor: '#4fc823',
+										cancelButtonColor: '#d33',
+										confirmButtonText: SwalConfirmText,
+										cancelButtonText: SwalCancelText
+									}).then(function(result) {
+										if (result.value) {
+											$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
+												if (s.toString().indexOf("signup.php") != -1) {
+													Toast.fire({
+														icon: 'warning',
+														html: signup
+													});
+												} else {
+													var hash = (s.toString().match(mgt_reg))[0];
+													window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986);
+													Toast.fire({
+														icon: 'success',
+														title: getfname + ' скачивается через Magnet!'
+													});
+												}
+											});
+										}
+									});
+								} else {
 									$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-										var hash = (s.toString().match(mgt_reg))[0];
 										if (s.toString().indexOf("signup.php") != -1) {
 											Toast.fire({
 												icon: 'warning',
 												html: signup
-											})
+											});
 										} else {
+											var hash = (s.toString().match(mgt_reg))[0];
 											window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986);
 											Toast.fire({
 												icon: 'success',
-												title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Magnet!'
-											})
+												title: getfname + ' скачивается через Magnet!'
+											});
 										}
 									});
 								}
-							})
-						} else {
-							$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-								var hash = (s.toString().match(mgt_reg))[0];
-								if (s.toString().indexOf("signup.php") != -1) {
-									Toast.fire({
-										icon: 'warning',
-										html: signup
-									})
-								} else {
-									window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986);
-									Toast.fire({
-										icon: 'success',
-										title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Magnet!'
-									})
-								}
-							});
-						}
+							}
+						});
 					} else if (target.id === 'TorrentButton') {
-						if (obj.settings.ConfirmDownloadTorrent) {
-							Swal.fire({
-								title: "Скачать Торрент файл?",
-								html: "Раздача:<br><b>" + film_name[0].toUpperCase() + "</b><br><br>Ваш рейтинг упадёт, а так же количество скачивании торрентов уменьшится в день!",
-								icon: 'question',
-								showCancelButton: true,
-								confirmButtonColor: '#4fc823',
-								cancelButtonColor: '#d33',
-								confirmButtonText: SwalConfirmText,
-								cancelButtonText: SwalCancelText
-							}).then(function(result) {
-								if (result.value) {
-									$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-										if (s.toString().indexOf("signup.php") != -1) {
-											Toast.fire({
-												icon: 'warning',
-												html: signup
-											})
-										} else {
+						$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
+							if (s.toString().indexOf("signup.php") != -1) {
+								Toast.fire({
+									icon: 'warning',
+									html: signup
+								});
+							} else {
+								if (obj.settings.ConfirmDownloadTorrentD) {
+									Swal.fire({
+										title: "Скачать Торрент файл?",
+										html: "Раздача:<br><b>" + getfname + "</b><br><br>Ваш рейтинг упадёт, а так же количество скачивании торрентов уменьшится в день!",
+										icon: 'question',
+										showCancelButton: true,
+										confirmButtonColor: '#4fc823',
+										cancelButtonColor: '#d33',
+										confirmButtonText: SwalConfirmText,
+										cancelButtonText: SwalCancelText
+									}).then(function(result) {
+										if (result.value) {
 											window.location.href = "/download.php?id=" + id;
 											Toast.fire({
 												icon: 'success',
-												title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Торрент!'
-											})
+												title: getfname + ' скачивается через Торрент!'
+											});
 										}
 									});
-								}
-							})
-						} else {
-							$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-								if (s.toString().indexOf("signup.php") != -1) {
-									Toast.fire({
-										icon: 'warning',
-										html: signup
-									})
 								} else {
 									window.location.href = "/download.php?id=" + id;
 									Toast.fire({
 										icon: 'success',
-										title: 'Раздача ( ' + film_name[0].toUpperCase() + ' ) скачивается через Торрент!'
-									})
+										title: getfname + ' скачивается через Торрент!'
+									});
 								}
-							});
-						}
+							}
+						});
 					}
 				}, false);
 			}
@@ -2030,67 +1396,27 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 		function RutorScriptSettingsScript() {
 			this.settings = {};
 			this.loadSettings = function() {
-				if (GM_getValue("ShowTorrentButton") == undefined) {
-					GM_setValue("ShowTorrentButton", true);
+				if (GM_getValue("ShowMagnetButtonR") == undefined) {
+					GM_setValue("ShowMagnetButtonR", true);
 				}
-				if (GM_getValue("ConfirmDownloadTorrent") == undefined) {
-					GM_setValue("ConfirmDownloadTorrent", true);
-				}
-				if (GM_getValue("ShowMagnetButton") == undefined) {
-					GM_setValue("ShowMagnetButton", true);
-				}
-				if (GM_getValue("ConfirmDownloadMagnet") == undefined) {
-					GM_setValue("ConfirmDownloadMagnet", true);
-				}
-				if (GM_getValue("ShowAcestreamButton") == undefined) {
-					GM_setValue("ShowAcestreamButton", false);
-				}
-				if (GM_getValue("ChangeIconsToText") == undefined) {
-					GM_setValue("ChangeIconsToText", false);
-				}
-				if (GM_getValue("ShowMarkTorrents") == undefined) {
-					GM_setValue("ShowMarkTorrents", false);
-				}
-				if (GM_getValue("MarkValue") == undefined) {
-					GM_setValue("MarkValue", '4K 2160P');
+				if (GM_getValue("ShowAcestreamButtonR") == undefined) {
+					GM_setValue("ShowAcestreamButtonR", true);
 				}
 				this.settings = {
-					ShowTorrentButton: GM_getValue('ShowTorrentButton', true),
-					ConfirmDownloadTorrent: GM_getValue('ConfirmDownloadTorrent', true),
-					ShowMagnetButton: GM_getValue('ShowMagnetButton', true),
-					ConfirmDownloadMagnet: GM_getValue('ConfirmDownloadMagnet', true),
-					ShowAcestreamButton: GM_getValue('ShowAcestreamButton', false),
-					ChangeIconsToText: GM_getValue('ChangeIconsToText', false),
-					ShowMarkTorrents: GM_getValue('ShowMarkTorrents', false),
-					MarkValue: GM_getValue('MarkValue', '4K 2160P')
+					ShowMagnetButtonR: GM_getValue('ShowMagnetButtonR', true),
+					ShowAcestreamButtonR: GM_getValue('ShowAcestreamButtonR', true)
 				};
 			}
 			this.toggleSettings = function() {
 				var $sett_wnd = $('#acemgn_script_settings'),
 					x = parseInt(($(window).width() - $sett_wnd.width()) / 2),
 					y = parseInt(($(window).height() - $sett_wnd.height()) / 2);
-				if (this.settings.ShowTorrentButton) {
-					$('#ShowTorrentButton').attr('checked', true);
+				if (this.settings.ShowMagnetButtonR) {
+					$('#ShowMagnetButtonR').attr('checked', true);
 				}
-				if (this.settings.ShowMagnetButton) {
-					$('#ShowMagnetButton').attr('checked', true);
+				if (this.settings.ShowAcestreamButtonR) {
+					$('#ShowAcestreamButtonR').attr('checked', true);
 				}
-				if (this.settings.ShowAcestreamButton) {
-					$('#ShowAcestreamButton').attr('checked', true);
-				}
-				if (this.settings.ConfirmDownloadTorrent) {
-					$('#ConfirmDownloadTorrent').attr('checked', true);
-				}
-				if (this.settings.ConfirmDownloadMagnet) {
-					$('#ConfirmDownloadMagnet').attr('checked', true);
-				}
-				if (this.settings.ChangeIconsToText) {
-					$('#ChangeIconsToText').attr('checked', true);
-				}
-				if (this.settings.ShowMarkTorrents) {
-					$('#ShowMarkTorrents').attr('checked', true);
-				}
-				$('#MarkValue').val(this.settings.MarkValue);
 				$('#acemgn_script_settings').css({
 					'left': x,
 					'top': y
@@ -2106,50 +1432,20 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 				var $wnd = $(`
 <div id="acemgn_script_settings" style="display: none">
 	<div class="header">Настройка скрипта<br>
-		<h3>Кнопки скачивания в поисковой системе и в раздачи персоны</h3>
-	</div>
-	<div class="fields">
-		<div class="row">
-			<div class="title">Торрент настройки</div>
-			<div class="col1">Включить кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowTorrentButton"></div>
-		</div>
-		<div class="row">
-			<div class="col1">Включить подтверждение?</div>
-			<div class="col2"><input type="checkbox" id="ConfirmDownloadTorrent"></div>
-		</div>
+		<h3>Кнопки скачивания</h3>
 	</div>
 	<div class="fields">
 		<div class="row">
 			<div class="title">Магнит настройки</div>
 			<div class="col1">Включить кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowMagnetButton"></div>
-		</div>
-		<div class="row">
-			<div class="col1">Включить подтверждение?</div>
-			<div class="col2"><input type="checkbox" id="ConfirmDownloadMagnet"></div>
+			<div class="col2"><input type="checkbox" id="ShowMagnetButtonR"></div>
 		</div>
 	</div>
 	<div class="fields">
 		<div class="row">
 			<div class="title">Acestream настройки</div>
 			<div class="col1">Включить кнопку ?</div>
-			<div class="col2"><input type="checkbox" id="ShowAcestreamButton"></div>
-		</div>
-	</div>
-	<div class="fields">
-		<div class="row">
-			<div class="title">Остальное</div>
-			<div class="col1">Сделать кнопки текстом ?</div>
-			<div class="col2"><input type="checkbox" id="ChangeIconsToText"></div>
-		</div>
-		<div class="row">
-			<div class="col1">Выделять раздачи ?</div>
-			<div class="col2"><input type="checkbox" id="ShowMarkTorrents"></div>
-		</div>
-		<div class="row">
-			<div class="col1">Текст выделения <b>через пробел</b></div>
-			<div class="col2"><input type="text" placeholder="Пример: 4K 2160P" id="MarkValue"></div>
+			<div class="col2"><input type="checkbox" id="ShowAcestreamButtonR"></div>
 		</div>
 	</div>
 	<div class="fields">
@@ -2160,14 +1456,8 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 </div>`);
 				$('body').append($wnd);
 				$('#acemgn_script_save_settings').live('click', function() {
-					GM_setValue('ShowTorrentButton', $('#ShowTorrentButton').is(':checked'));
-					GM_setValue('ConfirmDownloadTorrent', $('#ConfirmDownloadTorrent').is(':checked'));
-					GM_setValue('ShowMagnetButton', $('#ShowMagnetButton').is(':checked'));
-					GM_setValue('ConfirmDownloadMagnet', $('#ConfirmDownloadMagnet').is(':checked'));
-					GM_setValue('ShowAcestreamButton', $('#ShowAcestreamButton').is(':checked'));
-					GM_setValue('ChangeIconsToText', $('#ChangeIconsToText').is(':checked'));
-					GM_setValue('ShowMarkTorrents', $('#ShowMarkTorrents').is(':checked'));
-					GM_setValue('MarkValue', $('#MarkValue').val());
+					GM_setValue('ShowMagnetButtonR', $('#ShowMagnetButtonR').is(':checked'));
+					GM_setValue('ShowAcestreamButtonR', $('#ShowAcestreamButtonR').is(':checked'));
 					obj.loadSettings();
 					$('#acemgn_script_settings').toggle('fast');
 					location.reload();
@@ -2180,11 +1470,23 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 				//alert(get_cat);
 				var hash_result = document.getElementById('download').getElementsByTagName('a')[0].getAttribute("href").match(/magnet:\?xt=urn:btih:([a-z\d]{40})&/im)[1];
 				var set_buttons = document.querySelector("#download");
-				var filmname = $('div#all > H1').text();
-				set_buttons.innerHTML += '<table id="copy_form">' + '<tbody>' + '<tr>' + '<td><button id="LibTorrent" type="button" class="btndt swal2-styled">LIBTORRENT</button> <button id="Magnet" type="button" class="btndm swal2-styled">MAGNET</button> <button id="acestream" type="button" class="btnace swal2-styled">ACESTREAM</button></td>' + '</tr>' + '<tr>' + '<td colspan="2"><b style="color:#cc0000">Скрипт предназначен для копирования ссылок LIBTORRENT и ACESTREAM.<br>Скопированные ссылки вкидывайте в свой <font style="color:#00cc00">m3u8</font> плейлист</b></td>' + '</tr>' + '</tbody>' + '</table>';
+				var fname = $('div#all > H1').text();
+				set_buttons.innerHTML += `<table id="copy_form">
+				<tbody>
+	<tr>
+		<td class="nw">
+		${obj.settings.ShowMagnetButtonR ? ' <button id="MagnetButton" type="button" class="btndm">MAGNET</button>' : ''}
+		${obj.settings.ShowAcestreamButtonR ? ' <button id="AceStreamButton" type="button" class="btnace">ACESTREAM</button>' : ''}
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2"><b style="color:#cc0000">Скрипт предназначен для копирования ссылок LIBTORRENT и ACESTREAM.<br>Скопированные ссылки вкидывайте в свой <font style="color:#00cc00">m3u8</font> плейлист</b></td>
+	</tr>
+</tbody>
+</table>`;
 				document.getElementById('copy_form').addEventListener('click', async function(evt) {
 					var target = evt.target;
-					if (target.id === 'acestream') {
+					if (target.id === 'AceStreamButtonR') {
 						if (get_cat.match(/Зарубежные фильмы|Наши фильмы|Научно-популярные фильмы|Зарубежные сериалы|Наши сериалы|Телевизор|Аниме/gi) && get_file_count > 1) {
 							if (get_cat.match(/(логия)/gi)) {
 								var selbtn1 = "НЕСКОЛЬКО ФИЛЬМОВ";
@@ -2203,19 +1505,19 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 								var selbtn2 = "ОДИН ВЫПУСК";
 							}
 							Swal.fire({
-								title: filmname.toUpperCase(),
+								title: fname,
 								html: `Копировать для просмотра через AceStream<br>
 <button type="button" id="1" class="btnconfirm swal2-styled">${selbtn1}</button>
 <button type="button" id="2" class="btnconfirm swal2-styled">${selbtn2}</button><br>
 <button type="button" id="cancel" class="btncnc swal2-styled">ОТМЕНА</button>`,
 								showCancelButton: false,
 								showConfirmButton: false
-							})
+							});
 							$("#1").on("click", async function(e) {
 								const {
 									value: formValues
 								} = await Swal.fire({
-									title: filmname.toUpperCase(),
+									title: fname,
 									html: 'Введите количество серий, фильмов, выпусков, этапов',
 									input: 'text',
 									inputPlaceholder: 'Кол-во',
@@ -2236,14 +1538,14 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 											} else {
 												resolve()
 											}
-										})
+										});
 									},
 									showCloseButton: false,
 									showCancelButton: false,
 									showConfirmButton: true,
 									confirmButtonColor: '#3085d6',
 									confirmButtonText: 'Копировать'
-								})
+								});
 								if (formValues) {
 									if (get_cat.match(/(логия)/gi)) {
 										var number_copy = formValues + " " + declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
@@ -2261,15 +1563,15 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 									while (i < formValues) {
 										var set_i = 1 + i;
 										if (get_cat.match(/(логия)/gi)) {
-											var copyname = filmname + " / " + set_i + "-й ФИЛЬМ";
+											var copyname = fname + " / " + set_i + "-й ФИЛЬМ";
 										} else if (get_cat.match(/(выпуск)/gi)) {
-											var copyname = filmname + " / " + set_i + " ВЫПУСК";
+											var copyname = fname + " / " + set_i + " ВЫПУСК";
 										} else if (get_cat.match(/серии|сезон/gi)) {
-											var copyname = filmname + " / " + set_i + " СЕРИЯ";
+											var copyname = fname + " / " + set_i + " СЕРИЯ";
 										} else if (get_cat.match(/этапы/gi)) {
-											var copyname = filmname + " / " + set_i + " ЭТАП";
+											var copyname = fname + " / " + set_i + " ЭТАП";
 										} else {
-											var copyname = filmname + " / " + set_i + " ВЫПУСК";
+											var copyname = fname + " / " + set_i + " ВЫПУСК";
 										}
 										copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
 										i++;
@@ -2278,14 +1580,14 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 									Toast.fire({
 										icon: 'success',
 										title: 'СКОПИРОВАНО ' + number_copy + ' !'
-									})
+									});
 								}
 							});
 							$("#2").on("click", async function(e) {
 								const {
 									value: formValues
 								} = await Swal.fire({
-									title: filmname.toUpperCase(),
+									title: fname,
 									html: 'Введите серию / фильм / выпуск / этап',
 									input: 'text',
 									inputPlaceholder: 'Цифра',
@@ -2303,14 +1605,14 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 											} else {
 												resolve()
 											}
-										})
+										});
 									},
 									showCloseButton: false,
 									showCancelButton: false,
 									showConfirmButton: true,
 									confirmButtonColor: '#3085d6',
 									confirmButtonText: 'Копировать'
-								})
+								});
 								if (formValues) {
 									var set_i = formValues - 1;
 									if (get_cat.match(/(логия)/gi)) {
@@ -2325,21 +1627,21 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 										var number_copy = formValues + " ВЫПУСК СКОПИРОВАН !";
 									}
 									if (get_cat.match(/(логия)/gi)) {
-										var copyname = filmname + " / " + formValues + "-й ФИЛЬМ";
+										var copyname = fname + " / " + formValues + "-й ФИЛЬМ";
 									} else if (get_cat.match(/(выпуск)/gi)) {
-										var copyname = filmname + " / " + formValues + " ВЫПУСК";
+										var copyname = fname + " / " + formValues + " ВЫПУСК";
 									} else if (get_cat.match(/серии|сезон/gi)) {
-										var copyname = filmname + " / " + formValues + " СЕРИЯ";
+										var copyname = fname + " / " + formValues + " СЕРИЯ";
 									} else if (get_cat.match(/этапы/gi)) {
-										var copyname = filmname + " / " + formValues + " ЭТАП";
+										var copyname = fname + " / " + formValues + " ЭТАП";
 									} else {
-										var copyname = filmname + " / " + formValues + " ВЫПУСК";
+										var copyname = fname + " / " + formValues + " ВЫПУСК";
 									}
 									copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
 									Toast.fire({
 										icon: 'success',
 										title: number_copy
-									})
+									});
 								}
 							});
 							$("#cancel").on("click", function(e) {
@@ -2348,37 +1650,16 @@ ${obj.settings.ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">
 						} else {
 							Toast.fire({
 								icon: 'success',
-								title: 'Раздача ( ' + filmname.toUpperCase() + ' ) скопирована!2'
-							})
-							copy("\r\n#EXTINF:-1," + filmname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result + "&playlist_output_format_vod=hls&_idx=0&.mp4");
+								title: 'Раздача ( ' + fname + ' ) скопирована!'
+							});
+							copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result + "&playlist_output_format_vod=hls&_idx=0&.mp4");
 						}
-					} else if (target.id === 'Magnet') {
-						if (obj.settings.ConfirmDownloadMagnet) {
-							Swal.fire({
-								title: "Скачать через Magnet?",
-								html: "Раздача:<br><b>" + filmname.toUpperCase(),
-								icon: 'question',
-								showCancelButton: true,
-								confirmButtonColor: '#4fc823',
-								cancelButtonColor: '#d33',
-								confirmButtonText: SwalConfirmText,
-								cancelButtonText: SwalCancelText
-							}).then(function(result) {
-								if (result.value) {
-									window.location.href = "magnet:?xt=urn:btih:" + hash_result + ('&dn=' + encodeURIComponent(filmname)).substring(0, 1986);
-									Toast.fire({
-										icon: 'success',
-										title: 'Раздача ( ' + filmname.toUpperCase() + ' ) скачивается через Magnet!'
-									})
-								}
-							})
-						} else {
-							window.location.href = "magnet:?xt=urn:btih:" + hash_result + ('&dn=' + encodeURIComponent(filmname)).substring(0, 1986);
-							Toast.fire({
-								icon: 'success',
-								title: 'Раздача ( ' + filmname.toUpperCase() + ' ) скачивается через Magnet!'
-							})
-						}
+					} else if (target.id === 'MagnetButton') {
+						window.location.href = "magnet:?xt=urn:btih:" + hash_result + ('&dn=' + encodeURIComponent(fname)).substring(0, 1986);
+						Toast.fire({
+							icon: 'success',
+							title: 'Раздача ( ' + fname + ' ) скачивается через Magnet!'
+						});
 					}
 				}, false);
 			}
