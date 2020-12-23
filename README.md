@@ -1,14 +1,19 @@
 
-# Kinozal.tv - Кнопки скачивания внутри раздачи, в поисковике
+# #1 - Kinozal.( me | tv | guru | website ), Kino-zal.site 
+# Кнопки скачивания в поисковой системе и в раздачи персоны
+
+<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-rutor-magnet-knopki/main/bp.gif" style="max-width:100%;">
+
+# #2 - Kinozal.( me | tv | guru | website ), Kino-zal.site 
+# Кнопки скачивания внутри раздачи
 
 <img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/image.jpg" style="max-width:100%;">
-<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/detail_info_search.jpg" style="max-width:100%;">
-<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/settings_info.jpg" style="max-width:100%;">
 <img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/detailed_info_buttons.jpg" style="max-width:100%;">
 
-# Rutor.ORG - Кнопки скачивания внутри раздачи
+# #3 - Rutor.( info | is ) 
+# Кнопки скачивания внутри раздачи
 
-<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/2020-12-13_163611.jpg">
+<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/rutor_script.jpg">
 
 **Magnet** - Скачать без учёта рейтинга/скачивания
 
