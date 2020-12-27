@@ -2,7 +2,7 @@
 // @name Kinozal+Rutor | Кнопки скачивания (Torrent/Magnet/Acestream)
 // @description Torrent - Всего лишь заменяет старую кнопку на новую / Magnet - Скачать без учёта рейтинга/скачивания / AceStream - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона ) / Настройки - Настраивайте под себя, какие кнопки показывать, а какие убрать, выделение раздачи ( 4K 2160p 1080p ). 
 // @namespace none
-// @version 1.0.8
+// @version 1.0.13
 // @author https://greasyfork.org/ru/users/173690
 // @author https://greasyfork.org/scripts/40843
 // @icon data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAAAD1BMVEU7R4CAAAD4+/z9787///8A0Su5AAAASUlEQVR4AXWPAQrEMBACzen/33wdkGILFZQdSFxWkZKoyWBsd5JXvFgMfC6ZLBs0pq8Mtq8f0Bcbw9N3HvuI8i14sAt/e8/73j/4FwHuDyR5AQAAAABJRU5ErkJggg==
@@ -23,26 +23,30 @@
 @import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css";
 @import "https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css";
 @font-face{font-family:"Open Sans";font-style:normal;font-weight:400;src:local("Open Sans"),local(OpenSans),url(https://themes.googleusercontent.com/static/fonts/opensans/v6/K88pR3goAWT7BTt32Z01mz8E0i7KZn-EPnyo3HZu7kw.woff) format("woff")}
-
+ 
 .t_peer td.swalbtn {width: 45px;text-align:center;}
-.swal2-styled.swal2-cancel,.swal2-styled.swal2-confirm,.swal2-styled.swal2-deny,.swal2-styled.swal2-deny{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
+.swal2-styled.swal2-cancel,.swal2-styled.swal2-confirm,.swal2-styled.swal2-deny,.swal2-styled.swal2-deny{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:bold;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
 .swal2-content {font-size: 14px;font-family: "Open Sans";font-style:normal;text-align: left;color: #000;}
-
-BUTTON.btndt,BUTTON.btnytb,BUTTON.btncnc{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;background-color:#d92638;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
+.menuinfo .floatright {float: right;color:#ff0000;}
+.menuinfo {font-weight:bold;}
+.fnm-title {font-weight:bold;font-family:Open Sans;text-transform:uppercase;font-size:35px;color: hsl(0deg 70% 55%);text-shadow: -1px -1px 0 hsl(0deg 70% 35%), -2px -2px 1px hsl(0deg 70% 35%);}
+ 
+BUTTON.btndt,BUTTON.btncnc{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:bold;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;background-color:#d92638;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
+BUTTON.btnytb{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:bold;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:18px;border-radius:.25rem;transition:all .1s;color:#fff;background-color:#d92638;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
 BUTTON.btndt:hover,BUTTON.btnytb:hover,BUTTON.btncnc:hover{color:#fff;background-color:#c32232;}
 BUTTON.btndt:focus,BUTTON.btndt:active,BUTTON.btndt:visited,BUTTON.btnytb:focus,BUTTON.btnytb:active,BUTTON.btncnc:focus,BUTTON.btncnc:active{color:#fff;background-color:#ad1f2d;}
-
-BUTTON.btndm,.btnconfirm{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;background-color:#2778C4;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
+ 
+BUTTON.btndm,.btnconfirm{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:bold;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;background-color:#2778C4;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
 BUTTON.btndm:hover,.btnconfirm:hover{color:#fff;background-color:#236CB0;}
 BUTTON.btndm:focus,BUTTON.btndm:active,BUTTON.btndm:visited,.btnconfirm:focus,.btnconfirm:active{color:#fff;background-color:#1F609D;}
-
-BUTTON.btnace{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;background-color:#4FC823;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
+ 
+BUTTON.btnace{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:bold;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;background-color:#4FC823;border:none;text-shadow:0 0 1px #000,1px 1px 1px #000}
 BUTTON.btnace:hover{color:#fff;background-color:#47B41F;}
 BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;background-color:#3fa01c;}
-
+ 
 #acemgn_script_settings{padding:5px;font-family:tahoma,arial,verdana,sans-serif,Lucida Sans;position:fixed;left:0;top:0;background-color:#fff;border:1px solid #000;border-radius:4px 4px 4px 4px;-moz-border-radius:4px;-webkit-border-radius:4px 4px 4px 4px;-webkit-box-shadow:0 0 0 1px #000;-moz-box-shadow:0 0 0 1px #000;box-shadow:0 0 0 1px #000}
-#acemgn_script_settings .header{font-size:16px;padding:5px;color:red;font-weight:700;text-align:center}
-#acemgn_script_settings .title{text-transform:uppercase;font-size:14px;color:#000;font-weight:700;text-align:center}
+#acemgn_script_settings .header{font-size:16px;padding:5px;color:red;font-weight:bold;text-align:center}
+#acemgn_script_settings .title{text-transform:uppercase;font-size:14px;color:#000;font-weight:bold;text-align:center}
 #acemgn_script_settings .fields{font-size:14px;text-transform:uppercase}
 #acemgn_script_settings .fields .row{clear:both;padding:5px 0}
 #acemgn_script_settings .fields .row .col1{width:250px;float:left;padding:0 20px}
@@ -52,7 +56,7 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 #acemgn_script_settings input[type=checkbox]::after{font-size:14px;position:relative;left:17px;content:"НЕТ";top:-3px}
 #acemgn_script_settings input[type=checkbox]:checked::after{font-size:14px;content:"ДА";top:-3px}
 `);
-
+ 
 	function copy(str) {
 		var tmp = document.createElement('textarea'),
 			focus = document.activeElement;
@@ -63,25 +67,25 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 		document.body.removeChild(tmp);
 		focus.focus();
 	}
-
+ 
 	function truncString(str, max, add) {
 		add = add || '...';
 		return (typeof str === 'string' && str.length > max ? str.substring(0, max) + add : str);
 	};
-
+ 
 	function declOfNum(n, text_forms) {
 		n = Math.abs(n) % 100;
 		var n1 = n % 10;
 		if (n > 10 && n < 20) {
-			return text_forms[2];
+			return n + " " + text_forms[2];
 		}
 		if (n1 > 1 && n1 < 5) {
-			return text_forms[1];
+			return n + " " + text_forms[1];
 		}
 		if (n1 == 1) {
-			return text_forms[0];
+			return n + " " + text_forms[0];
 		}
-		return text_forms[2];
+		return n + " " + text_forms[2];
 	}
 	const Toast = Swal.mixin({
 		toast: true,
@@ -139,7 +143,7 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 					GM_setValue("MarkValueS", '4K 2160P');
 				}
 				if (GM_getValue("SwalDetailedInfoWidthS") == undefined) {
-					GM_setValue("SwalDetailedInfoWidthS", '800px');
+					GM_setValue("SwalDetailedInfoWidthS", '1100px');
 				}
 				this.settings = {
 					ShowAboutFile: GM_getValue('ShowAboutFile', true),
@@ -154,7 +158,7 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 					ChangeIconsToTextS: GM_getValue('ChangeIconsToTextS', false),
 					ShowMarkTorrentsS: GM_getValue('ShowMarkTorrentsS', false),
 					MarkValueS: GM_getValue('MarkValueS', '4K 2160P'),
-					SwalDetailedInfoWidthS: GM_getValue('SwalDetailedInfoWidthS', '800px')
+					SwalDetailedInfoWidthS: GM_getValue('SwalDetailedInfoWidthS', '1100px')
 				};
 			}
 			this.toggleSettings = function() {
@@ -313,8 +317,6 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 				var obj = this;
 				var domain = get_url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:[^.]+\.)?([^:\/\n\?\=]+)/im)[0];
 				var mgt_reg = new RegExp('[a-zA-Z0-9]{40}', 'i');
-				var gfname = $('H1 a').text().split(" / ");
-				var film_full_name = $('H1 a').text();
 				var swal_width = obj.settings.SwalDetailedInfoWidthS;
 				var SwalConfirmText = "СКАЧАТЬ";
 				var SwalCancelText = "ОТМЕНА";
@@ -397,17 +399,35 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 										}).done(function(data) {
 											var obj1 = $(data);
 											var getinfo = obj1.find('#tabs').html();
+											var gsimilarfiles = obj1.find('#tabs2 td.w90p').html();
 											var grel = obj1.find(".lis li:contains(Релиз)").html();
 											var gscr = obj1.find(".lis li:contains(Скриншоты)").html();
+											var gmenuinfo1 = obj1.find(".mn1_menu ul.men li a:contains(Раздают)").html();
+											var gmenuinfo2 = obj1.find(".mn1_menu ul.men li a:contains(Скачивают)").html();
+											var gmenuinfo3 = obj1.find(".mn1_menu ul.men li a:contains(Скачали)").html();
+											var gmenuinfo4 = obj1.find(".mn1_menu ul.men li a:contains(Список файлов)").html();
+											var getmyacc_id = obj1.find(".menu ul.men li.tp2.center.b").html().match(/userdetails\.php\?id=(\d+)/)[1];
 											var gaboutfile = obj1.find("div.bx1.justify p").html();
 											var gaboutfile1 = obj1.find("div.bx1.justify h2").html();
 											var g_movie = gaboutfile.indexOf("О фильме:") !== -1;
-											var gimg = '<img src="' + (obj1.find("li.img").html().match(/img.*?src=("|')(.*?)\1/i)[2]) + '" style="display: block;width:250px;" alt="">';
+											var gimg = '<img src="' + (obj1.find("li.img").html().match(/img.*?src=("|')(.*?)\1/i)[2]) + '" style="display: block;width:250px;padding:0px 0px 10px 0px;" alt="">';
 											var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
-											var fname_youtube = (gyear) ? getfname + " " + getfnames : getfname + " " + getfnames + " " + gfname[1];
-											var fname = '<h2 class="swal2-title" style="font-weight:bold;font-family:Open Sans;text-transform:uppercase;font-size:35px;color: hsl(0deg 70% 55%);text-shadow: -1px -1px 0 hsl(0deg 70% 35%), -2px -2px 1px hsl(0deg 70% 35%);">' + getfname + '</h2>';
+											var fname_youtube = (gyear) ? gfname[0] + " " + gfname[1] : gfname[0] + " " + gfname[2];
+											var fname = '<h2 class="swal2-title fnm-title">' + getfname + '</h2>';
 											var get_ajax_rel;
 											var get_ajax_scr;
+											var get_ajax_accid;
+											$.ajax({
+												url: '/userdetails.php?id=' + getmyacc_id,
+												async: false
+											}).done(function(myacinfo) {
+												get_ajax_accid = myacinfo;
+												return get_ajax_accid;
+											});
+											var obj2 = $(get_ajax_accid);
+											var gaccleftdownl_txt = obj2.find(".mn_wrap .mn1_content .tables1.u2 tr:nth-child(6) td:nth-child(2)").text();
+											var gaccleftdownl = gaccleftdownl_txt.match(/\d+/g);
+											var gaccleftdownl_calc = gaccleftdownl[0] - gaccleftdownl[1];
 											if (grel !== null) {
 												var grel_id = grel.match(/\d+/g)[1];
 												$.ajax({
@@ -432,39 +452,85 @@ BUTTON.btnace:focus,BUTTON.btnace:active,BUTTON.btnace:visited{color:#fff;backgr
 											} else {
 												get_ajax_scr = null;
 											}
-											Swal.fire({
-												width: swal_width,
-												html: `
+											var ads_rel = (ssh_rel && get_ajax_rel !== null && get_ajax_rel.match(/без реклам/i) ? '<p style="width: 100%;font-size:16px;text-align:center;padding:0px 0px 10px 0px;color:red;font-weight:bold;">Релиз без рекламы!</p>' : '');
+											var similarfiles = (gsimilarfiles !== null ? '<p style="width: 100%;font-size:12px;text-align:center;padding:0px 0px 10px 0px;font-weight:bold;">' + gsimilarfiles + '</p>' : '');
+											var menuinfo = (gmenuinfo1 !== null ? '<span class="menuinfo">' + gmenuinfo1 + '</span><br>' : '') + (gmenuinfo2 !== null ? '<span class="menuinfo">' + gmenuinfo2 + '</span><br>' : '') + (gmenuinfo3 !== null ? '<span class="menuinfo">' + gmenuinfo3 + '</span><br>' : '') + (gmenuinfo4 !== null ? '<span class="menuinfo">' + gmenuinfo4 + '</span><br>' : '');
+											var trailer = (g_movie ? '<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=' + encodeURIComponent(fname_youtube + ' трейлер русский') + '\')" style="display: block;margin-left: auto;margin-right: auto;">YOUTUBE ТРЕЙЛЕР</button>' : '');
+											var maininfo = (ssh_mi ? '<b>Техданные:</b><br>' + getinfo : '');
+											var aboutfile = (ssh_af ? truncString(gaboutfile, 300, '...') + '<br><br>' : '');
+											var rel_info = (ssh_rel && get_ajax_rel !== null ? '<b>Релиз:</b><br>' + get_ajax_rel + '<br><br>' : '');
+											var scr_info = (ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>' + get_ajax_scr + '<br><br>' : '');
+											if (gaccleftdownl_calc >= 1) {
+												Swal.fire({
+													width: swal_width,
+													html: `
 ${fname}
 <table>
 <tr>
 <td colspan="2" style="vertical-align:top;padding:10px;font-size: 12px;width:270px;">
-${gimg}<br>
-${(ssh_mi ? '<b>Техданные:</b><br>'+getinfo : '')}
-${(g_movie ? '<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query='+encodeURIComponent(fname_youtube + ' трейлер русский')+'\')" style="display: block;margin-left: auto;margin-right: auto;">ТРЕЙЛЕР</button>' : '')}</td>
+${gimg}
+${ads_rel}
+${similarfiles}
+${menuinfo}
+<br>
+${maininfo}
+${trailer}</td>
 <td style="vertical-align:top;padding:10px;font-size: 12px;">
 ${gaboutfile1}<br>
-${(ssh_af ? truncString(gaboutfile,300,'...')+'<br><br>' : '')}
-${(ssh_rel && get_ajax_rel !== null ? '<b>Релиз:</b><br>'+get_ajax_rel+'<br><br>' : '')}
-${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_scr+'<br><br>' : '')}
+${aboutfile}
+${rel_info}
+${scr_info}
 </td>
 </tr>
-</table>`,
-												showCancelButton: true,
-												confirmButtonColor: '#4fc823',
-												cancelButtonColor: '#d33',
-												confirmButtonText: SwalConfirmText + " ТОРРЕНТ ФАЙЛ",
-												cancelButtonText: SwalCancelText,
-												footer: `<center><b style="color:#000099;">Скачивание через торрент</b><br><b style="color:#990000;">Внимание! Этот метод скачивания не актуален для тех, кому важен рейтинг. Так как при скачивании, ваш рейтинг может понизится, тем самым возможен блок аккаунта!</b></center>`
-											}).then(function(result) {
-												if (result.value) {
-													window.location.href = "/download.php?id=" + id;
-													Toast.fire({
-														icon: 'success',
-														title: getfname + ' скачивается через Торрент!'
-													});
-												}
-											});
+</table>
+${(gaccleftdownl !== null ? '<center><h2 class="swal2-title" style="color:#ff0000;">Вам доступно для скачивания '+declOfNum(gaccleftdownl_calc, ['торрент', 'торрента', 'торрентов'])+'</h2></center>' : '')}`,
+													showCancelButton: true,
+													confirmButtonColor: '#4fc823',
+													cancelButtonColor: '#d33',
+													confirmButtonText: SwalConfirmText + " ТОРРЕНТ ФАЙЛ",
+													cancelButtonText: SwalCancelText,
+													footer: `<center><b style="color:#000099;">Скачивание через торрент</b><br><b style="color:#990000;">Внимание! Этот метод скачивания не актуален для тех, кому важен рейтинг. Так как при скачивании, ваш рейтинг может понизится, тем самым возможен блок аккаунта!</b></center>`
+												}).then(function(result) {
+													if (result.value) {
+														window.location.href = "/download.php?id=" + id;
+														Toast.fire({
+															icon: 'success',
+															title: getfname + ' скачивается через Торрент!'
+														});
+													}
+												});
+											} else {
+												Swal.fire({
+													width: swal_width,
+													html: `
+${fname}
+<table>
+<tr>
+<td colspan="2" style="vertical-align:top;padding:10px;font-size: 12px;width:270px;">
+${gimg}
+${ads_rel}
+${similarfiles}
+${menuinfo}
+<br>
+${maininfo}
+${trailer}</td>
+<td style="vertical-align:top;padding:10px;font-size: 12px;">
+${gaboutfile1}<br>
+${aboutfile}
+${rel_info}
+${scr_info}
+</td>
+</tr>
+</table>
+<center><h2 class="swal2-title" style="color:#ff0000;">Вам доступно для скачивания ${declOfNum(0, ['торрент', 'торрента', 'торрентов'])}</h2></center>
+`,
+													showCancelButton: true,
+													showConfirmButton: false,
+													cancelButtonColor: '#d33',
+													cancelButtonText: "ПОНЯТНО",
+													footer: `<center><b style="color:#000099;">Скачивание через торрент</b><br><b style="color:#990000;">Внимание! Этот метод скачивания не актуален для тех, кому важен рейтинг. Так как при скачивании, ваш рейтинг может понизится, тем самым возможен блок аккаунта!</b></center>`
+												});
+											}
 										});
 									} else {
 										window.location.href = "/download.php?id=" + id;
@@ -492,15 +558,20 @@ ${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_
 										}).done(function(data) {
 											var obj1 = $(data);
 											var getinfo = obj1.find('#tabs').html();
+											var gsimilarfiles = obj1.find('#tabs2 td.w90p').html();
 											var grel = obj1.find(".lis li:contains(Релиз)").html();
 											var gscr = obj1.find(".lis li:contains(Скриншоты)").html();
+											var gmenuinfo1 = obj1.find(".mn1_menu ul.men li a:contains(Раздают)").html();
+											var gmenuinfo2 = obj1.find(".mn1_menu ul.men li a:contains(Скачивают)").html();
+											var gmenuinfo3 = obj1.find(".mn1_menu ul.men li a:contains(Скачали)").html();
+											var gmenuinfo4 = obj1.find(".mn1_menu ul.men li a:contains(Список файлов)").html();
 											var gaboutfile = obj1.find("div.bx1.justify p").html();
 											var gaboutfile1 = obj1.find("div.bx1.justify h2").html();
 											var g_movie = gaboutfile.indexOf("О фильме:") !== -1;
-											var gimg = '<img src="' + (obj1.find("li.img").html().match(/img.*?src=("|')(.*?)\1/i)[2]) + '" style="display: block;width:250px;" alt="">';
+											var gimg = '<img src="' + (obj1.find("li.img").html().match(/img.*?src=("|')(.*?)\1/i)[2]) + '" style="display: block;width:250px;padding:0px 0px 10px 0px;" alt="">';
 											var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
-											var fname_youtube = (gyear) ? getfname + " " + getfnames : getfname + " " + getfnames + " " + gfname[1];
-											var fname = '<h2 class="swal2-title" style="font-weight:bold;font-family:Open Sans;text-transform:uppercase;font-size:35px;color: hsl(0deg 70% 55%);text-shadow: -1px -1px 0 hsl(0deg 70% 35%), -2px -2px 1px hsl(0deg 70% 35%);">' + getfname + '</h2>';
+											var fname_youtube = (gyear) ? gfname[0] + " " + gfname[1] : gfname[0] + " " + gfname[2];
+											var fname = '<h2 class="swal2-title fnm-title">' + getfname + '</h2>';
 											var get_ajax_rel;
 											var get_ajax_scr;
 											if (grel !== null) {
@@ -527,6 +598,14 @@ ${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_
 											} else {
 												get_ajax_scr = null;
 											}
+											var ads_rel = (ssh_rel && get_ajax_rel !== null && get_ajax_rel.match(/без реклам/i) ? '<p style="width: 100%;font-size:16px;text-align:center;padding:0px 0px 10px 0px;color:red;font-weight:bold;">Релиз без рекламы!</p>' : '');
+											var similarfiles = (gsimilarfiles !== null ? '<p style="width: 100%;font-size:12px;text-align:center;padding:0px 0px 10px 0px;font-weight:bold;">' + gsimilarfiles + '</p>' : '');
+											var menuinfo = (gmenuinfo1 !== null ? '<span class="menuinfo">' + gmenuinfo1 + '</span><br>' : '') + (gmenuinfo2 !== null ? '<span class="menuinfo">' + gmenuinfo2 + '</span><br>' : '') + (gmenuinfo3 !== null ? '<span class="menuinfo">' + gmenuinfo3 + '</span><br>' : '') + (gmenuinfo4 !== null ? '<span class="menuinfo">' + gmenuinfo4 + '</span><br>' : '');
+											var trailer = (g_movie ? '<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=' + encodeURIComponent(fname_youtube + ' трейлер русский') + '\')" style="display: block;margin-left: auto;margin-right: auto;">YOUTUBE ТРЕЙЛЕР</button>' : '');
+											var maininfo = (ssh_mi ? '<b>Техданные:</b><br>' + getinfo : '');
+											var aboutfile = (ssh_af ? truncString(gaboutfile, 300, '...') + '<br><br>' : '');
+											var rel_info = (ssh_rel && get_ajax_rel !== null ? '<b>Релиз:</b><br>' + get_ajax_rel + '<br><br>' : '');
+											var scr_info = (ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>' + get_ajax_scr + '<br><br>' : '');
 											Swal.fire({
 												width: swal_width,
 												html: `
@@ -534,46 +613,50 @@ ${fname}
 <table>
 <tr>
 <td colspan="2" style="vertical-align:top;padding:10px;font-size: 12px;width:270px;">
-${gimg}<br>
-${(ssh_mi ? '<b>Техданные:</b><br>'+getinfo : '')}
-${(g_movie ? '<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query='+encodeURIComponent(fname_youtube + ' трейлер русский')+'\')" style="display: block;margin-left: auto;margin-right: auto;">ТРЕЙЛЕР</button>' : '')}</td>
+${gimg}
+${ads_rel}
+${similarfiles}
+${menuinfo}
+<br>
+${maininfo}
+${trailer}</td>
 <td style="vertical-align:top;padding:10px;font-size: 12px;">
 ${gaboutfile1}<br>
-${(ssh_af ? truncString(gaboutfile,300,'...')+'<br><br>' : '')}
-${(ssh_rel && get_ajax_rel !== null ? '<b>Релиз:</b><br>'+get_ajax_rel+'<br><br>' : '')}
-${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_scr+'<br><br>' : '')}
+${aboutfile}
+${rel_info}
+${scr_info}
 </td>
 </tr>
 </table>`,
 												showCancelButton: true,
+												showDenyButton: true,
+												denyButtonColor: '#237ec8',
 												confirmButtonColor: '#4fc823',
 												cancelButtonColor: '#d33',
+												denyButtonText: "КОПИРОВАТЬ MAGNET",
 												confirmButtonText: SwalConfirmText + " ЧЕРЕЗ MAGNET",
 												cancelButtonText: SwalCancelText,
 												footer: `<center><b style="color:#000099;">Скачивание через MAGNET</b><br><b style="color:#009900;">Ваш рейтинг не упадёт, можете скачивать бесконечно!</b></center>`
 											}).then(function(result) {
-												if (result.value) {
-													$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-														if (s.toString().indexOf("signup.php") != -1) {
-															Toast.fire({
-																icon: 'warning',
-																html: signup
-															});
-														} else {
-															var hash = (s.toString().match(mgt_reg))[0];
-															window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986);
-															Toast.fire({
-																icon: 'success',
-																title: getfname + ' скачивается через Magnet!'
-															});
-														}
+												var hash = (s.toString().match(mgt_reg))[0];
+												if (result.isConfirmed) {
+													window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(getfname)).substring(0, 1986);
+													Toast.fire({
+														icon: 'success',
+														title: getfname + ' скачивается через Magnet!'
+													});
+												} else if (result.isDenied) {
+													copy("magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(getfname)).substring(0, 1986));
+													Toast.fire({
+														icon: 'success',
+														title: 'Magnet ссылка скопирована!'
 													});
 												}
 											});
 										});
 									} else {
 										var hash = (s.toString().match(mgt_reg))[0];
-										window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986);
+										window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(getfname)).substring(0, 1986);
 										Toast.fire({
 											icon: 'success',
 											title: getfname + ' скачивается через Magnet!'
@@ -611,15 +694,20 @@ ${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_
 										}).done(function(data) {
 											var obj1 = $(data);
 											var getinfo = obj1.find('#tabs').html();
+											var gsimilarfiles = obj1.find('#tabs2 td.w90p').html();
 											var grel = obj1.find(".lis li:contains(Релиз)").html();
 											var gscr = obj1.find(".lis li:contains(Скриншоты)").html();
+											var gmenuinfo1 = obj1.find(".mn1_menu ul.men li a:contains(Раздают)").html();
+											var gmenuinfo2 = obj1.find(".mn1_menu ul.men li a:contains(Скачивают)").html();
+											var gmenuinfo3 = obj1.find(".mn1_menu ul.men li a:contains(Скачали)").html();
+											var gmenuinfo4 = obj1.find(".mn1_menu ul.men li a:contains(Список файлов)").html();
 											var gaboutfile = obj1.find("div.bx1.justify p").html();
 											var gaboutfile1 = obj1.find("div.bx1.justify h2").html();
 											var g_movie = gaboutfile.indexOf("О фильме:") !== -1;
-											var gimg = '<img src="' + (obj1.find("li.img").html().match(/img.*?src=("|')(.*?)\1/i)[2]) + '" style="display: block;width:250px;" alt="">';
+											var gimg = '<img src="' + (obj1.find("li.img").html().match(/img.*?src=("|')(.*?)\1/i)[2]) + '" style="display: block;width:250px;padding:0px 0px 10px 0px;" alt="">';
 											var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
-											var fname_youtube = (gyear) ? getfname + " " + getfnames : getfname + " " + getfnames + " " + gfname[1];
-											var fname = '<h2 class="swal2-title" style="font-weight:bold;font-family:Open Sans;text-transform:uppercase;font-size:35px;color: hsl(0deg 70% 55%);text-shadow: -1px -1px 0 hsl(0deg 70% 35%), -2px -2px 1px hsl(0deg 70% 35%);">' + getfname + '</h2>';
+											var fname_youtube = (gyear) ? gfname[0] + " " + gfname[1] : gfname[0] + " " + gfname[2];
+											var fname = '<h2 class="swal2-title fnm-title">' + getfname + '</h2>';
 											var get_ajax_rel;
 											var get_ajax_scr;
 											if (grel !== null) {
@@ -646,6 +734,14 @@ ${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_
 											} else {
 												get_ajax_scr = null;
 											}
+											var ads_rel = (ssh_rel && get_ajax_rel !== null && get_ajax_rel.match(/без реклам/i) ? '<p style="width: 100%;font-size:16px;text-align:center;padding:0px 0px 10px 0px;color:red;font-weight:bold;">Релиз без рекламы!</p>' : '');
+											var similarfiles = (gsimilarfiles !== null ? '<p style="width: 100%;font-size:12px;text-align:center;padding:0px 0px 10px 0px;font-weight:bold;">' + gsimilarfiles + '</p>' : '');
+											var menuinfo = (gmenuinfo1 !== null ? '<span class="menuinfo">' + gmenuinfo1 + '</span><br>' : '') + (gmenuinfo2 !== null ? '<span class="menuinfo">' + gmenuinfo2 + '</span><br>' : '') + (gmenuinfo3 !== null ? '<span class="menuinfo">' + gmenuinfo3 + '</span><br>' : '') + (gmenuinfo4 !== null ? '<span class="menuinfo">' + gmenuinfo4 + '</span><br>' : '');
+											var trailer = (g_movie ? '<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query=' + encodeURIComponent(fname_youtube + ' трейлер русский') + '\')" style="display: block;margin-left: auto;margin-right: auto;">YOUTUBE ТРЕЙЛЕР</button>' : '');
+											var maininfo = (ssh_mi ? '<b>Техданные:</b><br>' + getinfo : '');
+											var aboutfile = (ssh_af ? truncString(gaboutfile, 300, '...') + '<br><br>' : '');
+											var rel_info = (ssh_rel && get_ajax_rel !== null ? '<b>Релиз:</b><br>' + get_ajax_rel + '<br><br>' : '');
+											var scr_info = (ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>' + get_ajax_scr + '<br><br>' : '');
 											Swal.fire({
 												width: swal_width,
 												html: `
@@ -653,14 +749,18 @@ ${fname}
 <table>
 <tr>
 <td colspan="2" style="vertical-align:top;padding:10px;font-size: 12px;width:270px;">
-${gimg}<br>
-${(ssh_mi ? '<b>Техданные:</b><br>'+getinfo : '')}
-${(g_movie ? '<button type="button" class="btnytb swal2-styled" onclick="window.open(\'https://www.youtube.com/results?search_query='+encodeURIComponent(fname_youtube + ' трейлер русский')+'\')" style="display: block;margin-left: auto;margin-right: auto;">ТРЕЙЛЕР</button>' : '')}</td>
+${gimg}
+${ads_rel}
+${similarfiles}
+${menuinfo}
+<br>
+${maininfo}
+${trailer}</td>
 <td style="vertical-align:top;padding:10px;font-size: 12px;">
 ${gaboutfile1}<br>
-${(ssh_af ? truncString(gaboutfile,300,'...')+'<br><br>' : '')}
-${(ssh_rel && get_ajax_rel !== null ? '<b>Релиз:</b><br>'+get_ajax_rel+'<br><br>' : '')}
-${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_scr+'<br><br>' : '')}
+${aboutfile}
+${rel_info}
+${scr_info}
 </td>
 </tr>
 </table>
@@ -724,15 +824,15 @@ ${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_
 															});
 														} else {
 															if (gfname[0].match(/(логия)/gi)) {
-																var number_copy = formValues + " " + declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
+																var number_copy = declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
 															} else if (gfname[0].match(/(выпуск)/gi)) {
-																var number_copy = formValues + " " + declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
+																var number_copy = declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
 															} else if (gfname[0].match(/серии|сезон/gi)) {
-																var number_copy = formValues + " " + declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
+																var number_copy = declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
 															} else if (gfname[0].match(/этапы/gi)) {
-																var number_copy = formValues + " " + declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
+																var number_copy = declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
 															}
-															var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
+															var hash = (s.toString().match(mgt_reg))[0];
 															var copy_text = "";
 															var i = 0;
 															while (i < formValues) {
@@ -746,7 +846,7 @@ ${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_
 																} else if (gfname[0].match(/этапы/gi)) {
 																	var copyname = fname + " / " + set_i + " ЭТАП";
 																}
-																copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
+																copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
 																i++;
 															}
 															copy(copy_text);
@@ -805,7 +905,7 @@ ${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_
 																html: signup
 															});
 														} else {
-															var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
+															var hash = (s.toString().match(mgt_reg))[0];
 															var set_i = formValues - 1;
 															if (gfname[0].match(/(логия)/gi)) {
 																var number_copy = formValues + "-й ФИЛЬМ СКОПИРОВАН !";
@@ -825,7 +925,7 @@ ${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_
 															} else if (gfname[0].match(/этапы/gi)) {
 																var copyname = fname + " / " + formValues + " ЭТАП";
 															}
-															copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
+															copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
 															Toast.fire({
 																icon: 'success',
 																title: number_copy
@@ -848,8 +948,8 @@ ${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_
 											icon: 'success',
 											title: 'Раздача ( ' + getfname + ' ) скопирована!'
 										});
-										var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-										copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result + "&playlist_output_format_vod=hls&_idx=0&.mp4");
+										var hash = (s.toString().match(mgt_reg))[0];
+										copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=0&.mp4");
 									}
 								}
 							});
@@ -1006,9 +1106,8 @@ ${(ssh_scr && get_ajax_scr !== null ? '<b>Скриншоты:</b><br>'+get_ajax_
 				var id = (get_url.match(reg_id)[0]).substr(3);
 				var domain = get_url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:[^.]+\.)?([^:\/\n\?\=]+)/im)[0];
 				var mgt_reg = new RegExp('[a-zA-Z0-9]{40}', 'i');
-				var gfname = $('H1 a').text().split(" / ");
+				var gfname = $('.mn_wrap div h1 a').text().split(" / ");
 				var getfname = gfname[0].toUpperCase();
-				var film_full_name = $('.mn_wrap > div > h1 > a').text();
 				var SwalConfirmText = "СКАЧАТЬ";
 				var SwalCancelText = "ОТМЕНА";
 				var signup = "Чтобы скачать, нужно зайти на сайт!";
@@ -1147,15 +1246,15 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 													});
 												} else {
 													if (gfname[0].match(/(логия)/gi)) {
-														var number_copy = formValues + " " + declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
+														var number_copy = declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
 													} else if (gfname[0].match(/(выпуск)/gi)) {
-														var number_copy = formValues + " " + declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
+														var number_copy = declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
 													} else if (gfname[0].match(/серии|сезон/gi)) {
-														var number_copy = formValues + " " + declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
+														var number_copy = declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
 													} else if (gfname[0].match(/этапы/gi)) {
-														var number_copy = formValues + " " + declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
+														var number_copy = declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
 													}
-													var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
+													var hash = (s.toString().match(mgt_reg))[0];
 													var copy_text = "";
 													var i = 0;
 													while (i < formValues) {
@@ -1169,7 +1268,7 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 														} else if (gfname[0].match(/этапы/gi)) {
 															var copyname = fname + " / " + set_i + " ЭТАП";
 														}
-														copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
+														copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
 														i++;
 													}
 													copy(copy_text);
@@ -1228,7 +1327,7 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 														html: signup
 													});
 												} else {
-													var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
+													var hash = (s.toString().match(mgt_reg))[0];
 													var set_i = formValues - 1;
 													if (gfname[0].match(/(логия)/gi)) {
 														var number_copy = formValues + "-й ФИЛЬМ СКОПИРОВАН !";
@@ -1248,7 +1347,7 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 													} else if (gfname[0].match(/этапы/gi)) {
 														var copyname = fname + " / " + formValues + " ЭТАП";
 													}
-													copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
+													copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
 													Toast.fire({
 														icon: 'success',
 														title: number_copy
@@ -1269,8 +1368,8 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 										icon: 'success',
 										title: 'Раздача ( ' + getfname + ' ) скопирована!'
 									});
-									var hash_result = new RegExp('Инфо хеш: (.\{40\})').exec(s)[1];
-									copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result + "&playlist_output_format_vod=hls&_idx=0&.mp4");
+									var hash = (s.toString().match(mgt_reg))[0];
+									copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=0&.mp4");
 								}
 							}
 						});
@@ -1284,48 +1383,38 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 							} else {
 								if (obj.settings.ConfirmDownloadMagnetD) {
 									Swal.fire({
-										title: "Скачать через Magnet?",
-										html: "Раздача:<br><b>" + getfname + "</b><br><br>Ваш рейтинг не упадёт, можете скачивать бесконечно!",
-										icon: 'question',
+										title: getfname,
 										showCancelButton: true,
+										showDenyButton: true,
+										denyButtonColor: '#237ec8',
 										confirmButtonColor: '#4fc823',
 										cancelButtonColor: '#d33',
+										denyButtonText: "КОПИРОВАТЬ",
 										confirmButtonText: SwalConfirmText,
-										cancelButtonText: SwalCancelText
+										cancelButtonText: SwalCancelText,
+										footer: `<center><b style="color:#000099;">Скачивание через MAGNET</b><br><b style="color:#009900;">Ваш рейтинг не упадёт, можете скачивать бесконечно!</b></center>`
 									}).then(function(result) {
-										if (result.value) {
-											$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-												if (s.toString().indexOf("signup.php") != -1) {
-													Toast.fire({
-														icon: 'warning',
-														html: signup
-													});
-												} else {
-													var hash = (s.toString().match(mgt_reg))[0];
-													window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986);
-													Toast.fire({
-														icon: 'success',
-														title: getfname + ' скачивается через Magnet!'
-													});
-												}
-											});
-										}
-									});
-								} else {
-									$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s) {
-										if (s.toString().indexOf("signup.php") != -1) {
-											Toast.fire({
-												icon: 'warning',
-												html: signup
-											});
-										} else {
-											var hash = (s.toString().match(mgt_reg))[0];
-											window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(film_full_name)).substring(0, 1986);
+										var hash = (s.toString().match(mgt_reg))[0];
+										if (result.isConfirmed) {
+											window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(getfname)).substring(0, 1986);
 											Toast.fire({
 												icon: 'success',
 												title: getfname + ' скачивается через Magnet!'
 											});
+										} else if (result.isDenied) {
+											copy("magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(getfname)).substring(0, 1986));
+											Toast.fire({
+												icon: 'success',
+												title: 'Magnet ссылка скопирована!'
+											});
 										}
+									});
+								} else {
+									var hash = (s.toString().match(mgt_reg))[0];
+									window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(getfname)).substring(0, 1986);
+									Toast.fire({
+										icon: 'success',
+										title: getfname + ' скачивается через Magnet!'
 									});
 								}
 							}
@@ -1465,13 +1554,10 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 			}
 			this.RutorScript = function() {
 				var obj = this;
-				var get_file_count = $("table#details").children("tbody").children("tr:nth-child(12)").children("td.header").children("span").children("u").text().match(/\d+/);
-				var get_cat = $("table#details > tbody > tr > td:nth-child(2) > a").text();
-				//alert(get_cat);
-				var hash_result = document.getElementById('download').getElementsByTagName('a')[0].getAttribute("href").match(/magnet:\?xt=urn:btih:([a-z\d]{40})&/im)[1];
+				var hash = document.getElementById('download').getElementsByTagName('a')[0].getAttribute("href").match(/magnet:\?xt=urn:btih:([a-z\d]{40})&/im)[1];
 				var set_buttons = document.querySelector("#download");
 				var fname = $('div#all > H1').text();
-				set_buttons.innerHTML += `<table id="copy_form">
+				set_buttons.innerHTML += `<br><table id="copy_form">
 				<tbody>
 	<tr>
 		<td class="nw">
@@ -1548,15 +1634,15 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 								});
 								if (formValues) {
 									if (get_cat.match(/(логия)/gi)) {
-										var number_copy = formValues + " " + declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
+										var number_copy = declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
 									} else if (get_cat.match(/(выпуск)/gi)) {
-										var number_copy = formValues + " " + declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
+										var number_copy = declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
 									} else if (get_cat.match(/серии|сезон/gi)) {
-										var number_copy = formValues + " " + declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
+										var number_copy = declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
 									} else if (get_cat.match(/этапы/gi)) {
-										var number_copy = formValues + " " + declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
+										var number_copy = declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
 									} else {
-										var number_copy = formValues + " " + declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
+										var number_copy = declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
 									}
 									var copy_text = "";
 									var i = 0;
@@ -1573,7 +1659,7 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 										} else {
 											var copyname = fname + " / " + set_i + " ВЫПУСК";
 										}
-										copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
+										copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
 										i++;
 									}
 									copy(copy_text);
@@ -1637,7 +1723,7 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 									} else {
 										var copyname = fname + " / " + formValues + " ВЫПУСК";
 									}
-									copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
+									copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
 									Toast.fire({
 										icon: 'success',
 										title: number_copy
@@ -1652,10 +1738,10 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 								icon: 'success',
 								title: 'Раздача ( ' + fname + ' ) скопирована!'
 							});
-							copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash_result + "&playlist_output_format_vod=hls&_idx=0&.mp4");
+							copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=0&.mp4");
 						}
 					} else if (target.id === 'MagnetButton') {
-						window.location.href = "magnet:?xt=urn:btih:" + hash_result + ('&dn=' + encodeURIComponent(fname)).substring(0, 1986);
+						window.location.href = "magnet:?xt=urn:btih:" + hash.toUpperCase() + ('&dn=' + encodeURIComponent(fname)).substring(0, 1986);
 						Toast.fire({
 							icon: 'success',
 							title: 'Раздача ( ' + fname + ' ) скачивается через Magnet!'
