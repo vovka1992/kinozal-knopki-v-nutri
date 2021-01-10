@@ -2,7 +2,7 @@
 // @name Kinozal+Rutor | Кнопки скачивания (Torrent/Magnet/Acestream)
 // @description Torrent - Всего лишь заменяет старую кнопку на новую / Magnet - Скачать без учёта рейтинга/скачивания / AceStream - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона ) / Настройки - Настраивайте под себя, какие кнопки показывать, а какие убрать, выделение раздачи ( 4K 2160p 1080p ). 
 // @namespace none
-// @version 1.0.13
+// @version 1.0.14
 // @author https://greasyfork.org/ru/users/173690
 // @author https://greasyfork.org/scripts/40843
 // @icon data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAAAD1BMVEU7R4CAAAD4+/z9787///8A0Su5AAAASUlEQVR4AXWPAQrEMBACzen/33wdkGILFZQdSFxWkZKoyWBsd5JXvFgMfC6ZLBs0pq8Mtq8f0Bcbw9N3HvuI8i14sAt/e8/73j/4FwHuDyR5AQAAAABJRU5ErkJggg==
@@ -1482,6 +1482,10 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 		(new KinozalDetailSettingsScript()).init();
 	}
 	if (reg_rutor.test(get_url)) {
+		let script = document.createElement('script');
+		script.src = "http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js";
+		document.body.appendChild(script);
+ 
 		function RutorScriptSettingsScript() {
 			this.settings = {};
 			this.loadSettings = function() {
@@ -1554,48 +1558,67 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 			}
 			this.RutorScript = function() {
 				var obj = this;
-				var hash = document.getElementById('download').getElementsByTagName('a')[0].getAttribute("href").match(/magnet:\?xt=urn:btih:([a-z\d]{40})&/im)[1];
+				var hash = document.getElementById('download').getElementsByTagName('a')[0].getAttribute("href").match(/magnet:\?xt=urn:btih:([a-z\d]{40})&/)[1];
+				var get_id = document.getElementById('download').getElementsByTagName('a')[1].getAttribute("href").match(/http:\/\/d.rutor.info\/download\/(.*)/)[1];
 				var set_buttons = document.querySelector("#download");
-				var fname = $('div#all > H1').text();
-				set_buttons.innerHTML += `<br><table id="copy_form">
-				<tbody>
-	<tr>
-		<td class="nw">
-		${obj.settings.ShowMagnetButtonR ? ' <button id="MagnetButton" type="button" class="btndm">MAGNET</button>' : ''}
-		${obj.settings.ShowAcestreamButtonR ? ' <button id="AceStreamButton" type="button" class="btnace">ACESTREAM</button>' : ''}
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2"><b style="color:#cc0000">Скрипт предназначен для копирования ссылок LIBTORRENT и ACESTREAM.<br>Скопированные ссылки вкидывайте в свой <font style="color:#00cc00">m3u8</font> плейлист</b></td>
-	</tr>
-</tbody>
+				var fname = $('div#all > H1').text().split(" / ")[0];
+				var get_cat = $('table#details').text().match(/Категория(.*)/)[1];
+				var get_files_count = $('table#details').text().match(/Файлы \((.*)\)/)[1];
+				var get_years = $('table#details').text().match(/Год .*: ([0-9]{4})/)[1];
+				set_buttons.innerHTML += `<br>
+<table id="copy_form">
+	<tbody>
+		<tr>
+			<td class="nw">${obj.settings.ShowMagnetButtonR ? ' <button id="MagnetButton" type="button" class="btndm">MAGNET</button>' : ''} ${obj.settings.ShowAcestreamButtonR ? ' <button id="AceStreamButton" type="button" class="btnace">ACESTREAM</button>' : ''}</td>
+		</tr>
+		<tr>
+			<td colspan="2"><b style="color:#cc0000">Скрипт предназначен для копирования ссылок LIBTORRENT и ACESTREAM.<br>Скопированные ссылки вкидывайте в свой <font style="color:#00cc00">m3u8</font> плейлист</b></td>
+		</tr>
+	</tbody>
 </table>`;
 				document.getElementById('copy_form').addEventListener('click', async function(evt) {
 					var target = evt.target;
-					if (target.id === 'AceStreamButtonR') {
-						if (get_cat.match(/Зарубежные фильмы|Наши фильмы|Научно-популярные фильмы|Зарубежные сериалы|Наши сериалы|Телевизор|Аниме/gi) && get_file_count > 1) {
-							if (get_cat.match(/(логия)/gi)) {
+					if (target.id === 'AceStreamButton') {
+						if (get_files_count > 1) {
+							if (get_cat.match(/Зарубежные фильмы|Наши фильмы|Научно-популярные фильмы/)) {
 								var selbtn1 = "НЕСКОЛЬКО ФИЛЬМОВ";
 								var selbtn2 = "ОДИН ФИЛЬМ";
-							} else if (get_cat.match(/(выпуск)/gi)) {
-								var selbtn1 = "НЕСКОЛЬКО ВЫПУСКОВ";
-								var selbtn2 = "ОДИН ВЫПУСК";
-							} else if (get_cat.match(/серии|сезон/gi)) {
+							} else if (get_cat.match(/Телевизор/)) {
+								var selbtn1 = "НЕСКОЛЬКО ПЕРЕДАЧ";
+								var selbtn2 = "ОДНА ПЕРЕДАЧА";
+							} else if (get_cat.match(/Зарубежные сериалы|Наши сериалы|Аниме/)) {
 								var selbtn1 = "НЕСКОЛЬКО СЕРИЙ";
 								var selbtn2 = "ОДНА СЕРИЯ";
-							} else if (get_cat.match(/этапы/gi)) {
-								var selbtn1 = "НЕСКОЛЬКО ЭТАПОВ";
-								var selbtn2 = "ОДИН ЭТАП";
 							} else {
 								var selbtn1 = "НЕСКОЛЬКО ВЫПУСКОВ";
 								var selbtn2 = "ОДИН ВЫПУСК";
 							}
+                            var get_file_list = "";
+                            $.ajax({
+												url: '/descriptions/'+get_id+'.files',
+												async: false
+											}).done(function(get) {
+												get_file_list = get;
+												return get_file_list;
+											});
 							Swal.fire({
+								width: "1000px",
 								title: fname,
 								html: `Копировать для просмотра через AceStream<br>
 <button type="button" id="1" class="btnconfirm swal2-styled">${selbtn1}</button>
 <button type="button" id="2" class="btnconfirm swal2-styled">${selbtn2}</button><br>
-<button type="button" id="cancel" class="btncnc swal2-styled">ОТМЕНА</button>`,
+<button type="button" id="cancel" class="btncnc swal2-styled">ОТМЕНА</button><br>
+<div id="displayfiles" style="max-height:450px;overflow:auto;">
+	<table id="files">
+		<tbody>
+			<tr>
+				<td>Название</td>
+				<td>Размер</td>
+			</tr>
+		</tbody>
+		<tbody id="filelist">${get_file_list}</tbody>
+	</table>
+</div>`,
 								showCancelButton: false,
 								showConfirmButton: false
 							});
@@ -1633,33 +1656,24 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 									confirmButtonText: 'Копировать'
 								});
 								if (formValues) {
-									if (get_cat.match(/(логия)/gi)) {
-										var number_copy = declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
-									} else if (get_cat.match(/(выпуск)/gi)) {
-										var number_copy = declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
-									} else if (get_cat.match(/серии|сезон/gi)) {
-										var number_copy = declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
-									} else if (get_cat.match(/этапы/gi)) {
-										var number_copy = declOfNum(formValues, ['ЭТАП', 'ЭТАПА', 'ЭТАПОВ']);
-									} else {
-										var number_copy = declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
-									}
 									var copy_text = "";
 									var i = 0;
 									while (i < formValues) {
 										var set_i = 1 + i;
-										if (get_cat.match(/(логия)/gi)) {
-											var copyname = fname + " / " + set_i + "-й ФИЛЬМ";
-										} else if (get_cat.match(/(выпуск)/gi)) {
-											var copyname = fname + " / " + set_i + " ВЫПУСК";
-										} else if (get_cat.match(/серии|сезон/gi)) {
-											var copyname = fname + " / " + set_i + " СЕРИЯ";
-										} else if (get_cat.match(/этапы/gi)) {
-											var copyname = fname + " / " + set_i + " ЭТАП";
+										if (get_cat.match(/Зарубежные фильмы|Наши фильмы|Научно-популярные фильмы/)) {
+											var copyname = fname + " / " + get_years + " / " + set_i + "-й ФИЛЬМ";
+											var number_copy = declOfNum(formValues, ['ФИЛЬМ', 'ФИЛЬМА', 'ФИЛЬМОВ']);
+										} else if (get_cat.match(/Зарубежные сериалы|Наши сериалы|Аниме/)) {
+											var copyname = fname + " / " + get_years + " / " + set_i + " СЕРИЯ";
+											var number_copy = declOfNum(formValues, ['СЕРИЯ', 'СЕРИЙ', 'СЕРИЙ']);
+										} else if (get_cat.match(/Телевизор/)) {
+											var copyname = fname + " / " + get_years + " / " + set_i + " ПЕРЕДАЧА";
+											var number_copy = declOfNum(formValues, ['ПЕРЕДАЧА', 'ПЕРЕДАЧИ', 'ПЕРЕДАЧ']);
 										} else {
-											var copyname = fname + " / " + set_i + " ВЫПУСК";
+											var copyname = fname + " / " + get_years + " / " + set_i + " ВЫПУСК";
+											var number_copy = declOfNum(formValues, ['ВЫПУСК', 'ВЫПУСКА', 'ВЫПУСКОВ']);
 										}
-										copy_text += ("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
+										copy_text += ("\r\n#EXTINF:-1," + copyname.toUpperCase() + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + i + "&.mp4");
 										i++;
 									}
 									copy(copy_text);
@@ -1701,29 +1715,20 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 								});
 								if (formValues) {
 									var set_i = formValues - 1;
-									if (get_cat.match(/(логия)/gi)) {
+									if (get_cat.match(/Зарубежные фильмы|Наши фильмы|Научно-популярные фильмы/)) {
+										var copyname = fname + " / " + get_years + " / " + formValues + "-й ФИЛЬМ";
 										var number_copy = formValues + "-й ФИЛЬМ СКОПИРОВАН !";
-									} else if (get_cat.match(/(выпуск)/gi)) {
-										var number_copy = formValues + " ВЫПУСК СКОПИРОВАН !";
-									} else if (get_cat.match(/серии|сезон/gi)) {
+									} else if (get_cat.match(/Зарубежные сериалы|Наши сериалы|Аниме/)) {
+										var copyname = fname + " / " + get_years + " / " + formValues + " СЕРИЯ";
 										var number_copy = formValues + " СЕРИЯ СКОПИРОВАНА !";
-									} else if (get_cat.match(/этапы/gi)) {
-										var number_copy = formValues + " ЭТАП СКОПИРОВАН !";
+									} else if (get_cat.match(/Телевизор/)) {
+										var copyname = fname + " / " + get_years + " / " + formValues + " ПЕРЕДАЧА";
+										var number_copy = formValues + " ПЕРЕДАЧА СКОПИРОВАНА !";
 									} else {
+										var copyname = fname + " / " + get_years + " / " + formValues + " ВЫПУСК";
 										var number_copy = formValues + " ВЫПУСК СКОПИРОВАН !";
 									}
-									if (get_cat.match(/(логия)/gi)) {
-										var copyname = fname + " / " + formValues + "-й ФИЛЬМ";
-									} else if (get_cat.match(/(выпуск)/gi)) {
-										var copyname = fname + " / " + formValues + " ВЫПУСК";
-									} else if (get_cat.match(/серии|сезон/gi)) {
-										var copyname = fname + " / " + formValues + " СЕРИЯ";
-									} else if (get_cat.match(/этапы/gi)) {
-										var copyname = fname + " / " + formValues + " ЭТАП";
-									} else {
-										var copyname = fname + " / " + formValues + " ВЫПУСК";
-									}
-									copy("\r\n#EXTINF:-1," + copyname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
+									copy("\r\n#EXTINF:-1," + copyname.toUpperCase() + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=" + set_i + "&.mp4");
 									Toast.fire({
 										icon: 'success',
 										title: number_copy
@@ -1734,11 +1739,16 @@ ${obj.settings.ShowHelpButtonD ? ' <tr><td style="height: 4px;text-align:right;"
 								Swal.close();
 							});
 						} else {
-							Toast.fire({
+							Swal.fire({
+								title: 'Раздача ( ' + fname + ' ) скопирована!',
+								html: 'Осталось только вставить ( CTRL + V ) в свой Плейлист m3u!',
 								icon: 'success',
-								title: 'Раздача ( ' + fname + ' ) скопирована!'
-							});
-							copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=0&.mp4");
+								showCloseButton: false,
+								showCancelButton: false,
+								showConfirmButton: false,
+								timer: 2500
+							})
+							copy("\r\n#EXTINF:-1," + fname.toUpperCase() + " / " + get_years + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=0&.mp4");
 						}
 					} else if (target.id === 'MagnetButton') {
 						window.location.href = "magnet:?xt=urn:btih:" + hash.toUpperCase() + ('&dn=' + encodeURIComponent(fname)).substring(0, 1986);
