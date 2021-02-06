@@ -3,6 +3,7 @@
 # Кнопки скачивания в поисковой системе и в раздачи персоны
 
 <img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-rutor-magnet-knopki/main/new_settings_kinozal_search.jpg" style="max-width:100%;">
+<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-rutor-magnet-knopki/main/kinopoisk_kinozal_button.jpg" style="max-width:100%;">
 
 # #2 - Kinozal.( me | tv | guru | website ), Kino-zal.site 
 # Кнопки скачивания внутри раздачи
