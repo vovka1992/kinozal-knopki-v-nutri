@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name Kinozal+Rutor | Кнопки скачивания (Torrent/Magnet/Acestream)
-// @description Torrent - Всего лишь заменяет старую кнопку на новую / Magnet - Скачать без учёта рейтинга/скачивания / AceStream - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона ) / Настройки - Настраивайте под себя, какие кнопки показывать, а какие убрать, выделение раздачи ( 4K 2160p 1080p ). 
+// @description Torrent - Всего лишь заменяет старую кнопку на новую / Magnet - Скачать без учёта рейтинга/скачивания / AceStream - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона ) / Настройки - Настраивайте под себя, какие кнопки показывать, а какие убрать, выделение раздачи ( 4K 2160p 1080p ).
 // @namespace none
-// @version 1.1.0
+// @version 1.1.6
 // @author https://greasyfork.org/ru/users/173690
 // @author https://greasyfork.org/scripts/39242
 // @icon data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAAAD1BMVEU7R4CAAAD4+/z9787///8A0Su5AAAASUlEQVR4AXWPAQrEMBACzen/33wdkGILFZQdSFxWkZKoyWBsd5JXvFgMfC6ZLBs0pq8Mtq8f0Bcbw9N3HvuI8i14sAt/e8/73j/4FwHuDyR5AQAAAABJRU5ErkJggg==
-// @include /(https?:\/\/)?(www\.)?kinozal\.(me|tv|guru|website)\/*/
-// @include /(https?:\/\/)?(www\.)?kino-zal\.site\/*/
+// @include /(https?:\/\/)?(www\.)?kinozal(\.me|\.tv|\.guru|\.website|tv\.life)\/*/
 // @include /(https?:\/\/)?(www\.)?rutor\.(info|is)\/*/
+// @include /(https?:\/\/)?(www\.)?kinopoisk\.ru\/*/
 // @require https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js
 // @grant GM_getValue
@@ -20,6 +20,7 @@
 (function()
 {
 	'use strict';
+	var script_version = " v1.1.6";
 	GM_addStyle(`
 @import "https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css";
 @import "https://cdn.jsdelivr.net/npm/microtip@0.2.2/microtip.css";
@@ -28,7 +29,7 @@
 .fa{font-family: FontAwesome;}
 
 .checkboxToggle input[type=checkbox]{height: 0;width: 0;display: none;}
-.checkboxToggleSwitch {cursor: pointer;width: 122px;height: 32px;margin: 10px;background: rgb(255 132 132);display: block;border-radius: 7px;position: relative;border: 1px solid rgb(132 0 0);box-shadow: 1px 1px 2px rgb(84 0 0 / 50%);}
+.checkboxToggleSwitch {cursor: pointer;width: 122px;height: 32px;background: rgb(255 132 132);display: block;border-radius: 7px;margin: 5px 0px;position: relative;border: 1px solid rgb(132 0 0);box-shadow: 1px 1px 2px rgb(84 0 0 / 50%);}
 .checkboxToggleSwitch:after {content: '';position: absolute;top: 1px;left: 1px;width: 28px;height: 28px;margin: 0px 0px;background: #fff;border-radius: 5px;transition: all 0.2s;border: 1px solid rgb(0 0 0 / 50%);}
 .checkboxToggle input:checked + .checkboxToggleSwitch {background: rgb(151 255 154);border: 1px solid rgb(0 130 4);box-shadow: 1px 1px 2px rgb(0 78 2 / 50%);}
 .checkboxToggle input[type="checkbox"]:checked + .checkboxToggleSwitch:after {left: calc(100% - 1px);transform: translateX(-100%);}
@@ -50,11 +51,10 @@
 .fnm-no-ads{color: rgb(0 153 0);text-shadow: 1px 1px 1px rgb(0 78 0);}
 .fnm-with-ads{color: rgb(255 0 0);text-shadow: 1px 1px 1px rgb(78 0 0);}
 
-.swal-settings-label {font-size: 16px;display: block;padding: 8px 10px;}
-.swal-settings-select {width: 100%;transition: border-color .3s,box-shadow .3s;border: 1px solid #767676;padding: 6px 6px;font-size: 16px;margin: 10px;}
+.swal-settings-label {font-size: 16px;display: block;padding: 12px 10px;}
 .swal-settings-select:focus, .swal-settings-color:focus, .swal-settings-input:focus, .swal-settings-textarea:focus {border: 1px solid rgb(100 160 224);outline: 0;box-shadow: 0 0 0 3px rgb(85 142 202 / 50%);}
-.swal-settings-input, .swal-settings-textarea {transition: border-color .3s,box-shadow .3s;border: 1px solid #767676;font-size: 18px;padding: 8px 8px;margin: 10px;border-radius: 5px;}
-.swal-settings-color {transition: border-color .3s,box-shadow .3s;padding: 0px 1px;margin: 10px;border-radius: 5px;width: 115px;height: 34px;}
+.swal-settings-select, .swal-settings-input, .swal-settings-textarea {transition: border-color .3s,box-shadow .3s;border: 1px solid #767676;font-size: 18px;padding: 8px 8px;margin: 5px 5px 4px 0px;border-radius: 5px;}
+.swal-settings-color {transition: border-color .3s,box-shadow .3s;padding: 0px 1px;margin: 4px 0px;border-radius: 5px;width: 115px;height: 34px;}
 
 .swal-settings-buttons{text-align: center;}
 .swal-settings-title {padding: 20px 0px 5px 0px;font-size: 18px;font-weight: bold;text-align: center;}
@@ -95,6 +95,8 @@
 .post-block.spoil.open>.block-title:empty:before{content: url('data:image/gif;base64,R0lGODlhCQAJAMQeAOLt+ff8//z+/4CRxo2by7vF6a254X6PxICQw87a74CQxuXo84CQxM/b7/H6/v7+/oGRxouayoGSxv7+/8LN7IqZyv7//4KSxur0/MrV74OTx9Ld8trl9gwMDP///wAAACH5BAEAAB4ALAAAAAAJAAkAAAU4oFcpwzFAkWgUVLZxCQGxLgdgGtS+t6NJmY5QOEFcNo/kZGLRXGwYR0DQjDSiU8uCIJJIGJdLKgQAOw==') " ( ИНФО";}
 .post-block.spoil.close>.block-title:empty:before{content: url('data:image/gif;base64,R0lGODlhCQAJAMQfAIqZyoGSxv3+/trl84CQxYCRxn6PxMXQ7efq9H+Pwtnk8oKTxoCQxKy44QAAANvl9rvG6fD5/o2by4GRxvb8//v9//7+/ubw+v39/ouayoKSxoOTx/7+/wwMDP///////yH5BAEAAB8ALAAAAAAJAAkAAAU84AdoGkNmX4Z4HldRirSxXMdF1zK7nXU9mk2t4+h0BIlNhWPpYTCBDQXXwRwggczgJ8BAGhLRZGIoEFAhADs=') " (";}
 .post-block.spoil>.block-title:empty:after{content: '';}
+
+#tooltip {background: #eeeeee;font-size: 23px;width: auto;border: 0px solid #778899;border-left: 0px;color: black;font-family: "Open Sans";text-transform: uppercase;font-weight: bold;opacity: 0.9;line-height: 30px;z-index: 1100;margin: 0px;padding: 4px;position: absolute;visibility: hidden; border-collapse: separate;}
 `);
 
 	function MonkeyConfig()
@@ -183,13 +185,13 @@
 				switch (data.buttons[button])
 				{
 					case 'cancel':
-						html += '<button type="button" class="btn_big btn_cred MT10" id="ScriptSettingsButton_cancel"  aria-label="Отменить сохранение настроек" data-microtip-position="top" role="tooltip">Отмена</button>';
+						html += '<button type="button" class="btn_big btn_cred MT10" id="ScriptSettingsButton_cancel">Отмена</button>';
 						break;
 					case 'defaults':
-						html += '<button type="button" class="btn_big btn_cblue MT10" id="ScriptSettingsButton_defaults"  aria-label="Восстановить стандартные настройки" data-microtip-position="top" role="tooltip">Ст. Наст.</button>';
+						html += '<button type="button" class="btn_big btn_cblue MT10" id="ScriptSettingsButton_defaults">Ст. Наст.</button>';
 						break;
 					case 'save':
-						html += '<button type="button" class="btn_big btn_cblue MT10" id="ScriptSettingsButton_save"  aria-label="Сохранить настройки и перезагрузить страницу" data-microtip-position="top" role="tooltip">Сохранить</button>';
+						html += '<button type="button" class="btn_big btn_cblue MT10" id="ScriptSettingsButton_save">Сохранить</button>';
 						break;
 				}
 			}
@@ -323,7 +325,11 @@
 						width: data.width,
 						html: render(),
 						showCancelButton: false,
-						showConfirmButton: false
+						showConfirmButton: false,
+						didOpen: () =>
+						{
+							Swal.getContent().querySelector('button#ScriptSettingsButton_save').focus();
+						}
 					});
 					container = document.querySelector('.ScriptSettingsContainer');
 					openDone();
@@ -518,10 +524,234 @@
 			toast.addEventListener('mouseleave', Swal.resumeTimer)
 		}
 	});
+	function fixedEncodeURIComponent(str) {
+		return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+			return '%' + c.charCodeAt(0).toString(16);
+		});
+	}
 	var get_url = location.href;
-	var reg_kinozal_search = new RegExp('(kinozal.(me|tv|guru|website)|kino-zal.site)\/(browse|persons|groupexreleaselist|groupex|groupextorrentlist).php', 'i');
-	var reg_kinozal_detailed = new RegExp('(kinozal.(me|tv|guru|website)|kino-zal.site)\/(details|comment).php', 'i');
-	var reg_rutor_list = new RegExp('rutor.(info|is)/*', 'i');
+	var reg_kinozal_search = new RegExp('kinozal(\.me|\.tv|\.guru|\.website|tv\.life)\/(browse|persons|groupexreleaselist|groupex|groupextorrentlist).php', 'i');
+	var reg_kinozal_detailed = new RegExp('kinozal(\.me|\.tv|\.guru|\.website|tv\.life)\/(details|comment).php', 'i');
+	var reg_rutor_list = new RegExp('rutor\.(info|is)/*', 'i');
+	var KinozalCFG = new MonkeyConfig(
+	{
+		width: "700px",
+		scriptname: "kinozal",
+		title: "Настройка скрипта в Кинозале"+script_version,
+		menuCommand: false,
+		params:
+		{
+			ShowConfirmDownload:
+			{
+				title: "Настройки<br><small style=\"font-size:11px;\">( Внутри раздачи )</small>",
+				label: "Подтверждение действия<br><small style=\"font-size:11px;\">( ТОРРЕНТ и MAGNET )</small>",
+				type: 'checkbox',
+				default: true
+			},
+			ShowHelpButton:
+			{
+				label: "Кнопка \"Помощь\"",
+				type: 'checkbox',
+				default: true
+			},
+			DetailedInfoButtons:
+			{
+				label: "Сделать простыми кнопки скачивания?",
+				type: 'checkbox',
+				default: false
+			},
+			TurnOnButtons:
+			{
+				label: "Включить кнопки (SHIFT + 1 и т.д.)?:",
+				type: 'checkbox',
+				default: false
+			},
+			ShowTorrentButton:
+			{
+				title: "Главные кнопки<br><small style=\"font-size:11px;\">( Поиск / Раздачи персоны / Внутри раздачи )</small>",
+				label: "Скачать <b>ТОРРЕНТ</b> файл",
+				type: 'checkbox',
+				default: true
+			},
+			ShowMagnetButton:
+			{
+				label: "Скачать через <b>MAGNET</b>",
+				type: 'checkbox',
+				default: true
+			},
+			ShowAcestreamButton:
+			{
+				label: "Смотреть через <b>ACESTREAM</b>",
+				type: 'checkbox',
+				default: false
+			},
+			KinopoiskLinkSearch:
+			{
+				title: "Настройка КиноПоиск<br><small style=\"font-size:11px;\">( Поиск / Раздачи персоны )</small>",
+				label: "Кнопка в кинопоиске<br><small style=\"font-size:11px;\">Выберите каким кинозалом вы пользуетесь, что бы при нажатии на кнопку, открывался ваш кинозал</small>",
+				type: 'select',
+				choices: {
+					kinozal1: 'kinozal.tv',
+					kinozal2: 'kinozal.me',
+					kinozal3: 'kinozal.guru',
+					kinozal4: 'kinozaltv.life',
+				},
+				default: 'kinozal1'
+			},
+			ChangeButtonToLink:
+			{
+				title: "Настройка ссылок<br><small style=\"font-size:11px;\">( Поиск / Раздачи персоны )</small>",
+				label: "Выберите вариант:<br><small style=\"font-size:11px;\"><b>ВКЛ</b> Создаст отдельную кнопку для открытия окно с информацией<br><b>ВЫКЛ</b> При нажатии главной ссылки, откроется окошко с информацией</small>",
+				type: 'checkbox',
+				default: true
+			},
+			ChangeButtonIcon:
+			{
+				label: "Иконка отдельной кнопки<br><small style=\"font-size:11px;\">Работать будет только если <b>ВКЛ</b><br>( Больше иконок на этом сайте <a href=\"https://fontawesome.com/v4.7.0/icons/\" target=\"_blank\"><b>fontawesome.com</b></a> )</small>",
+				type: 'text',
+				default: "fa fa-info"
+			},
+			ShowFileInfo:
+			{
+				label: "Подробная информация о раздаче<br><small style=\"font-size:11px;\">Покажет подробную информацию о раздаче ( Есть ли реклама в раздаче, Скриншоты и т.д. )</small>",
+				type: 'checkbox',
+				default: true
+			},
+			ChangePersonLinks:
+			{
+				label: "При нажатии на имя персонажа:<br><small style=\"font-size:11px;\">( В окошке с информацией )</small><br><small style=\"font-size:11px;\"><b>ВКЛ</b> Искать в поиске<br><b>ВЫКЛ</b> Оставить без изминений</small>",
+				type: 'checkbox',
+				default: false
+			},
+			ShowButtonsHints:
+			{
+				label: "Подсказки возле кнопок скачивания<br><small style=\"font-size:11px;\">Убирает подсказку (Пример: Ваш рейтинг не упадёт...)</small>",
+				type: 'checkbox',
+				default: true
+			},
+			ShowMarkTorrents:
+			{
+				title: "Настройка меток<br><small style=\"font-size:11px;\">( Поиск / Раздачи персоны )</small>",
+				label: "Помечать раздачи",
+				type: 'checkbox',
+				default: true
+			},
+			MarkColor:
+			{
+				label: "Главный Цвет",
+				type: 'color',
+				default: "#ff6666"
+			},
+			MarkBolder:
+			{
+				label: "Обводка текста<br><small style=\"font-size:11px;\">Делает чуть жирнее текст</small>",
+				type: 'checkbox',
+				default: false
+			},
+			MarkBoldColor:
+			{
+				label: "Цвет обводки",
+				type: 'color',
+				default: "#750000"
+			},
+			MarkTextValue:
+			{
+				label: "Текст метки <b>через пробел</b>",
+				type: 'text',
+				default: "4K 2160P 1080P BDRIP"
+			},
+			SwalDetailedInfoWidth:
+			{
+				title: "Настройка главного окна информации",
+				label: "Ширина окна (<b>%</b> или <b>px</b>)<br><small style=\"font-size:11px;\">Пример <b>1000px</b> или <b>100%</b></small>",
+				type: 'text',
+				default: "1100px"
+			},
+		},
+		onSave: function(values)
+		{
+			location.reload();
+		}
+	});
+	var RutorCFG = new MonkeyConfig(
+	{
+		width: "500px",
+		scriptname: "rutor",
+		title: "Настройка скрипта ( Кнопки скачивания )"+script_version,
+		menuCommand: false,
+		params:
+		{
+			ShowMagnetButton:
+			{
+				title: "Кнопки скачивания",
+				label: "MAGNET кнопка",
+				type: 'checkbox',
+				default: true
+			},
+			ShowAcestreamButton:
+			{
+				label: "ACESTREAM кнопка",
+				type: 'checkbox',
+				default: true
+			},
+		},
+		onSave: function(values)
+		{
+			location.reload();
+		}
+	});
+	if (/kinopoisk.ru\/film\/\d+\/like/i.test(get_url))
+	{
+		GM_addStyle(`
+.search_kinozal_button
+{
+background: #e4e4e3 url(https://st.kp.yandex.net/images/movies/select.gif?v=20101228-1723) -225px 0;
+user-select: none;
+color: #333;
+font-family: tahoma, verdana;
+font-size: 11px;
+font-weight: bold;
+text-align: center;
+border: 1px #999 solid;
+border-top: none;
+overflow: hidden;
+cursor: pointer;
+display: block;
+position: absolute;
+padding: 5px 9px !important;
+margin-top: -2px;
+}
+`);
+		var get_kinozal_link = KinozalCFG.get('KinopoiskLinkSearch'),set_kinozal_link = "";
+		if(get_kinozal_link == "kinozal1")
+		{
+			set_kinozal_link = "kinozal.tv";
+		} else if(get_kinozal_link == "kinozal2")
+		{
+			set_kinozal_link = "kinozal.me";
+		} else if(get_kinozal_link == "kinozal3")
+		{
+			set_kinozal_link = "kinozal.guru";
+		} else if(get_kinozal_link == "kinozal4")
+		{
+			set_kinozal_link = "kinozaltv.life";
+		}
+
+		var table1 = $('#block_left_pad > ul > li:nth-child(3)');
+		table1.each(function(i, e)
+		{
+			var get_name_first = $(e).find("h1 > a").text();
+			var get_years = $(e).find("div").text().match(/([\d+]{4})/);
+			$(e).append('<br><div class="search_kinozal_button" onclick="window.open(\'//'+set_kinozal_link+'/browse.php?s=' + fixedEncodeURIComponent(get_name_first) + '&g=0&v=0&d=' + (get_years !== null ? get_years[1] : '0') + '&w=0&t=1&f=0\')">Искать в Кинозале</div>');
+		});
+		var table2 = $('table.ten_items tbody');
+		table2.find("tr").each(function(i, e)
+		{
+			var get_name_first = $(e).find("td.news > div > div:nth-child(1) > a").text().replace(/ \(сериал\)/,"");
+			var get_years = $(e).find("td.news > div > div:nth-child(1) > span").text().match(/([\d+]{4})/);
+			$(e).find("td.news > div").append('<div class="search_kinozal_button" onclick="window.open(\'//'+set_kinozal_link+'/browse.php?s=' + fixedEncodeURIComponent(get_name_first) + '&g=0&v=0&d=' + (get_years !== null ? get_years[1] : '0') + '&w=0&t=1&f=0\')">Искать в Кинозале</div>');
+		});
+	}
 	if (reg_kinozal_search.test(get_url))
 	{
 		$("body").on("click", ".block-title", function(event)
@@ -556,129 +786,26 @@
 			var gaccleftdownl_txt = $(get_ajax_acc_info).find(".tables1.u2 tr:nth-child(6) td:nth-child(2)").text();
 			var gaccleftdownl = gaccleftdownl_txt.match(/\d+/g);
 			var gaccleftdownl_calc = gaccleftdownl[0] - gaccleftdownl[1];
-			var KinozalSearchCFG = new MonkeyConfig(
-			{
-				width: "610px",
-				scriptname: "kinozal_search",
-				title: "Настройка скрипта ( Поиск / Раздачи персоны )",
-				menuCommand: false,
-				params:
-				{
-					ChangeButtonToLink:
-					{
-						title: "Настройка ссылок",
-						label: "Выберите вариант:<br><small style=\"font-size:11px;\"><b>ВКЛ</b> Создаст отдельную кнопку для открытия окно с информацией<br><b>ВЫКЛ</b> При нажатии главной ссылки, откроется окошко с информацией</small>",
-						type: 'checkbox',
-						default: true
-					},
-					ChangeButtonIcon:
-					{
-						label: "Иконка кнопки<br><small style=\"font-size:11px;\">Работать будет только если <b>ВКЛ</b><br>( Больше иконок на этом сайте <a href=\"https://fontawesome.com/v4.7.0/icons/\" target=\"_blank\"><b>fontawesome.com</b></a> )</small>",
-						type: 'text',
-						default: "fa fa-info"
-					},
-					ChangePersonLinks:
-					{
-						label: "При нажатии на имя персонажа:<br><small style=\"font-size:11px;\">( В окошке с информацией )</small><br><small style=\"font-size:11px;\"><b>ВКЛ</b> Искать в поиске<br><b>ВЫКЛ</b> Оставить без изминений</small>",
-						type: 'checkbox',
-						default: false
-					},
-					ShowFileInfo:
-					{
-						title: "Настройка информации",
-						label: "Подробная информация о раздаче",
-						type: 'checkbox',
-						default: true
-					},
-					ShowTorrentButton:
-					{
-						title: "Настройка кнопок",
-						label: "Кнопка <b>ТОРРЕНТ</b>",
-						type: 'checkbox',
-						default: false
-					},
-					ShowMagnetButton:
-					{
-						label: "Кнопка <b>MAGNET</b>",
-						type: 'checkbox',
-						default: true
-					},
-					ShowAcestreamButton:
-					{
-						label: "Кнопка <b>ACESTREAM</b>",
-						type: 'checkbox',
-						default: false
-					},
-					ShowButtonsHints:
-					{
-						label: "Подсказки возле кнопок скачивания<br><small style=\"font-size:11px;\">Убирает подсказки (Пример: Ваш рейтинг не упадёт...)</small>",
-						type: 'checkbox',
-						default: true
-					},
-					ShowMarkTorrents:
-					{
-						title: "Настройка меток",
-						label: "Помечать раздачи",
-						type: 'checkbox',
-						default: true
-					},
-					MarkColor:
-					{
-						label: "Главный Цвет",
-						type: 'color',
-						default: "#ff6666"
-					},
-					MarkBolder:
-					{
-						label: "Обводка текста<br><small style=\"font-size:11px;\">Делает чуть жирнее текст</small>",
-						type: 'checkbox',
-						default: false
-					},
-					MarkBoldColor:
-					{
-						label: "Цвет обводки",
-						type: 'color',
-						default: "#750000"
-					},
-					MarkTextValue:
-					{
-						label: "Текст метки <b>через пробел</b>",
-						type: 'text',
-						default: "4K 2160P 1080P BDRIP"
-					},
-					SwalDetailedInfoWidth:
-					{
-						title: "Настройка главного окна информации",
-						label: "Ширина окна (<b>%</b> или <b>px</b>)<br><small style=\"font-size:11px;\">Пример <b>1000px</b> или <b>100%</b></small>",
-						type: 'text',
-						default: "1100px"
-					},
-				},
-				onSave: function(values)
-				{
-					location.reload();
-				}
-			});
 			var $tab = $('<li style="padding-left:14px;"><span class="bulet"></span><a href="javascript:void(0);" id="kinozal_search_settings" title="Настройка скрипта">Настройка скрипта</a></li>');
 			$('ul.men:first').append($tab);
 			$("ul.men a#kinozal_search_settings").click(function()
 			{
-				KinozalSearchCFG.open();
+				KinozalCFG.open();
 			});
-			var ChangeButtonToLink = KinozalSearchCFG.get('ChangeButtonToLink');
-			var ShowFileInfo = KinozalSearchCFG.get('ShowFileInfo');
-			var ChangePersonLinks = KinozalSearchCFG.get('ChangePersonLinks');
-			var ShowTorrentButton = KinozalSearchCFG.get('ShowTorrentButton');
-			var ShowMagnetButton = KinozalSearchCFG.get('ShowMagnetButton');
-			var ShowAcestreamButton = KinozalSearchCFG.get('ShowAcestreamButton');
-			var ShowMarkTorrents = KinozalSearchCFG.get('ShowMarkTorrents');
-			var ShowButtonsHints = KinozalSearchCFG.get('ShowButtonsHints');
-			var MarkTextValue = KinozalSearchCFG.get('MarkTextValue');
-			var MarkBolder = KinozalSearchCFG.get('MarkBolder');
-			var MarkColorValue = KinozalSearchCFG.get('MarkColor');
-			var MarkBoldColorValue = KinozalSearchCFG.get('MarkBoldColor');
-			var SwalDetailedInfoWidth = KinozalSearchCFG.get('SwalDetailedInfoWidth');
-			var ChangeButtonIcon = KinozalSearchCFG.get('ChangeButtonIcon');
+			var ChangeButtonToLink = KinozalCFG.get('ChangeButtonToLink');
+			var ShowFileInfo = KinozalCFG.get('ShowFileInfo');
+			var ChangePersonLinks = KinozalCFG.get('ChangePersonLinks');
+			var ShowTorrentButton = KinozalCFG.get('ShowTorrentButton');
+			var ShowMagnetButton = KinozalCFG.get('ShowMagnetButton');
+			var ShowAcestreamButton = KinozalCFG.get('ShowAcestreamButton');
+			var ShowMarkTorrents = KinozalCFG.get('ShowMarkTorrents');
+			var ShowButtonsHints = KinozalCFG.get('ShowButtonsHints');
+			var MarkTextValue = KinozalCFG.get('MarkTextValue');
+			var MarkBolder = KinozalCFG.get('MarkBolder');
+			var MarkColorValue = KinozalCFG.get('MarkColor');
+			var MarkBoldColorValue = KinozalCFG.get('MarkBoldColor');
+			var SwalDetailedInfoWidth = KinozalCFG.get('SwalDetailedInfoWidth');
+			var ChangeButtonIcon = KinozalCFG.get('ChangeButtonIcon');
 			var domain = get_url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:[^.]+\.)?([^:\/\n\?\=]+)/im)[0];
 			var mgt_reg = new RegExp('[a-zA-Z0-9]{40}', 'i');
 			var SwalConfirmText = "СКАЧАТЬ";
@@ -839,10 +966,10 @@
 								{
 									ads_rel = '<p class="fnm-ads-title fnm-with-ads">ПРИСУТСТВУЕТ РЕКЛАМА</p>';
 								}
-								var similarfiles = (gsimilarfiles !== null ? '<p style="font-size:12px;text-align:center;padding:0px 0px 10px 0px;font-weight:bold;"><a href="javascript:void(0);" onclick="window.open(\'browse.php?s=' + encodeURIComponent(get_name_first) + '&g=0&v=0&d=' + (gmaininfo_year !== null ? gmaininfo_year : '0') + '&w=0&t=1&f=0\',\'_self\')" style="color:red;margin-left: auto;margin-right: auto;">НАЙДЕНО ' + declOfNum(gsimilarfiles[1], ['ПОДОБНАЯ РАЗДАЧА', 'ПОДОБНЫЕ РАЗДАЧИ', 'ПОДОБНЫХ РАЗДАЧ']) + ' </a></p>' : '');
+								var similarfiles = (gsimilarfiles !== null ? '<p style="font-size:12px;text-align:center;padding:0px 0px 10px 0px;font-weight:bold;"><a href="javascript:void(0);" onclick="window.open(\'browse.php?s=' + fixedEncodeURIComponent(get_name_first) + '&g=0&v=0&d=' + (gmaininfo_year !== null ? gmaininfo_year : '0') + '&w=0&t=1&f=0\',\'_self\')" style="color:red;margin-left: auto;margin-right: auto;">НАЙДЕНО ' + declOfNum(gsimilarfiles[1], ['ПОДОБНАЯ РАЗДАЧА', 'ПОДОБНЫЕ РАЗДАЧИ', 'ПОДОБНЫХ РАЗДАЧ']) + ' </a></p>' : '');
 								var menuinfo = (razdajut !== null ? '<span class="menuinfo">Раздают<span class="floatright">' + razdajut[1] + '</span></span><br>' : '') + (skacivajut !== null ? '<span class="menuinfo">Скачивают<span class="floatright">' + skacivajut[1] + '</span></span><br>' : '') + (skaciali !== null ? '<span class="menuinfo">Скачали<span class="floatright">' + skaciali[1] + '</span></span><br>' : '') + (spisokfailov !== null ? '<span class="menuinfo">Список файлов<span class="floatright">' + spisokfailov[1] + '</span></span><br>' : '') + (komentarijev !== null ? '<span class="menuinfo">Комментариев<span class="floatright">' + komentarijev[1] + '</span></span><br>' : '');
-								var trailer = (g_movie ? '<button type="button" class="btn_small btn_cred MT4" onclick="window.open(\'https://www.youtube.com/results?search_query=' + encodeURIComponent(fname_youtube + ' русский трейлер') + '\')" style="display: block;margin-left: auto;margin-right: auto;">YOUTUBE ТРЕЙЛЕР</button>' : '');
-								var similarmovies = (kinopoisk ? `<button type="button" class="btn_small btn_cblue MT4" onclick="window.open(\'${kinopoisk}/like\')" style="display: block;margin-left: auto;margin-right: auto;">КИНОПОИСК ПОХОЖИЕ</button>` : '');
+								var trailer = (g_movie ? '<button type="button" class="btn_small btn_cred MT4" onclick="window.open(\'https://www.youtube.com/results?search_query=' + fixedEncodeURIComponent(fname_youtube + ' русский трейлер') + '\')" style="display: block;margin-left: auto;margin-right: auto;">YOUTUBE ТРЕЙЛЕР</button>' : '');
+								var similarmovies = (kinopoisk ? `<button type="button" class="btn_small btn_cblue MT4" onclick="window.open(\'${kinopoisk}\')" style="display: block;margin-left: auto;margin-right: auto;">КИНОПОИСК</button><button type="button" class="btn_small btn_cblue MT4" onclick="window.open(\'${kinopoisk}/like\')" style="display: block;margin-left: auto;margin-right: auto;">КИНОПОИСК ПОХОЖИЕ</button>` : '');
 								var aboutfile = spoilerblock(matchaboutfile, replaceaboutfile);
 								var rel_info = (get_ajax_rel !== null ? spoilerblock("Релиз", get_ajax_rel) : '');
 								var scr_info = (get_ajax_scr !== null ? spoilerblock("Скриншоты", get_ajax_scr, "open", "red") : '');
@@ -1187,7 +1314,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 							});
 							$("#download_with_magnet").on("click", function(e)
 							{
-								window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(get_name_first)).substring(0, 1986);
+								window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + fixedEncodeURIComponent(get_name_first)).substring(0, 1986);
 								Toast.fire(
 								{
 									icon: 'success',
@@ -1233,74 +1360,18 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 		var get_acc_login_check = $(".bx2_0 ul.men:first li.tp2").text();
 		if (get_acc_login_check.match(/Выход/))
 		{
-			var KinozalDetailCFG = new MonkeyConfig(
-			{
-				width: "500px",
-				scriptname: "kinozal_details",
-				title: "Настройка скрипта ( Внутри раздачи )",
-				menuCommand: false,
-				params:
-				{
-					ShowConfirmDownload:
-					{
-						label: "Подтверждение действия<br><small style=\"font-size:11px;\">(ТОРРЕНТ / MAGNET)</small>",
-						type: 'checkbox',
-						default: true
-					},
-					ShowTorrentButton:
-					{
-						label: "ТОРРЕНТ кнопка",
-						type: 'checkbox',
-						default: false
-					},
-					ShowMagnetButton:
-					{
-						label: "MAGNET кнопка",
-						type: 'checkbox',
-						default: true
-					},
-					ShowAcestreamButton:
-					{
-						label: "ACESTREAM кнопка",
-						type: 'checkbox',
-						default: true
-					},
-					ShowHelpButton:
-					{
-						label: "Кнопка \"Помощь\"",
-						type: 'checkbox',
-						default: true
-					},
-					DetailedInfoButtons:
-					{
-						label: "Сделать простыми кнопки скачивания?",
-						type: 'checkbox',
-						default: false
-					},
-					TurnOnButtons:
-					{
-						label: "Включить кнопки (SHIFT + 1 и т.д.)?:",
-						type: 'checkbox',
-						default: false
-					},
-				},
-				onSave: function(values)
-				{
-					location.reload();
-				}
-			});
 			$('ul.men:first').append('<li style="padding-left:14px;"><span class="bulet"></span><a href="javascript:void(0);" id="kinozal_detail_settings" title="Настройка скрипта">Настройка скрипта</a></li>');
 			$("ul.men a#kinozal_detail_settings").click(function()
 			{
-				KinozalDetailCFG.open();
+				KinozalCFG.open();
 			});
-			var ShowConfirmDownload = KinozalDetailCFG.get('ShowConfirmDownload');
-			var ShowTorrentButton = KinozalDetailCFG.get('ShowTorrentButton');
-			var ShowMagnetButton = KinozalDetailCFG.get('ShowMagnetButton');
-			var ShowAcestreamButton = KinozalDetailCFG.get('ShowAcestreamButton');
-			var ShowHelpButton = KinozalDetailCFG.get('ShowHelpButton');
-			var TurnOnButtons = KinozalDetailCFG.get('TurnOnButtons');
-			var DetailedInfoButtons = KinozalDetailCFG.get('DetailedInfoButtons');
+			var ShowConfirmDownload = KinozalCFG.get('ShowConfirmDownload');
+			var ShowTorrentButton = KinozalCFG.get('ShowTorrentButton');
+			var ShowMagnetButton = KinozalCFG.get('ShowMagnetButton');
+			var ShowAcestreamButton = KinozalCFG.get('ShowAcestreamButton');
+			var ShowHelpButton = KinozalCFG.get('ShowHelpButton');
+			var TurnOnButtons = KinozalCFG.get('TurnOnButtons');
+			var DetailedInfoButtons = KinozalCFG.get('DetailedInfoButtons');
 			if (ShowTorrentButton || ShowMagnetButton || ShowAcestreamButton)
 			{
 				var reg_id = new RegExp('id=[0-9]{6,10}', 'ig');
@@ -1659,7 +1730,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 									var hash = (s.toString().match(mgt_reg))[0];
 									if (result.isConfirmed)
 									{
-										window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(getfname)).substring(0, 1986);
+										window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + fixedEncodeURIComponent(getfname)).substring(0, 1986);
 										Toast.fire(
 										{
 											icon: 'success',
@@ -1668,7 +1739,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 									}
 									else if (result.isDenied)
 									{
-										copy("magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(getfname)).substring(0, 1986));
+										copy("magnet:?xt=urn:btih:" + hash + ('&dn=' + fixedEncodeURIComponent(getfname)).substring(0, 1986));
 										Toast.fire(
 										{
 											icon: 'success',
@@ -1680,7 +1751,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 							else
 							{
 								var hash = (s.toString().match(mgt_reg))[0];
-								window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + encodeURIComponent(getfname)).substring(0, 1986);
+								window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + fixedEncodeURIComponent(getfname)).substring(0, 1986);
 								Toast.fire(
 								{
 									icon: 'success',
@@ -1762,32 +1833,6 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 	}
 	if (reg_rutor_list.test(get_url))
 	{
-		var RutorCFG = new MonkeyConfig(
-		{
-			width: "500px",
-			scriptname: "kinozal_details",
-			title: "Настройка скрипта ( Кнопки скачивания )",
-			menuCommand: false,
-			params:
-			{
-				ShowMagnetButton:
-				{
-					label: "MAGNET кнопка",
-					type: 'checkbox',
-					default: true
-				},
-				ShowAcestreamButton:
-				{
-					label: "ACESTREAM кнопка",
-					type: 'checkbox',
-					default: true
-				},
-			},
-			onSave: function(values)
-			{
-				location.reload();
-			}
-		});
 		$('#menu').append('<a href="javascript:void(0);" id="rutor_settings" class="menu_b" title="Настройка скрипта"><div>Настройка</div></a>');
 		$("#menu a#rutor_settings").click(function()
 		{
@@ -2051,7 +2096,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 			}
 			else if (target.id === 'MagnetButton')
 			{
-				window.location.href = "magnet:?xt=urn:btih:" + hash.toUpperCase() + ('&dn=' + encodeURIComponent(fname)).substring(0, 1986);
+				window.location.href = "magnet:?xt=urn:btih:" + hash.toUpperCase() + ('&dn=' + fixedEncodeURIComponent(fname)).substring(0, 1986);
 				Toast.fire(
 				{
 					icon: 'success',
