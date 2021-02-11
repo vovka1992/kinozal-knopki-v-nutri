@@ -2,13 +2,13 @@
 // @name Kinozal+Rutor | Кнопки скачивания (Torrent/Magnet/Acestream)
 // @description Torrent - Всего лишь заменяет старую кнопку на новую / Magnet - Скачать без учёта рейтинга/скачивания / AceStream - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона ) / Настройки - Настраивайте под себя, какие кнопки показывать, а какие убрать, выделение раздачи ( 4K 2160p 1080p ).
 // @namespace none
-// @version 1.1.6
+// @version 1.1.8
 // @author https://greasyfork.org/ru/users/173690
 // @author https://greasyfork.org/scripts/39242
 // @icon data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAAAD1BMVEU7R4CAAAD4+/z9787///8A0Su5AAAASUlEQVR4AXWPAQrEMBACzen/33wdkGILFZQdSFxWkZKoyWBsd5JXvFgMfC6ZLBs0pq8Mtq8f0Bcbw9N3HvuI8i14sAt/e8/73j/4FwHuDyR5AQAAAABJRU5ErkJggg==
-// @include /(https?:\/\/)?(www\.)?kinozal(\.me|\.tv|\.guru|\.website|tv\.life)\/*/
-// @include /(https?:\/\/)?(www\.)?rutor\.(info|is)\/*/
-// @include /(https?:\/\/)?(www\.)?kinopoisk\.ru\/*/
+// @include /^(https?:\/\/)?(www\.)?kinozal(\.me|\.tv|\.guru|\.website|tv\.life)\/*/
+// @include /^(https?:\/\/)?(www\.)?rutor\.(info|is)\/*/
+// @include /^(https?:\/\/)?(www\.)?kinopoisk\.ru\/*/
 // @require https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js
 // @grant GM_getValue
@@ -20,7 +20,7 @@
 (function()
 {
 	'use strict';
-	var script_version = " v1.1.6";
+	var script_version = " v1.1.8";
 	GM_addStyle(`
 @import "https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css";
 @import "https://cdn.jsdelivr.net/npm/microtip@0.2.2/microtip.css";
@@ -533,6 +533,7 @@
 	var reg_kinozal_search = new RegExp('kinozal(\.me|\.tv|\.guru|\.website|tv\.life)\/(browse|persons|groupexreleaselist|groupex|groupextorrentlist).php', 'i');
 	var reg_kinozal_detailed = new RegExp('kinozal(\.me|\.tv|\.guru|\.website|tv\.life)\/(details|comment).php', 'i');
 	var reg_rutor_list = new RegExp('rutor\.(info|is)/*', 'i');
+	var reg_kinopoisk = new RegExp('kinopoisk\.ru\/film\/[0-9]+\/like', 'i');
 	var KinozalCFG = new MonkeyConfig(
 	{
 		width: "700px",
@@ -700,7 +701,7 @@
 			location.reload();
 		}
 	});
-	if (/kinopoisk.ru\/film\/\d+\/like/i.test(get_url))
+	if (reg_kinopoisk.test(get_url))
 	{
 		GM_addStyle(`
 .search_kinozal_button
@@ -771,21 +772,7 @@ margin-top: -2px;
 		var get_acc_login_check = $(".bx2_0 ul.men:first li.tp2").text();
 		if (get_acc_login_check.match(/Выход/))
 		{
-			var get_ajax_acc_info = "";
 			var button_changetolink = "";
-			var getmyacc_id = $(".bx2_0 ul.men:first li.tp2").html().match(/userdetails\.php\?id=(\d+)/)[1];
-			$.ajax(
-			{
-				url: '/userdetails.php?id=' + getmyacc_id,
-				async: false
-			}).done(function(myaccinfo)
-			{
-				get_ajax_acc_info = myaccinfo;
-				return get_ajax_acc_info;
-			});
-			var gaccleftdownl_txt = $(get_ajax_acc_info).find(".tables1.u2 tr:nth-child(6) td:nth-child(2)").text();
-			var gaccleftdownl = gaccleftdownl_txt.match(/\d+/g);
-			var gaccleftdownl_calc = gaccleftdownl[0] - gaccleftdownl[1];
 			var $tab = $('<li style="padding-left:14px;"><span class="bulet"></span><a href="javascript:void(0);" id="kinozal_search_settings" title="Настройка скрипта">Настройка скрипта</a></li>');
 			$('ul.men:first').append($tab);
 			$("ul.men a#kinozal_search_settings").click(function()
@@ -976,16 +963,7 @@ margin-top: -2px;
 							}
 							if (ShowTorrentButton)
 							{
-								var torrent_left_info = "";
-								if (gaccleftdownl !== null && gaccleftdownl_calc >= 1)
-								{
-									torrent_left_info = ' id="download_torrent_file" aria-label="Вам доступно для скачивания ' + declOfNum(gaccleftdownl_calc, ['торрент', 'торрента', 'торрентов']) + '" data-microtip-position="top" role="tooltip"';
-								}
-								else if (gaccleftdownl !== null && gaccleftdownl_calc < 1)
-								{
-									torrent_left_info = ' aria-label="Вам доступно для скачивания ' + declOfNum(0, ['торрент', 'торрента', 'торрентов']) + '" data-microtip-position="top" role="tooltip"';
-								}
-								torrent_buttons = torrent_about_info + '<button type="button"' + torrent_left_info + ' class="btn_normal btn_cred MT4">СКАЧАТЬ ТОРРЕНТ ФАЙЛ</button>';
+								torrent_buttons = torrent_about_info + '<button type="button" class="btn_normal btn_cred MT4">СКАЧАТЬ ТОРРЕНТ ФАЙЛ</button>';
 							}
 							if (ShowMagnetButton)
 							{
@@ -1342,8 +1320,8 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 									icon: 'success',
 									title: 'Раздача ( ' + get_name_first + ' ) скопирована!'
 								});
-								var hash = (s.toString().match(mgt_reg))[0];
-								copy("#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=0&.mp4");
+								var hash = (GetSrvDetailsHash.toString().match(mgt_reg))[0].toUpperCase();
+								copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=0&.mp4");
 							});
 							$("#cancel").on("click", function(e)
 							{
