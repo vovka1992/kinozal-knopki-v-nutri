@@ -1,20 +1,25 @@
 
+# Kinozal.( me | tv | guru | website ), Kino-zal.site 
+# Настройки
+
+<img alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-rutor-magnet-knopki/main/settings.jpg">
+
 # #1 - Kinozal.( me | tv | guru | website ), Kino-zal.site 
 # Кнопки скачивания в поисковой системе и в раздачи персоны
 
-<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-rutor-magnet-knopki/main/new_settings_kinozal_search.jpg" style="max-width:100%;">
-<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-rutor-magnet-knopki/main/kinopoisk_kinozal_button.jpg" style="max-width:100%;">
+<img alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-rutor-magnet-knopki/main/new_settings_kinozal_search.jpg">
+<img alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-rutor-magnet-knopki/main/kinopoisk_kinozal_button.jpg">
 
 # #2 - Kinozal.( me | tv | guru | website ), Kino-zal.site 
 # Кнопки скачивания внутри раздачи
 
-<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/image.jpg" style="max-width:100%;">
-<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/detailed_info_buttons.jpg" style="max-width:100%;">
+<img alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/image.jpg">
+<img alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/detailed_info_buttons.jpg">
 
 # #3 - Rutor.( info | is ) 
 # Кнопки скачивания внутри раздачи
 
-<img width="1280" alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/rutor_script.jpg">
+<img alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/rutor_script.jpg">
 
 **Magnet** - Скачать без учёта рейтинга/скачивания
 
