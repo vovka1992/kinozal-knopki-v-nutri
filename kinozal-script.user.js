@@ -2,7 +2,7 @@
 // @name Kinozal+Rutor | Кнопки скачивания (Torrent/Magnet/Acestream)
 // @description Torrent - Всего лишь заменяет старую кнопку на новую / Magnet - Скачать без учёта рейтинга/скачивания / AceStream - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона ) / Настройки - Настраивайте под себя, какие кнопки показывать, а какие убрать, выделение раздачи ( 4K 2160p 1080p ).
 // @namespace none
-// @version 1.1.8
+// @version 1.1.9
 // @author https://greasyfork.org/ru/users/173690
 // @author https://greasyfork.org/scripts/39242
 // @icon data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAAAD1BMVEU7R4CAAAD4+/z9787///8A0Su5AAAASUlEQVR4AXWPAQrEMBACzen/33wdkGILFZQdSFxWkZKoyWBsd5JXvFgMfC6ZLBs0pq8Mtq8f0Bcbw9N3HvuI8i14sAt/e8/73j/4FwHuDyR5AQAAAABJRU5ErkJggg==
@@ -20,7 +20,7 @@
 (function()
 {
 	'use strict';
-	var script_version = " v1.1.8";
+	var script_version = " v1.1.9";
 	GM_addStyle(`
 @import "https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css";
 @import "https://cdn.jsdelivr.net/npm/microtip@0.2.2/microtip.css";
@@ -28,17 +28,18 @@
 @font-face{font-family: "Open Sans";font-style: normal;font-weight: 400;src: local("Open Sans"), local(OpenSans), url(https://themes.googleusercontent.com/static/fonts/opensans/v6/K88pR3goAWT7BTt32Z01mz8E0i7KZn-EPnyo3HZu7kw.woff) format("woff")}
 .fa{font-family: FontAwesome;}
 
-.checkboxToggle input[type=checkbox]{height: 0;width: 0;display: none;}
-.checkboxToggleSwitch {cursor: pointer;width: 122px;height: 32px;background: rgb(255 132 132);display: block;border-radius: 7px;margin: 5px 0px;position: relative;border: 1px solid rgb(132 0 0);box-shadow: 1px 1px 2px rgb(84 0 0 / 50%);}
-.checkboxToggleSwitch:after {content: '';position: absolute;top: 1px;left: 1px;width: 28px;height: 28px;margin: 0px 0px;background: #fff;border-radius: 5px;transition: all 0.2s;border: 1px solid rgb(0 0 0 / 50%);}
-.checkboxToggle input:checked + .checkboxToggleSwitch {background: rgb(151 255 154);border: 1px solid rgb(0 130 4);box-shadow: 1px 1px 2px rgb(0 78 2 / 50%);}
-.checkboxToggle input[type="checkbox"]:checked + .checkboxToggleSwitch:after {left: calc(100% - 1px);transform: translateX(-100%);}
-.checkboxToggleSwitch:active:after {width: 40px;}
-.checkboxToggle input[type="checkbox"]:checked+.checkboxToggleSwitch:before{content: "ВКЛ";left: 33px;}
-.checkboxToggle input[type="checkbox"]+.checkboxToggleSwitch:before{font-family: Verdana, Geneva, sans-serif;content: "ВЫКЛ";position: relative;top: 0px;left: 33px;font-size: 26px;transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);}
+.checkboxToggle b {cursor: pointer;position: relative;display: inline-block;width: 70px;height: 33px;background: #f2f2f2;border: 1px solid #d0d0d0;border-radius: 23px;vertical-align: text-bottom;transition: all 0.2s linear;}
+.checkboxToggle b::after {content: "";position: absolute;left: 0;width: 29px;height: 29px;background-color: #fff;border-radius: 30px;box-shadow: 0px 0px 2px rgb(0 0 0 / 50%);transform: translate3d(2px, 2px, 0);transition: all 0.2s ease-in-out;}
+.checkboxToggle:active b::after {width: 35px;transform: translate3d(2px, 2px, 0);}
+.checkboxToggle:active input:checked + b::after {transform: translate3d(33px, 2px, 0); }
+.checkboxToggle input {display: none;}
+.checkboxToggle input:checked + b { background-color: #4bd763;border-color: #3aa24c}
+.checkboxToggle input:checked + b::after {transform: translate3d(39px, 2px, 0);}
 
-.ScriptSettingsContainer tbody>tr:hover td:nth-child(1){background-color: #dedede85 !important;border-radius: 10px 0px 0px 10px;}
-.ScriptSettingsContainer tbody>tr:hover td:nth-child(2){background-color: #dedede85 !important;border-radius: 0px 10px 10px 0px;}
+.ScriptSettingsContainer tbody>tr:hover td:nth-child(1) {background-color: #f5f5f58c;border-radius: 10px 0px 0px 10px;border-top-color: #d0d0d0;border-top-style: solid;border-top-width: 1px;border-right-color: #f5f5f58c;border-bottom-color: #d0d0d0;border-bottom-style: solid;border-bottom-width: 1px;border-left-color: #d0d0d0;border-left-style: solid;border-left-width: 1px;}
+.ScriptSettingsContainer tbody>tr:hover td:nth-child(2) {background-color: #f5f5f58c;border-radius: 0px 10px 10px 0px;border-top-color: #d0d0d0;border-top-style: solid;border-top-width: 1px;border-right-color: #d0d0d0;border-right-style: solid;border-right-width: 1px;border-bottom-color: #d0d0d0;border-bottom-style: solid;border-bottom-width: 1px;border-left-color: #f5f5f58c;}
+.ScriptSettingsContainer tbody>tr td:nth-child(1){border: 1px solid #ffffff;}
+.ScriptSettingsContainer tbody>tr td:nth-child(2){border: 1px solid #ffffff;}
 
 .t_peer td.swalbtn{width:45px;text-align:center}
 .swal2-styled.swal2-cancel,.swal2-styled.swal2-confirm,.swal2-styled.swal2-deny,.swal2-styled.swal2-deny{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:bold;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;border:0;text-shadow:0 0 1px #000,1px 1px 1px #000}
@@ -51,14 +52,15 @@
 .fnm-no-ads{color: rgb(0 153 0);text-shadow: 1px 1px 1px rgb(0 78 0);}
 .fnm-with-ads{color: rgb(255 0 0);text-shadow: 1px 1px 1px rgb(78 0 0);}
 
-.swal-settings-label {font-size: 16px;display: block;padding: 12px 10px;}
+.swal-settings-label {cursor: pointer;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;font-size: 14px;display: block;padding: 12px 10px;}
+.swal-settings-label p {font-size: 11px;}
 .swal-settings-select:focus, .swal-settings-color:focus, .swal-settings-input:focus, .swal-settings-textarea:focus {border: 1px solid rgb(100 160 224);outline: 0;box-shadow: 0 0 0 3px rgb(85 142 202 / 50%);}
-.swal-settings-select, .swal-settings-input, .swal-settings-textarea {transition: border-color .3s,box-shadow .3s;border: 1px solid #767676;font-size: 18px;padding: 8px 8px;margin: 5px 5px 4px 0px;border-radius: 5px;}
-.swal-settings-color {transition: border-color .3s,box-shadow .3s;padding: 0px 1px;margin: 4px 0px;border-radius: 5px;width: 115px;height: 34px;}
-
+.swal-settings-select, .swal-settings-input, .swal-settings-textarea {transition: border-color .3s,box-shadow .3s;border: 1px solid #767676;font-size: 16px;padding: 6px;margin: 6px;border-radius: 5px;width: 240px;}
+.swal-settings-color {transition: border-color .3s,box-shadow .3s;margin: 6px;border-radius: 5px;width: 30px;height: 30px;}
 .swal-settings-buttons{text-align: center;}
-.swal-settings-title {padding: 20px 0px 5px 0px;font-size: 18px;font-weight: bold;text-align: center;}
-.swal-settings-maintitle{position: relative;max-width: 100%;margin: 0 0 .4em;padding: 0;color: #ff0000;font-size: 20px;font-weight: bold;text-align: center;text-transform: none;}
+.swal-settings-title {padding: 4px 0px;font-size: 16px;font-weight: bold;text-align: center;}
+.swal-settings-title p {font-size: 11px;font-weight: bold;}
+.swal-settings-maintitle{position: relative;max-width: 100%;padding: 0px;color: #ff0000;font-size: 12px;font-weight: bold;text-align: center;text-transform: none;}
 
 .main_button_search {font-family: FontAwesome;margin: 0px 4px 0px 4px;cursor: pointer;outline: 0;padding: 6px;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;line-height: 0;font-size: 30px;border-radius: .25rem;color: #fff;background-color: #2778c4;border: 0;width: 44px;}
 .main_button_search:hover{color:#fff;background-color:#236cb0}
@@ -185,13 +187,13 @@
 				switch (data.buttons[button])
 				{
 					case 'cancel':
-						html += '<button type="button" class="btn_big btn_cred MT10" id="ScriptSettingsButton_cancel">Отмена</button>';
+						html += '<button type="button" class="btn_normal btn_cred MT6" id="ScriptSettingsButton_cancel">Отмена</button>';
 						break;
 					case 'defaults':
-						html += '<button type="button" class="btn_big btn_cblue MT10" id="ScriptSettingsButton_defaults">Ст. Наст.</button>';
+						html += '<button type="button" class="btn_normal btn_cblue MT6" id="ScriptSettingsButton_defaults">Ст. Наст.</button>';
 						break;
 					case 'save':
-						html += '<button type="button" class="btn_big btn_cblue MT10" id="ScriptSettingsButton_save">Сохранить</button>';
+						html += '<button type="button" class="btn_normal btn_cblue MT6" id="ScriptSettingsButton_save">Сохранить</button>';
 						break;
 				}
 			}
@@ -386,7 +388,7 @@
 		},
 		'checkbox': function(name, options, data)
 		{
-			return '<label class="checkboxToggle"><input id="ScriptSettings_field_' + name + '" type="checkbox" name="' + name + '" /><span class="checkboxToggleSwitch"></span></label>';
+			return '<label class="checkboxToggle"><input id="ScriptSettings_field_' + name + '" name="' + name + '" type="checkbox"><b></b></label>';
 		},
 		'custom': function(name, options, data)
 		{
@@ -544,8 +546,8 @@
 		{
 			ShowConfirmDownload:
 			{
-				title: "Настройки<br><small style=\"font-size:11px;\">( Внутри раздачи )</small>",
-				label: "Подтверждение действия<br><small style=\"font-size:11px;\">( ТОРРЕНТ и MAGNET )</small>",
+				title: "Настройки<p>( Внутри раздачи )</p>",
+				label: "Подтверждение действия<p>( ТОРРЕНТ и MAGNET )</p>",
 				type: 'checkbox',
 				default: true
 			},
@@ -569,7 +571,7 @@
 			},
 			ShowTorrentButton:
 			{
-				title: "Главные кнопки<br><small style=\"font-size:11px;\">( Поиск / Раздачи персоны / Внутри раздачи )</small>",
+				title: "Главные кнопки<p>( Поиск / Раздачи персоны / Внутри раздачи )</p>",
 				label: "Скачать <b>ТОРРЕНТ</b> файл",
 				type: 'checkbox',
 				default: true
@@ -588,8 +590,8 @@
 			},
 			KinopoiskLinkSearch:
 			{
-				title: "Настройка КиноПоиск<br><small style=\"font-size:11px;\">( Поиск / Раздачи персоны )</small>",
-				label: "Кнопка в кинопоиске<br><small style=\"font-size:11px;\">Выберите каким кинозалом вы пользуетесь, что бы при нажатии на кнопку, открывался ваш кинозал</small>",
+				title: "Настройка КиноПоиск<p>( Поиск / Раздачи персоны )</p>",
+				label: "Кнопка в кинопоиске<p>Выберите каким кинозалом вы пользуетесь, что бы при нажатии на кнопку, открывался ваш кинозал</p>",
 				type: 'select',
 				choices: {
 					kinozal1: 'kinozal.tv',
@@ -601,38 +603,38 @@
 			},
 			ChangeButtonToLink:
 			{
-				title: "Настройка ссылок<br><small style=\"font-size:11px;\">( Поиск / Раздачи персоны )</small>",
-				label: "Выберите вариант:<br><small style=\"font-size:11px;\"><b>ВКЛ</b> Создаст отдельную кнопку для открытия окно с информацией<br><b>ВЫКЛ</b> При нажатии главной ссылки, откроется окошко с информацией</small>",
+				title: "Настройка ссылок<p>( Поиск / Раздачи персоны )</p>",
+				label: "Выберите вариант:<p><b>ВКЛ</b> Создаст отдельную кнопку для открытия окно с информацией<br><b>ВЫКЛ</b> При нажатии главной ссылки, откроется окошко с информацией</p>",
 				type: 'checkbox',
 				default: true
 			},
 			ChangeButtonIcon:
 			{
-				label: "Иконка отдельной кнопки<br><small style=\"font-size:11px;\">Работать будет только если <b>ВКЛ</b><br>( Больше иконок на этом сайте <a href=\"https://fontawesome.com/v4.7.0/icons/\" target=\"_blank\"><b>fontawesome.com</b></a> )</small>",
+				label: "Иконка отдельной кнопки<p>Работать будет только если <b>ВКЛ</b><br>( Больше иконок на этом сайте <a href=\"https://fontawesome.com/v4.7.0/icons/\" target=\"_blank\"><b>fontawesome.com</b></a> )</small>",
 				type: 'text',
 				default: "fa fa-info"
 			},
 			ShowFileInfo:
 			{
-				label: "Подробная информация о раздаче<br><small style=\"font-size:11px;\">Покажет подробную информацию о раздаче ( Есть ли реклама в раздаче, Скриншоты и т.д. )</small>",
+				label: "Подробная информация о раздаче<p style=\"font-size:11px;\">Покажет подробную информацию о раздаче ( Есть ли реклама в раздаче, Скриншоты и т.д. )</p>",
 				type: 'checkbox',
 				default: true
 			},
 			ChangePersonLinks:
 			{
-				label: "При нажатии на имя персонажа:<br><small style=\"font-size:11px;\">( В окошке с информацией )</small><br><small style=\"font-size:11px;\"><b>ВКЛ</b> Искать в поиске<br><b>ВЫКЛ</b> Оставить без изминений</small>",
+				label: "При нажатии на имя персонажа:<p>( В окошке с информацией )</small><br><small style=\"font-size:11px;\"><b>ВКЛ</b> Искать в поиске<br><b>ВЫКЛ</b> Оставить без изминений</p>",
 				type: 'checkbox',
 				default: false
 			},
 			ShowButtonsHints:
 			{
-				label: "Подсказки возле кнопок скачивания<br><small style=\"font-size:11px;\">Убирает подсказку (Пример: Ваш рейтинг не упадёт...)</small>",
+				label: "Подсказки возле кнопок скачивания<p>Убирает подсказку (Пример: Ваш рейтинг не упадёт...)</p>",
 				type: 'checkbox',
 				default: true
 			},
 			ShowMarkTorrents:
 			{
-				title: "Настройка меток<br><small style=\"font-size:11px;\">( Поиск / Раздачи персоны )</small>",
+				title: "Настройка меток<p>( Поиск / Раздачи персоны )</p>",
 				label: "Помечать раздачи",
 				type: 'checkbox',
 				default: true
@@ -645,7 +647,7 @@
 			},
 			MarkBolder:
 			{
-				label: "Обводка текста<br><small style=\"font-size:11px;\">Делает чуть жирнее текст</small>",
+				label: "Обводка текста<p style=\"font-size:11px;\">Делает чуть жирнее текст</p>",
 				type: 'checkbox',
 				default: false
 			},
@@ -664,7 +666,7 @@
 			SwalDetailedInfoWidth:
 			{
 				title: "Настройка главного окна информации",
-				label: "Ширина окна (<b>%</b> или <b>px</b>)<br><small style=\"font-size:11px;\">Пример <b>1000px</b> или <b>100%</b></small>",
+				label: "Ширина окна (<b>%</b> или <b>px</b>)<p style=\"font-size:11px;\">Пример <b>1000px</b> или <b>100%</b></p>",
 				type: 'text',
 				default: "1100px"
 			},
