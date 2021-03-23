@@ -1,14 +1,15 @@
 // ==UserScript==
-// @name Kinozal+Rutor | Кнопки скачивания (Torrent/Magnet/Acestream)
-// @description Torrent - Всего лишь заменяет старую кнопку на новую / Magnet - Скачать без учёта рейтинга/скачивания / AceStream - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона ) / Настройки - Настраивайте под себя, какие кнопки показывать, а какие убрать, выделение раздачи ( 4K 2160p 1080p ).
+// @name Kinozal | Rutor | Rutracker / Кнопки скачивания (Torrent|Magnet|TorrServer)
+// @description v1.1.12 (Добавлен RuTracker для добавления в TorrServer)
 // @namespace none
-// @version 1.1.9
+// @version 1.1.12
 // @author https://greasyfork.org/ru/users/173690
 // @author https://greasyfork.org/scripts/39242
 // @icon data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAAAD1BMVEU7R4CAAAD4+/z9787///8A0Su5AAAASUlEQVR4AXWPAQrEMBACzen/33wdkGILFZQdSFxWkZKoyWBsd5JXvFgMfC6ZLBs0pq8Mtq8f0Bcbw9N3HvuI8i14sAt/e8/73j/4FwHuDyR5AQAAAABJRU5ErkJggg==
 // @include /^(https?:\/\/)?(www\.)?kinozal(\.me|\.tv|\.guru|\.website|tv\.life)\/*/
 // @include /^(https?:\/\/)?(www\.)?rutor\.(info|is)\/*/
 // @include /^(https?:\/\/)?(www\.)?kinopoisk\.ru\/*/
+// @include /^(https?:\/\/)?(www\.)?rutracker\.org\/*/
 // @require https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js
 // @grant GM_getValue
@@ -17,16 +18,17 @@
 // @grant GM_registerMenuCommand
 /* globals $ */
 // ==/UserScript==
-(function()
+(function ()
 {
 	'use strict';
-	var script_version = " v1.1.9";
+	var script_version = " v1.1.12";
 	GM_addStyle(`
 @import "https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css";
 @import "https://cdn.jsdelivr.net/npm/microtip@0.2.2/microtip.css";
 @import "https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css";
 @font-face{font-family: "Open Sans";font-style: normal;font-weight: 400;src: local("Open Sans"), local(OpenSans), url(https://themes.googleusercontent.com/static/fonts/opensans/v6/K88pR3goAWT7BTt32Z01mz8E0i7KZn-EPnyo3HZu7kw.woff) format("woff")}
 .fa{font-family: FontAwesome;}
+*, *::before, *::after {box-sizing: unset;}
 
 .checkboxToggle b {cursor: pointer;position: relative;display: inline-block;width: 70px;height: 33px;background: #f2f2f2;border: 1px solid #d0d0d0;border-radius: 23px;vertical-align: text-bottom;transition: all 0.2s linear;}
 .checkboxToggle b::after {content: "";position: absolute;left: 0;width: 29px;height: 29px;background-color: #fff;border-radius: 30px;box-shadow: 0px 0px 2px rgb(0 0 0 / 50%);transform: translate3d(2px, 2px, 0);transition: all 0.2s ease-in-out;}
@@ -138,7 +140,7 @@
 			if (data.menuCommand)
 			{
 				var caption = data.menuCommand !== true ? data.menuCommand : data.title;
-				GM_registerMenuCommand(caption, function()
+				GM_registerMenuCommand(caption, function ()
 				{
 					cfg.open();
 				});
@@ -146,7 +148,7 @@
 			cfg.open = open;
 			cfg.close = close;
 			cfg.get = get;
-			cfg.set = function(name, value)
+			cfg.set = function (name, value)
 			{
 				set(name, value);
 				update();
@@ -186,15 +188,15 @@
 			{
 				switch (data.buttons[button])
 				{
-					case 'cancel':
-						html += '<button type="button" class="btn_normal btn_cred MT6" id="ScriptSettingsButton_cancel">Отмена</button>';
-						break;
-					case 'defaults':
-						html += '<button type="button" class="btn_normal btn_cblue MT6" id="ScriptSettingsButton_defaults">Ст. Наст.</button>';
-						break;
-					case 'save':
-						html += '<button type="button" class="btn_normal btn_cblue MT6" id="ScriptSettingsButton_save">Сохранить</button>';
-						break;
+				case 'cancel':
+					html += '<button type="button" class="btn_normal btn_cred MT6" id="ScriptSettingsButton_cancel">Отмена</button>';
+					break;
+				case 'defaults':
+					html += '<button type="button" class="btn_normal btn_cblue MT6" id="ScriptSettingsButton_defaults">Ст. Наст.</button>';
+					break;
+				case 'save':
+					html += '<button type="button" class="btn_normal btn_cblue MT6" id="ScriptSettingsButton_save">Сохранить</button>';
+					break;
 				}
 			}
 			html += "</th></tr></table><div>";
@@ -209,42 +211,42 @@
 				var value = values[name];
 				switch (params[name].type)
 				{
-					case 'checkbox':
-						var elem = container.querySelector('[name="' + name + '"]');
-						elem.checked = !!value;
-						break;
-					case 'custom':
-						params[name].set(value, container.querySelector('#ScriptSettingsParent_' + name));
-						break;
-					case 'number':
-					case 'text':
-					case 'color':
-						var elem = container.querySelector('[name="' + name + '"]');
-						elem.value = value;
-						break;
-					case 'select':
-						var elem = container.querySelector('[name="' + name + '"]');
-						if (elem.tagName.toLowerCase() == 'input')
+				case 'checkbox':
+					var elem = container.querySelector('[name="' + name + '"]');
+					elem.checked = !!value;
+					break;
+				case 'custom':
+					params[name].set(value, container.querySelector('#ScriptSettingsParent_' + name));
+					break;
+				case 'number':
+				case 'text':
+				case 'color':
+					var elem = container.querySelector('[name="' + name + '"]');
+					elem.value = value;
+					break;
+				case 'select':
+					var elem = container.querySelector('[name="' + name + '"]');
+					if (elem.tagName.toLowerCase() == 'input')
+					{
+						if (elem.type && elem.type == 'radio')
 						{
-							if (elem.type && elem.type == 'radio')
-							{
-								elem = container.querySelector('[name="' + name + '"][value="' + value + '"]');
-								elem.checked = true;
-							}
-							else if (elem.type && elem.type == 'checkbox')
-							{
-								var checkboxes = container.querySelectorAll('input[name="' + name + '"]');
-								for (var i = 0; i < checkboxes.length; i++) checkboxes[i].checked = (value.indexOf(checkboxes[i].value) > -1);
-							}
+							elem = container.querySelector('[name="' + name + '"][value="' + value + '"]');
+							elem.checked = true;
 						}
-						else if (elem.tagName.toLowerCase() == 'select')
-							if (elem.multiple)
-							{
-								var options = container.querySelectorAll('select[name="' + name + '"] option');
-								for (var i = 0; i < options.length; i++) options[i].selected = (value.indexOf(options[i].value) > -1);
-							}
-						else elem.value = value;
-						break;
+						else if (elem.type && elem.type == 'checkbox')
+						{
+							var checkboxes = container.querySelectorAll('input[name="' + name + '"]');
+							for (var i = 0; i < checkboxes.length; i++) checkboxes[i].checked = (value.indexOf(checkboxes[i].value) > -1);
+						}
+					}
+					else if (elem.tagName.toLowerCase() == 'select')
+						if (elem.multiple)
+						{
+							var options = container.querySelectorAll('select[name="' + name + '"] option');
+							for (var i = 0; i < options.length; i++) options[i].selected = (value.indexOf(options[i].value) > -1);
+						}
+					else elem.value = value;
+					break;
 				}
 			}
 		}
@@ -255,41 +257,41 @@
 			{
 				switch (params[name].type)
 				{
-					case 'checkbox':
-						var elem = container.querySelector('[name="' + name + '"]');
-						values[name] = elem.checked;
-						break;
-					case 'custom':
-						values[name] = params[name].get(container.querySelector('#ScriptSettingsParent_' + name));
-						break;
-					case 'number':
-					case 'text':
-					case 'color':
-						var elem = container.querySelector('[name="' + name + '"]');
-						values[name] = elem.value;
-						break;
-					case 'select':
-						var elem = container.querySelector('[name="' + name + '"]');
-						if (elem.tagName.toLowerCase() == 'input')
-						{
-							if (elem.type && elem.type == 'radio') values[name] = container.querySelector('[name="' + name + '"]:checked').value;
-							else if (elem.type && elem.type == 'checkbox')
-							{
-								values[name] = [];
-								var inputs = container.querySelectorAll('input[name="' + name + '"]');
-								for (var i = 0; i < inputs.length; i++)
-									if (inputs[i].checked) values[name].push(inputs[i].value);
-							}
-						}
-						else if (elem.tagName.toLowerCase() == 'select' && elem.multiple)
+				case 'checkbox':
+					var elem = container.querySelector('[name="' + name + '"]');
+					values[name] = elem.checked;
+					break;
+				case 'custom':
+					values[name] = params[name].get(container.querySelector('#ScriptSettingsParent_' + name));
+					break;
+				case 'number':
+				case 'text':
+				case 'color':
+					var elem = container.querySelector('[name="' + name + '"]');
+					values[name] = elem.value;
+					break;
+				case 'select':
+					var elem = container.querySelector('[name="' + name + '"]');
+					if (elem.tagName.toLowerCase() == 'input')
+					{
+						if (elem.type && elem.type == 'radio') values[name] = container.querySelector('[name="' + name + '"]:checked').value;
+						else if (elem.type && elem.type == 'checkbox')
 						{
 							values[name] = [];
-							var options = container.querySelectorAll('select[name="' + name + '"] option');
-							for (var i = 0; i < options.length; i++)
-								if (options[i].selected) values[name].push(options[i].value);
+							var inputs = container.querySelectorAll('input[name="' + name + '"]');
+							for (var i = 0; i < inputs.length; i++)
+								if (inputs[i].checked) values[name].push(inputs[i].value);
 						}
-						else values[name] = elem.value;
-						break;
+					}
+					else if (elem.tagName.toLowerCase() == 'select' && elem.multiple)
+					{
+						values[name] = [];
+						var options = container.querySelectorAll('select[name="' + name + '"] option');
+						for (var i = 0; i < options.length; i++)
+							if (options[i].selected) values[name].push(options[i].value);
+					}
+					else values[name] = elem.value;
+					break;
 				}
 			}
 			GM_setValue(storageKey, JSON.stringify(values));
@@ -321,21 +323,21 @@
 			}
 			switch (mode)
 			{
-				default:
-					Swal.fire(
+			default:
+				Swal.fire(
+				{
+					width: data.width,
+					html: render(),
+					showCancelButton: false,
+					showConfirmButton: false,
+					didOpen: () =>
 					{
-						width: data.width,
-						html: render(),
-						showCancelButton: false,
-						showConfirmButton: false,
-						didOpen: () =>
-						{
-							Swal.getContent().querySelector('button#ScriptSettingsButton_save').focus();
-						}
-					});
-					container = document.querySelector('.ScriptSettingsContainer');
-					openDone();
-					break;
+						Swal.getContent().querySelector('button#ScriptSettingsButton_save').focus();
+					}
+				});
+				container = document.querySelector('.ScriptSettingsContainer');
+				openDone();
+				break;
 			}
 		}
 
@@ -360,12 +362,12 @@
 		}
 		init(arguments[0]);
 	}
-	MonkeyConfig.esc = function(string)
+	MonkeyConfig.esc = function (string)
 	{
 		return string.replace(/"/g, '&quot;');
 	};
 	MonkeyConfig.HTML = {
-		'_field': function(name, options, data)
+		'_field': function (name, options, data)
 		{
 			var html;
 			if (options.type && MonkeyConfig.HTML[options.type]) html = MonkeyConfig.HTML[options.type](name, options, data);
@@ -376,29 +378,29 @@
 			}
 			return html;
 		},
-		'_label': function(name, options, data)
+		'_label': function (name, options, data)
 		{
 			var label = options['label'] || name.substring(0, 1).toUpperCase() + name.substring(1).replace(/_/g, '&nbsp;');
 			return '<label for="ScriptSettings_field_' + name + '" class="swal-settings-label">' + label + '</label>';
 		},
-		'_title': function(name, options)
+		'_title': function (name, options)
 		{
 			var title = (options['title'] != undefined ? '<th colspan="2" class="swal-settings-title">' + options['title'] + '</th></tr><tr>' : '');
 			return title;
 		},
-		'checkbox': function(name, options, data)
+		'checkbox': function (name, options, data)
 		{
 			return '<label class="checkboxToggle"><input id="ScriptSettings_field_' + name + '" name="' + name + '" type="checkbox"><b></b></label>';
 		},
-		'custom': function(name, options, data)
+		'custom': function (name, options, data)
 		{
 			return options.html;
 		},
-		'number': function(name, options, data)
+		'number': function (name, options, data)
 		{
 			return '<input id="ScriptSettings_field_' + name + '" type="text" class="ScriptSettings_field_number" name="' + name + '" />';
 		},
-		'select': function(name, options, data)
+		'select': function (name, options, data)
 		{
 			var choices = {},
 				html = '';
@@ -441,30 +443,30 @@
 			}
 			return html;
 		},
-		'text': function(name, options, data)
+		'text': function (name, options, data)
 		{
 			if (options.long) return '<textarea id="ScriptSettings_field_' + name + '" class="swal-settings-textarea" ' + (!isNaN(options.long) ? 'rows="' + options.long + '" ' : '') + 'name="' + name + '"></textarea>';
 			else return '<input id="ScriptSettings_field_' + name + '" type="text" class="swal-settings-input" name="' + name + '" />';
 		},
-		'color': function(name, options, data)
+		'color': function (name, options, data)
 		{
 			return '<input id="ScriptSettings_field_' + name + '" type="color" class="swal-settings-color" name="' + name + '" />';
 		}
 	};
 	MonkeyConfig.formatters = {
-		'tr': function(name, options, data)
+		'tr': function (name, options, data)
 		{
 			var html = '<tr>';
 			switch (options.type)
 			{
-				default:
-					html += MonkeyConfig.HTML['_title'](name, options, data);
-					html += '<td>';
-					html += MonkeyConfig.HTML['_label'](name, options, data);
-					html += '</td><td id="ScriptSettingsParent_' + name + '">';
-					html += MonkeyConfig.HTML['_field'](name, options, data);
-					html += '</td>';
-					break;
+			default:
+				html += MonkeyConfig.HTML['_title'](name, options, data);
+				html += '<td>';
+				html += MonkeyConfig.HTML['_label'](name, options, data);
+				html += '</td><td id="ScriptSettingsParent_' + name + '">';
+				html += MonkeyConfig.HTML['_field'](name, options, data);
+				html += '</td>';
+				break;
 			}
 			html += '</tr>';
 			return html;
@@ -526,21 +528,29 @@
 			toast.addEventListener('mouseleave', Swal.resumeTimer)
 		}
 	});
-	function fixedEncodeURIComponent(str) {
-		return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+
+	function fixedEncodeURIComponent(str)
+	{
+		return encodeURIComponent(str).replace(/[!'()*]/g, function (c)
+		{
 			return '%' + c.charCodeAt(0).toString(16);
 		});
+	}
+	async function windows1251ResponseToUTF8Response(response)
+	{
+		return new Response(new TextDecoder("windows-1251").decode(await response.arrayBuffer()));
 	}
 	var get_url = location.href;
 	var reg_kinozal_search = new RegExp('kinozal(\.me|\.tv|\.guru|\.website|tv\.life)\/(browse|persons|groupexreleaselist|groupex|groupextorrentlist).php', 'i');
 	var reg_kinozal_detailed = new RegExp('kinozal(\.me|\.tv|\.guru|\.website|tv\.life)\/(details|comment).php', 'i');
 	var reg_rutor_list = new RegExp('rutor\.(info|is)/*', 'i');
 	var reg_kinopoisk = new RegExp('kinopoisk\.ru\/film\/[0-9]+\/like', 'i');
+	var reg_rutracker = new RegExp('rutracker.org\/forum\/tracker.php', 'i');
 	var KinozalCFG = new MonkeyConfig(
 	{
 		width: "700px",
 		scriptname: "kinozal",
-		title: "Настройка скрипта в Кинозале"+script_version,
+		title: "Настройка скрипта в Кинозале" + script_version,
 		menuCommand: false,
 		params:
 		{
@@ -588,12 +598,25 @@
 				type: 'checkbox',
 				default: false
 			},
+			TorrServerButton:
+			{
+				label: "Кнопка \"Добавить раздачу в <b>TORRSERVER</b>\"<p>( Моментальное добавление раздачи в TorrServer )</p>",
+				type: 'checkbox',
+				default: false
+			},
+			TorrServerIP:
+			{
+				label: "Укажите TorrServer IP сервера<p>( Можете указать другой, например <b>192.168.0.122:8090</b> )</p>",
+				type: 'text',
+				default: "127.0.0.1:8090"
+			},
 			KinopoiskLinkSearch:
 			{
 				title: "Настройка КиноПоиск<p>( Поиск / Раздачи персоны )</p>",
 				label: "Кнопка в кинопоиске<p>Выберите каким кинозалом вы пользуетесь, что бы при нажатии на кнопку, открывался ваш кинозал</p>",
 				type: 'select',
-				choices: {
+				choices:
+				{
 					kinozal1: 'kinozal.tv',
 					kinozal2: 'kinozal.me',
 					kinozal3: 'kinozal.guru',
@@ -610,7 +633,7 @@
 			},
 			ChangeButtonIcon:
 			{
-				label: "Иконка отдельной кнопки<p>Работать будет только если <b>ВКЛ</b><br>( Больше иконок на этом сайте <a href=\"https://fontawesome.com/v4.7.0/icons/\" target=\"_blank\"><b>fontawesome.com</b></a> )</small>",
+				label: "Иконка отдельной кнопки<p>Работать будет только если <b>ВКЛ</b><br>( Больше иконок на этом сайте <a href=\"https://fontawesome.com/v4.7.0/icons/\" target=\"_blank\"><b>fontawesome.com</b></a> )",
 				type: 'text',
 				default: "fa fa-info"
 			},
@@ -671,16 +694,16 @@
 				default: "1100px"
 			},
 		},
-		onSave: function(values)
+		onSave: function (values)
 		{
 			location.reload();
 		}
 	});
 	var RutorCFG = new MonkeyConfig(
 	{
-		width: "500px",
+		width: "650px",
 		scriptname: "rutor",
-		title: "Настройка скрипта ( Кнопки скачивания )"+script_version,
+		title: "Настройка скрипта ( Кнопки скачивания )" + script_version,
 		menuCommand: false,
 		params:
 		{
@@ -697,8 +720,46 @@
 				type: 'checkbox',
 				default: true
 			},
+			TorrServerButton:
+			{
+				label: "Кнопка \"Добавить раздачу в <b>TORRSERVER</b>\"<p>( Моментальное добавление раздачи в TorrServer )</p>",
+				type: 'checkbox',
+				default: false
+			},
+			TorrServerIP:
+			{
+				label: "Укажите TorrServer IP сервера<p>( Можете указать другой, например <b>192.168.0.122:8090</b> )</p>",
+				type: 'text',
+				default: "127.0.0.1:8090"
+			},
 		},
-		onSave: function(values)
+		onSave: function (values)
+		{
+			location.reload();
+		}
+	});
+	var RuTrackerCFG = new MonkeyConfig(
+	{
+		width: "700px",
+		scriptname: "rutracker",
+		title: "Настройка скрипта" + script_version,
+		menuCommand: false,
+		params:
+		{
+			TorrServerButton:
+			{
+				label: "Кнопка \"Добавить раздачу в <b>TORRSERVER</b>\"<p>( Моментальное добавление раздачи в TorrServer )</p>",
+				type: 'checkbox',
+				default: false
+			},
+			TorrServerIP:
+			{
+				label: "Укажите TorrServer IP сервера<p>( Можете указать другой, например <b>192.168.0.122:8090</b> )</p>",
+				type: 'text',
+				default: "127.0.0.1:8090"
+			},
+		},
+		onSave: function (values)
 		{
 			location.reload();
 		}
@@ -725,39 +786,42 @@ padding: 5px 9px !important;
 margin-top: -2px;
 }
 `);
-		var get_kinozal_link = KinozalCFG.get('KinopoiskLinkSearch'),set_kinozal_link = "";
-		if(get_kinozal_link == "kinozal1")
+		var get_kinozal_link = KinozalCFG.get('KinopoiskLinkSearch'),
+			set_kinozal_link = "";
+		if (get_kinozal_link == "kinozal1")
 		{
 			set_kinozal_link = "kinozal.tv";
-		} else if(get_kinozal_link == "kinozal2")
+		}
+		else if (get_kinozal_link == "kinozal2")
 		{
 			set_kinozal_link = "kinozal.me";
-		} else if(get_kinozal_link == "kinozal3")
+		}
+		else if (get_kinozal_link == "kinozal3")
 		{
 			set_kinozal_link = "kinozal.guru";
-		} else if(get_kinozal_link == "kinozal4")
+		}
+		else if (get_kinozal_link == "kinozal4")
 		{
 			set_kinozal_link = "kinozaltv.life";
 		}
-
 		var table1 = $('#block_left_pad > ul > li:nth-child(3)');
-		table1.each(function(i, e)
+		table1.each(function (i, e)
 		{
 			var get_name_first = $(e).find("h1 > a").text();
 			var get_years = $(e).find("div").text().match(/([\d+]{4})/);
-			$(e).append('<br><div class="search_kinozal_button" onclick="window.open(\'//'+set_kinozal_link+'/browse.php?s=' + fixedEncodeURIComponent(get_name_first) + '&g=0&v=0&d=' + (get_years !== null ? get_years[1] : '0') + '&w=0&t=1&f=0\')">Искать в Кинозале</div>');
+			$(e).append('<br><div class="search_kinozal_button" onclick="window.open(\'//' + set_kinozal_link + '/browse.php?s=' + fixedEncodeURIComponent(get_name_first) + '&g=0&v=0&d=' + (get_years !== null ? get_years[1] : '0') + '&w=0&t=1&f=0\')">Искать в Кинозале</div>');
 		});
 		var table2 = $('table.ten_items tbody');
-		table2.find("tr").each(function(i, e)
+		table2.find("tr").each(function (i, e)
 		{
-			var get_name_first = $(e).find("td.news > div > div:nth-child(1) > a").text().replace(/ \(сериал\)/,"");
+			var get_name_first = $(e).find("td.news > div > div:nth-child(1) > a").text().replace(/ \(сериал\)/, "");
 			var get_years = $(e).find("td.news > div > div:nth-child(1) > span").text().match(/([\d+]{4})/);
-			$(e).find("td.news > div").append('<div class="search_kinozal_button" onclick="window.open(\'//'+set_kinozal_link+'/browse.php?s=' + fixedEncodeURIComponent(get_name_first) + '&g=0&v=0&d=' + (get_years !== null ? get_years[1] : '0') + '&w=0&t=1&f=0\')">Искать в Кинозале</div>');
+			$(e).find("td.news > div").append('<div class="search_kinozal_button" onclick="window.open(\'//' + set_kinozal_link + '/browse.php?s=' + fixedEncodeURIComponent(get_name_first) + '&g=0&v=0&d=' + (get_years !== null ? get_years[1] : '0') + '&w=0&t=1&f=0\')">Искать в Кинозале</div>');
 		});
 	}
 	if (reg_kinozal_search.test(get_url))
 	{
-		$("body").on("click", ".block-title", function(event)
+		$("body").on("click", ".block-title", function (event)
 		{
 			var $this = $(this).parent(".post-block");
 			if ($this.hasClass("close"))
@@ -777,7 +841,7 @@ margin-top: -2px;
 			var button_changetolink = "";
 			var $tab = $('<li style="padding-left:14px;"><span class="bulet"></span><a href="javascript:void(0);" id="kinozal_search_settings" title="Настройка скрипта">Настройка скрипта</a></li>');
 			$('ul.men:first').append($tab);
-			$("ul.men a#kinozal_search_settings").click(function()
+			$("ul.men a#kinozal_search_settings").click(function ()
 			{
 				KinozalCFG.open();
 			});
@@ -787,6 +851,7 @@ margin-top: -2px;
 			var ShowTorrentButton = KinozalCFG.get('ShowTorrentButton');
 			var ShowMagnetButton = KinozalCFG.get('ShowMagnetButton');
 			var ShowAcestreamButton = KinozalCFG.get('ShowAcestreamButton');
+			var ShowTorrServerButton = KinozalCFG.get('TorrServerButton');
 			var ShowMarkTorrents = KinozalCFG.get('ShowMarkTorrents');
 			var ShowButtonsHints = KinozalCFG.get('ShowButtonsHints');
 			var MarkTextValue = KinozalCFG.get('MarkTextValue');
@@ -795,6 +860,7 @@ margin-top: -2px;
 			var MarkBoldColorValue = KinozalCFG.get('MarkBoldColor');
 			var SwalDetailedInfoWidth = KinozalCFG.get('SwalDetailedInfoWidth');
 			var ChangeButtonIcon = KinozalCFG.get('ChangeButtonIcon');
+			var TorrServerIP = KinozalCFG.get('TorrServerIP');
 			var domain = get_url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:[^.]+\.)?([^:\/\n\?\=]+)/im)[0];
 			var mgt_reg = new RegExp('[a-zA-Z0-9]{40}', 'i');
 			var SwalConfirmText = "СКАЧАТЬ";
@@ -811,12 +877,12 @@ margin-top: -2px;
 			{
 				h.prepend('<td class="z"></td>');
 			}
-			table.find("tr").not(h).each(function(i, e)
+			table.find("tr").not(h).each(function (i, e)
 			{
 				var url = $(e).find('.nam a').attr('href');
 				var uArgs = url.split('?')[1].split('&');
 				var GetID = null;
-				uArgs.forEach(function(el)
+				uArgs.forEach(function (el)
 				{
 					if (el.startsWith('id='))
 					{
@@ -839,14 +905,14 @@ margin-top: -2px;
 					var get_name_second = get_name_from_link[1];
 					var GetDetailsID = null;
 					var GetSrvDetailsHash = null;
-					$("#get_info_" + GetID).click(async function()
+					$("#get_info_" + GetID).click(async function ()
 					{
 						$.ajax(
 						{
 							type: 'GET',
 							url: '/details.php?id=' + GetID,
 							async: false
-						}).done(function(details_string)
+						}).done(function (details_string)
 						{
 							GetDetailsID = details_string;
 							return GetDetailsID;
@@ -861,11 +927,13 @@ margin-top: -2px;
 						}
 						else
 						{
+							const parser = new DOMParser();
+							const doc = parser.parseFromString(GetDetailsID, "text/html");
 							$.ajax(
 							{
 								url: domain + '/get_srv_details.php?id=' + GetID + '&action=2',
 								async: false
-							}).done(function(GetSrvDetailsString)
+							}).done(function (GetSrvDetailsString)
 							{
 								GetSrvDetailsHash = GetSrvDetailsString;
 								return GetSrvDetailsHash;
@@ -877,6 +945,7 @@ margin-top: -2px;
 							var torrent_about_info = "";
 							var magnet_buttons = "";
 							var acestream_buttons = "";
+							var torrserver_buttons = "";
 							var cat_name = "";
 							var download_button_hints = '<b style="color:#0000CC;">Торрент файл</b><br><b style="color:#FF0000; font-size:12px;">Внимание! Этот метод скачивания не актуален для тех, кому важен рейтинг.<br>Так как при скачивании, ваш рейтинг может понизится, тем самым возможен блок аккаунта!</b><br><b style="color:#0000CC;">MAGNET и AceStream</b><br><b style="color:#009900; font-size:12px;">Ваш рейтинг не упадёт, можете скачивать бесконечно!</b><br>';
 							var gmaininfo_full = $(GetDetailsID).find("div.bx1.justify h2");
@@ -896,11 +965,11 @@ margin-top: -2px;
 							var spisokfailov = gmenuinfo.match(/Список файлов(\d+)/);
 							var komentarijev = gmenuinfo.match(/Комментариев(\d+)/);
 							var kinopoisk = $(GetDetailsID).find(".mn1_menu ul.men li a:contains(Кинопоиск)").attr('href');
-							var get_main_img = $(GetDetailsID).find("ul.men.w200 li.img a img").attr('src');
+							var get_main_img = (doc.querySelector("ul.men.w200 li.img") !== null ? '<img src="' + doc.querySelector("ul.men.w200 li.img a img").src + '" style="display: block;margin-left: auto;margin-right: auto;padding:0px 0px 10px 0px;width: 250px;" alt="">' : '');
+							var get_main_img_url = (doc.querySelector("ul.men.w200 li.img") !== null ? doc.querySelector("ul.men.w200 li.img a img").src : "");
 							var gaboutfile = $(GetDetailsID).find("div.bx1.justify p").html();
 							var gcat = gmaininfo.match(/src="\/pic\/cat\/(\d+).gif"/);
 							var g_movie = gaboutfile.indexOf("О фильме:") !== -1;
-							var img = (get_main_img !== null ? `<img src="${get_main_img}" style="display: block;margin-left: auto;margin-right: auto;padding:0px 0px 10px 0px;width: 250px;" alt="">` : '');
 							var fname_youtube = get_name_first + " " + get_name_second + " " + gmaininfo_year;
 							if (ChangeButtonToLink)
 							{
@@ -926,7 +995,7 @@ margin-top: -2px;
 									{
 										url: '/get_srv_details.php?id=' + GetID + '&pagesd=' + grel_id[1],
 										async: false
-									}).done(function(drel)
+									}).done(function (drel)
 									{
 										get_ajax_rel = drel.toLowerCase();
 										return get_ajax_rel;
@@ -938,7 +1007,7 @@ margin-top: -2px;
 									{
 										url: '/get_srv_details.php?id=' + GetID + '&pagesd=' + gscr_id[1],
 										async: false
-									}).done(function(dscr)
+									}).done(function (dscr)
 									{
 										get_ajax_scr = dscr;
 										return get_ajax_scr;
@@ -970,6 +1039,10 @@ margin-top: -2px;
 							if (ShowMagnetButton)
 							{
 								magnet_buttons = '<button type="button" id="download_with_magnet" class="btn_normal btn_cblue MT4">СКАЧАТЬ ЧЕРЕЗ MAGNET</button><button type="button" id="copy_with_magnet" class="btn_normal btn_cblue MT4">КОПИРОВАТЬ</button>';
+							}
+							if (ShowTorrServerButton)
+							{
+								torrserver_buttons = '<button type="button" id="add_to_torrserver" class="btn_normal btn_cblue MT4">Добавить в TorrServer</button>';
 							}
 							if (ShowAcestreamButton)
 							{
@@ -1016,7 +1089,7 @@ ${ads_rel}
 <tr>
 <td style="vertical-align:top;padding: 0px 10px 0px 0px;font-size: 12px;">
 <div style="width: 250px;">
-${img}
+${get_main_img}
 ${similarfiles}
 ${menuinfo}
 <br>
@@ -1032,7 +1105,7 @@ ${scr_info}
 </tr>
 </table>
 <center>
-${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_buttons}${acestream_buttons}
+${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_buttons}${torrserver_buttons}${acestream_buttons}
 </center>`,
 									showCancelButton: false,
 									showConfirmButton: false,
@@ -1051,7 +1124,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 									html: `
 <h2 class="swal2-title fnm-title">${get_name_first} / ${gmaininfo_year}</h2>
 <center>
-${img}
+${get_main_img}
 ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_buttons}${acestream_buttons}
 </center>`,
 									showCancelButton: false,
@@ -1063,7 +1136,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 									}
 								});
 							}
-							$("#ace_get_many_files").on("click", async function(e)
+							$("#ace_get_many_files").on("click", async function (e)
 							{
 								if (get_name_first.toLowerCase().match(/серии|сезон|(выпуск)|этапы|(логия)/))
 								{
@@ -1137,7 +1210,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 									{
 										fname = get_name_first.replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)") + " / " + gmaininfo_year.toUpperCase();
 									}
-									$.get(domain + '/get_srv_details.php?id=' + GetID + '&action=2', function(s)
+									$.get(domain + '/get_srv_details.php?id=' + GetID + '&action=2', function (s)
 									{
 										var hash = (GetSrvDetailsHash.toString().match(mgt_reg))[0].toUpperCase();
 										var copy_text = "";
@@ -1179,7 +1252,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 									});
 								}
 							});
-							$("#ace_get_one_file_1").on("click", async function(e)
+							$("#ace_get_one_file_1").on("click", async function (e)
 							{
 								if (get_name_first.toLowerCase().match(/серии|сезон|(выпуск)|этапы|(логия)/))
 								{
@@ -1248,7 +1321,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 									{
 										fname = get_name_first.replace(/(.*) \((.*) .*\: .*?\)/gi, "$1 ($2 СЕЗОН)") + " / " + gmaininfo_year.toUpperCase();
 									}
-									$.get(domain + '/get_srv_details.php?id=' + GetID + '&action=2', function(s)
+									$.get(domain + '/get_srv_details.php?id=' + GetID + '&action=2', function (s)
 									{
 										var hash = (GetSrvDetailsHash.toString().match(mgt_reg))[0].toUpperCase();
 										var copyname = "";
@@ -1283,7 +1356,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 									});
 								}
 							});
-							$("#download_torrent_file").on("click", function(e)
+							$("#download_torrent_file").on("click", function (e)
 							{
 								window.location.href = "/download.php?id=" + GetID;
 								Toast.fire(
@@ -1292,7 +1365,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 									title: get_name_first + ' скачивается через Торрент!'
 								});
 							});
-							$("#download_with_magnet").on("click", function(e)
+							$("#download_with_magnet").on("click", function (e)
 							{
 								window.location.href = "magnet:?xt=urn:btih:" + hash + ('&dn=' + fixedEncodeURIComponent(get_name_first)).substring(0, 1986);
 								Toast.fire(
@@ -1301,7 +1374,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 									title: get_name_first + ' скачивается через Magnet!'
 								});
 							});
-							$("#copy_with_magnet").on("click", function(e)
+							$("#copy_with_magnet").on("click", function (e)
 							{
 								copy("magnet:?xt=urn:btih:" + hash);
 								Toast.fire(
@@ -1310,7 +1383,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 									title: get_name_first + ' / Magnet ссылка скопирована!'
 								});
 							});
-							$("#ace_get_one_file_2").on("click", function(e)
+							$("#ace_get_one_file_2").on("click", function (e)
 							{
 								var year1 = get_name_from_link[1].replace(/(.*)/gi, "$1");
 								var year2 = get_name_from_link[2].replace(/(.*)/gi, "$1");
@@ -1325,7 +1398,37 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 								var hash = (GetSrvDetailsHash.toString().match(mgt_reg))[0].toUpperCase();
 								copy("\r\n#EXTINF:-1," + fname + "\r\nhttp://127.0.0.1:6878/ace/getstream?infohash=" + hash.toUpperCase() + "&playlist_output_format_vod=hls&_idx=0&.mp4");
 							});
-							$("#cancel").on("click", function(e)
+							$("#add_to_torrserver").on("click", function (e)
+							{
+								var year1 = get_name_from_link[1].replace(/(.*)/gi, "$1");
+								var year2 = get_name_from_link[2].replace(/(.*)/gi, "$1");
+								var gyear = new RegExp('^[0-9]+$').exec(get_name_from_link[1]);
+								var get_name_first = get_name_from_link[0].toUpperCase();
+								var fname = (gyear) ? get_name_first + " / " + year1 : get_name_first + " / " + year2;
+								fetch("//" + TorrServerIP + "/torrents",
+								{
+									method: 'post',
+									body: JSON.stringify(
+									{
+										action: 'add',
+										link: "magnet:?xt=urn:btih:" + hash,
+										title: fname,
+										poster: get_main_img_url,
+										save_to_db: true,
+									}),
+									headers:
+									{
+										Accept: 'application/json, text/plain, */*',
+										'Content-Type': 'application/json',
+									},
+								})
+								Toast.fire(
+								{
+									icon: 'success',
+									title: get_name_first + ' раздача добавлена вTorrServer!'
+								});
+							});
+							$("#cancel").on("click", function (e)
 							{
 								Swal.close();
 							});
@@ -1341,7 +1444,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 		if (get_acc_login_check.match(/Выход/))
 		{
 			$('ul.men:first').append('<li style="padding-left:14px;"><span class="bulet"></span><a href="javascript:void(0);" id="kinozal_detail_settings" title="Настройка скрипта">Настройка скрипта</a></li>');
-			$("ul.men a#kinozal_detail_settings").click(function()
+			$("ul.men a#kinozal_detail_settings").click(function ()
 			{
 				KinozalCFG.open();
 			});
@@ -1349,10 +1452,12 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 			var ShowTorrentButton = KinozalCFG.get('ShowTorrentButton');
 			var ShowMagnetButton = KinozalCFG.get('ShowMagnetButton');
 			var ShowAcestreamButton = KinozalCFG.get('ShowAcestreamButton');
+			var ShowTorrServerButton = KinozalCFG.get('TorrServerButton');
 			var ShowHelpButton = KinozalCFG.get('ShowHelpButton');
 			var TurnOnButtons = KinozalCFG.get('TurnOnButtons');
 			var DetailedInfoButtons = KinozalCFG.get('DetailedInfoButtons');
-			if (ShowTorrentButton || ShowMagnetButton || ShowAcestreamButton)
+			var TorrServerIP = KinozalCFG.get('TorrServerIP');
+			if (ShowTorrentButton || ShowMagnetButton || ShowAcestreamButton || ShowTorrServerButton)
 			{
 				var reg_id = new RegExp('id=[0-9]{6,10}', 'ig');
 				var id = (get_url.match(reg_id)[0]).substr(3);
@@ -1366,6 +1471,7 @@ ${(ShowButtonsHints ? download_button_hints : '')}${torrent_buttons}${magnet_but
 				var txt_dl_torrent_info = '<b><font color="#cc0000">Cкачать торрент-файл:</font></b><br>Для того, чтобы скачать эту раздачу - скачайте торрент-файл и запустите его при помощи клиента.';
 				var txt_dl_magnet_info = '<b><font color="#0000cc">Cкачать через Magnet:</font></b><br>Скачивайте сколько угодно, ваш рейтинг не изменится, так как данный метод не затрагивает ваш профиль!';
 				var txt_cp_acestream_info = '<b><font color="#00cc00">Смотреть через ACESTREAM:</font></b><br>Смотрите через Acestream ( На Android TV, в Планшете, в Телефоне )';
+				var txt_torrserver_info = '<b><font color="#0000cc">Добавить в TorrServer:</font></b><br>Моментальное добавление раздачи в TorrServer';
 				var set_buttons = document.querySelector("table.w100p");
 				set_buttons.classList.add('bx1');
 				if (DetailedInfoButtons)
@@ -1382,13 +1488,14 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 				else
 				{
 					set_buttons.innerHTML = `<tbody id="copy_form">
-	${(ShowTorrentButton ? '<tr><td style="width: 400px;" class="nw"><button id="TorrentButton" type="button" class="btn_normal btn_cred">Cкачать торрент-файл</button></td><td>' + txt_dl_torrent_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : '')}
-	${(ShowMagnetButton ? '<tr><td style="width: 400px;" class="nw"><button id="MagnetButton" type="button" class="btn_normal btn_cblue">Cкачать через Magnet</button></td><td>' + txt_dl_magnet_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : '')}
-	${(ShowAcestreamButton ? '<tr><td style="width: 400px;" class="nw"><button id="AceStreamButton" type="button" class="btn_normal btn_cgreen">ACESTREAM</button></td><td>' + txt_cp_acestream_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : '')}
+	${(ShowTorrentButton ? '<tr><td style="width: 400px;" class="nw"><button id="TorrentButton" type="button" class="btn_normal btn_cred MT4">Cкачать торрент-файл</button></td><td>' + txt_dl_torrent_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : '')}
+	${(ShowMagnetButton ? '<tr><td style="width: 400px;" class="nw"><button id="MagnetButton" type="button" class="btn_normal btn_cblue MT4">Cкачать через Magnet</button><br><button id="MagnetButtonCopy" type="button" class="btn_normal btn_cblue MT4">Копировать Magnet</button></td><td>' + txt_dl_magnet_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : '')}
+	${(ShowTorrServerButton ? '<tr><td style="width: 400px;" class="nw"><button id="TorrServerButton" type="button" class="btn_normal btn_cblue MT4">Добавить в TorrServer</button></td><td>' + txt_torrserver_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : '')}
+	${(ShowAcestreamButton ? '<tr><td style="width: 400px;" class="nw"><button id="AceStreamButton" type="button" class="btn_normal btn_cgreen MT4">ACESTREAM</button></td><td>' + txt_cp_acestream_info + '</td></tr><tr><td style="height: 4px"></td></tr>' : '')}
 	${(ShowHelpButton ? '<tr><td style="height: 4px;text-align:right;">( <a href="#"><b id="help">Помощь</b></a> )</td></tr>' : '')}
 </tbody>`;
 				}
-				document.getElementById('copy_form').addEventListener('click', async function(evt)
+				document.getElementById('copy_form').addEventListener('click', async function (evt)
 				{
 					var target = evt.target;
 					if (target.id === 'help')
@@ -1419,7 +1526,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 					}
 					else if (target.id === 'AceStreamButton')
 					{
-						$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s)
+						$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function (s)
 						{
 							var selbtn1 = "";
 							var selbtn2 = "";
@@ -1454,7 +1561,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 									showCancelButton: false,
 									showConfirmButton: false
 								});
-								$("#1").on("click", async function(e)
+								$("#1").on("click", async function (e)
 								{
 									const
 									{
@@ -1514,7 +1621,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 											var search_gfname = getfname;
 										}
 										var fname = (gyear) ? search_gfname + " / " + year1 : search_gfname + " / " + year2;
-										$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s)
+										$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function (s)
 										{
 											if (gfname[0].match(/(логия)/gi))
 											{
@@ -1566,7 +1673,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 										});
 									}
 								});
-								$("#2").on("click", async function(e)
+								$("#2").on("click", async function (e)
 								{
 									const
 									{
@@ -1621,7 +1728,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 											var search_gfname = getfname;
 										}
 										fname = (gyear) ? search_gfname + " / " + year1 : search_gfname + " / " + year2;
-										$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s)
+										$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function (s)
 										{
 											var hash = (s.toString().match(mgt_reg))[0];
 											var set_i = formValues - 1;
@@ -1666,7 +1773,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 										});
 									}
 								});
-								$("#cancel").on("click", function(e)
+								$("#cancel").on("click", function (e)
 								{
 									Swal.close();
 								});
@@ -1689,7 +1796,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 					}
 					else if (target.id === 'MagnetButton')
 					{
-						$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s)
+						$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function (s)
 						{
 							if (ShowConfirmDownload)
 							{
@@ -1705,7 +1812,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 									confirmButtonText: SwalConfirmText,
 									cancelButtonText: SwalCancelText,
 									footer: `<center><b style="color:#000099;">Скачивание через MAGNET</b><br><b style="color:#009900;">Ваш рейтинг не упадёт, можете скачивать бесконечно!</b></center>`
-								}).then(function(result)
+								}).then(function (result)
 								{
 									var hash = (s.toString().match(mgt_reg))[0];
 									if (result.isConfirmed)
@@ -1740,9 +1847,51 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 							}
 						});
 					}
+					else if (target.id === 'MagnetButtonCopy')
+					{
+						$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function (s)
+						{
+							var hash = (s.toString().match(mgt_reg))[0];
+							copy("magnet:?xt=urn:btih:" + hash + ('&dn=' + fixedEncodeURIComponent(getfname)).substring(0, 1986));
+							Toast.fire(
+							{
+								icon: 'success',
+								title: 'Magnet ссылка скопирована!'
+							});
+						});
+					}
+					else if (target.id === 'TorrServerButton')
+					{
+						$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function (s)
+						{
+							var hash = (s.toString().match(mgt_reg))[0];
+							var get_main_img = document.querySelector("ul.men.w200 li.img a img").src;
+							var year1 = gfname[1].replace(/(.*)/gi, "$1");
+							var year2 = gfname[2].replace(/(.*)/gi, "$1");
+							var gyear = new RegExp('^[0-9]+$').exec(gfname[1]);
+							var fname = (gyear) ? getfname + " / " + year1 : getfname + " / " + year2;
+							fetch("//" + TorrServerIP + "/torrents",
+							{
+								method: 'post',
+								body: JSON.stringify(
+								{
+									action: 'add',
+									link: "magnet:?xt=urn:btih:" + hash,
+									title: fname,
+									poster: get_main_img,
+									save_to_db: true,
+								}),
+								headers:
+								{
+									Accept: 'application/json, text/plain, */*',
+									'Content-Type': 'application/json',
+								},
+							})
+						});
+					}
 					else if (target.id === 'TorrentButton')
 					{
-						$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function(s)
+						$.get(domain + '/get_srv_details.php?id=' + id + '&action=2', function (s)
 						{
 							if (ShowConfirmDownload)
 							{
@@ -1756,7 +1905,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 									cancelButtonColor: '#d33',
 									confirmButtonText: SwalConfirmText,
 									cancelButtonText: SwalCancelText
-								}).then(function(result)
+								}).then(function (result)
 								{
 									if (result.value)
 									{
@@ -1783,7 +1932,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 				}, false);
 				if (TurnOnButtons)
 				{
-					document.addEventListener('keydown', function(event)
+					document.addEventListener('keydown', function (event)
 					{
 						if (event.code == 'Digit1' && (event.shiftKey || event.metaKey))
 						{
@@ -1814,16 +1963,19 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 	if (reg_rutor_list.test(get_url))
 	{
 		$('#menu').append('<a href="javascript:void(0);" id="rutor_settings" class="menu_b" title="Настройка скрипта"><div>Настройка</div></a>');
-		$("#menu a#rutor_settings").click(function()
+		$("#menu a#rutor_settings").click(function ()
 		{
 			RutorCFG.open();
 		});
 		var ShowMagnetButton = RutorCFG.get('ShowMagnetButton');
 		var ShowAcestreamButton = RutorCFG.get('ShowAcestreamButton');
+		var ShowTorrServerButton = RutorCFG.get('TorrServerButton');
+		var TorrServerIP = RutorCFG.get('TorrServerIP');
 		var obj = this;
 		var hash = document.getElementById('download').getElementsByTagName('a')[0].getAttribute("href").match(/magnet:\?xt=urn:btih:([a-z\d]{40})&/)[1];
 		var GetID = document.getElementById('download').getElementsByTagName('a')[1].getAttribute("href").match(/http:\/\/d.rutor.info\/download\/(.*)/)[1];
 		var set_buttons = document.querySelector("#download");
+		var get_img_url = document.getElementById('details').getElementsByTagName('img')[0].getAttribute("src");
 		var fname = $('div#all > H1').text().split(" / ")[0];
 		var get_cat = $('table#details').text().match(/Категория(.*)/)[1];
 		var get_files_count = $('table#details').text().match(/Файлы \((.*)\)/)[1];
@@ -1833,14 +1985,14 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 <table id="copy_form">
 	<tbody>
 		<tr>
-			<td class="nw">${ShowMagnetButton ? ' <button id="MagnetButton" type="button" class="btn_normal btn_cred MT4">MAGNET</button>' : ''}${ShowAcestreamButton ? ' <button id="AceStreamButton" type="button" class="btn_normal btn_cgreen MT4">ACESTREAM</button>' : ''}</td>
+			<td class="nw">${ShowMagnetButton ? ' <button id="MagnetButton" type="button" class="btn_normal btn_cred MT4">MAGNET</button>' : ''}${ShowAcestreamButton ? '<button id="AceStreamButton" type="button" class="btn_normal btn_cgreen MT4">ACESTREAM</button>' : ''}${ShowTorrServerButton ? '<button id="TorrServerButton" type="button" class="btn_normal btn_cblue MT4">Добавить в TorrServer</button>' : ''}</td>
 		</tr>
 		<tr>
 			<td colspan="2"><b style="color:#cc0000">Скрипт предназначен для копирования ссылок LIBTORRENT и ACESTREAM.<br>Скопированные ссылки вкидывайте в свой <font style="color:#00cc00">m3u8</font> плейлист</b></td>
 		</tr>
 	</tbody>
 </table>`;
-		document.getElementById('copy_form').addEventListener('click', async function(evt)
+		document.getElementById('copy_form').addEventListener('click', async function (evt)
 		{
 			var target = evt.target;
 			if (target.id === 'AceStreamButton')
@@ -1872,7 +2024,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 					{
 						url: '/descriptions/' + GetID + '.files',
 						async: false
-					}).done(function(get)
+					}).done(function (get)
 					{
 						get_file_list = get;
 						return get_file_list;
@@ -1898,7 +2050,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 						showCancelButton: false,
 						showConfirmButton: false
 					});
-					$("#1").on("click", async function(e)
+					$("#1").on("click", async function (e)
 					{
 						const
 						{
@@ -1982,7 +2134,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 							});
 						}
 					});
-					$("#2").on("click", async function(e)
+					$("#2").on("click", async function (e)
 					{
 						const
 						{
@@ -2054,7 +2206,7 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 							});
 						}
 					});
-					$("#cancel").on("click", function(e)
+					$("#cancel").on("click", function (e)
 					{
 						Swal.close();
 					});
@@ -2083,6 +2235,107 @@ ${(ShowHelpButton ? ' <tr><td style="height: 4px;text-align:right;">( <a href="#
 					title: 'Раздача ( ' + fname + ' ) скачивается через Magnet!'
 				});
 			}
+			else if (target.id === 'TorrServerButton')
+			{
+				fetch("//" + TorrServerIP + "/torrents",
+				{
+					method: 'post',
+					body: JSON.stringify(
+					{
+						action: 'add',
+						link: "magnet:?xt=urn:btih:" + hash.toUpperCase(),
+						hash: hash.toUpperCase(),
+						title: "" + fname.toUpperCase() + " / " + get_years + " / " + get_file_size + "",
+						poster: get_img_url,
+						save_to_db: true,
+					}),
+					headers:
+					{
+						Accept: 'application/json, text/plain, */*',
+						'Content-Type': 'application/json',
+					},
+				})
+				Toast.fire(
+				{
+					icon: 'success',
+					title: 'Раздача ( ' + fname + ' ) скачивается через Magnet!'
+				});
+			}
 		}, false);
+	}
+	if (reg_rutracker.test(get_url))
+	{
+		var ShowTorrServerButton = RuTrackerCFG.get('TorrServerButton');
+		var TorrServerIP = RuTrackerCFG.get('TorrServerIP');
+		$('#logged-in-username').parent().append('<button id="rutracker_cfg" class="bold" style="margin-left: 20px; width: 140px; height: 20px; border: 1px solid gray; font-family: Verdana,sans-serif; font-size: 11px;">Настройка скрипта</button>');
+		$("#rutracker_cfg").click(function ()
+		{
+			RuTrackerCFG.open();
+		});
+		if (ShowTorrServerButton)
+		{
+			$('#tor-tbl td:nth-child(4)').each(function (i, el)
+			{
+				var url = $(el).find('div.t-title a').attr('href');
+				var uArgs = url.split('?')[1].split('&');
+				var GetID = null;
+				uArgs.forEach(function (el)
+				{
+					if (el.startsWith('t='))
+					{
+						GetID = el.split('=')[1];
+					}
+				});
+				$(el).find('.t-title').first().append('<br><button id="get_info_' + GetID + '" class="bold" style="margin: 4px;padding: 4px 8px;border: 1px solid gray;font-family: Verdana,sans-serif;font-size: 11px;">ДОБАВИТЬ В TORRSERVER</button>');
+				$("#get_info_" + GetID).click(function ()
+				{
+					return fetch('/forum/viewtopic.php?t=' + GetID,
+					{
+						method: 'GET',
+					}).then(windows1251ResponseToUTF8Response).then(function (response)
+					{
+						if (!response.ok)
+						{
+							throw Error(response.statusText)
+						}
+						return response.text();
+					}).then(function (data)
+					{
+						const parser = new DOMParser();
+						const doc = parser.parseFromString(data, "text/html");
+						var hash = "magnet:?xt=urn:btih:" + doc.querySelector('[data-topic_id="' + GetID + '"]').title.toUpperCase();
+						var get_title = (doc.querySelector('#topic_main .message.td2 .post_wrap .post_body span').innerText !== null ? doc.querySelector('#topic_main .message.td2 .post_wrap .post_body span').innerText.split(" / ")[0] : doc.querySelector('#topic_main .message.td2 .post_wrap .post_body span').innerText);
+						var get_years = (doc.querySelector('#topic_main .message.td2 .post_wrap .post_body').innerText.match(/(Год выпуска: |Год выхода: )([\d+]{4})/) !== null ? " / " + doc.querySelector('#topic_main .message.td2 .post_wrap .post_body').innerText.match(/(Год выпуска: |Год выхода: )([\d+]{4})/)[2] : "");
+						var get_img_url = (doc.querySelector('#topic_main .message.td2 .post_wrap .post_body .postImg.postImgAligned.img-right').title !== null ? doc.querySelector('#topic_main .message.td2 .post_wrap .post_body .postImg.postImgAligned.img-right').title : "");
+						fetch("http://" + TorrServerIP + "/torrents",
+						{
+							method: 'post',
+							body: JSON.stringify(
+							{
+								action: 'add',
+								link: hash,
+								hash: hash,
+								title: get_title.toUpperCase() + get_years,
+								poster: get_img_url,
+								save_to_db: true,
+							}),
+							headers:
+							{
+								Accept: 'application/json, text/plain, */*',
+								'Content-Type': 'application/json',
+							},
+						})
+						Toast.fire(
+						{
+							icon: 'success',
+							title: 'Раздача ( ' + get_title + ' ) добавлена в TorrServer!'
+						});
+					})
+				});
+			});
+		}
+		let el = document.querySelector(".seed-leech");
+		el.dispatchEvent(new MouseEvent('mousedown'));
+		el.dispatchEvent(new MouseEvent('mouseup'));
 	}
 })();
