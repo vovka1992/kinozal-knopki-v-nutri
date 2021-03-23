@@ -21,6 +21,11 @@
 
 <img alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/rutor_script.jpg">
 
+# #3 - RuTracker.ORG 
+# Кнопка добавления TorrServer в расширенном поиске
+
+<img alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/new_rutracker.png">
+
 **Magnet** - Скачать без учёта рейтинга/скачивания
 
 **AceStream** - Смотреть через AceStream ( Актуально для Android TV/Планшета/Телефона )
