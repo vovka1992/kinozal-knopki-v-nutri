@@ -22,7 +22,7 @@
 # #3 - RuTracker.ORG 
 # Кнопка добавления TorrServer в расширенном поиске
 
-<img alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/rutracker_script_update.png">
+<img alt="Картинка" src="https://raw.githubusercontent.com/vovka1992/kinozal-knopki-v-nutri/main/rutracker_script_update.jpg">
 
 **Magnet** - Скачать без учёта рейтинга/скачивания
 
