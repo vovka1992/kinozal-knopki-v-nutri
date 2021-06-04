@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name Kinozal | Rutor | Rutracker / Кнопки скачивания (Torrent|Magnet|TorrServer)2
-// @description v1.2 (Обновлен полностью скрипт)2
+// @name Kinozal | Rutor | Rutracker / Кнопки скачивания (Torrent|Magnet|TorrServer)
+// @description v1.2.6 (Rutracker в настройках добавлена кнопка включения обложки + размер обложки + исправление ошибок)
 // @namespace none
-// @version 1.2
+// @version 1.2.6
 // @author https://greasyfork.org/ru/users/173690
 // @author https://greasyfork.org/scripts/39242
 // @icon data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAAAD1BMVEU7R4CAAAD4+/z9787///8A0Su5AAAASUlEQVR4AXWPAQrEMBACzen/33wdkGILFZQdSFxWkZKoyWBsd5JXvFgMfC6ZLBs0pq8Mtq8f0Bcbw9N3HvuI8i14sAt/e8/73j/4FwHuDyR5AQAAAABJRU5ErkJggg==
@@ -10,7 +10,7 @@
 // @include /^(https?:\/\/)?(www\.)?rutor\.(info|is)\/*/
 // @include /^(https?:\/\/)?(www\.)?kinopoisk\.ru\/*/
 // @include /^(https?:\/\/)?(www\.)?rutracker\.org\/*/
-// @require https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js
+// @require https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js
 // @require https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js
 // @grant GM_getValue
 // @grant GM_setValue
@@ -21,7 +21,7 @@
 (function ()
 {
 	'use strict';
-	var script_version = "v1.2",
+	var script_version = "v1.2.6",
 		match_no_ads = /без.*?реклам|реклам.*?нет|реклам.*?отсутствует|дублированный|лицензия|netflix|itunes|hdrezka|ironclub|appletv/g,
 		match_with_ads = /содержит.*?реклам|реклам.*?вставк|есть реклама|присутствуе.*?реклам|реклама.*?присутствует/g;
 
@@ -254,7 +254,7 @@
 					showConfirmButton: false,
 					didOpen: () =>
 					{
-						Swal.getContent().querySelector('button#ScriptSettingsButton_save').focus();
+						Swal.getHtmlContainer().querySelector('button#ScriptSettingsButton_save').focus();
 					}
 				});
 				container = document.querySelector('.ScriptSettingsContainer');
@@ -525,7 +525,26 @@
 					label: "IP сервера<p>В параметрах расширения необходимо указать сетевой адрес вашего торрсервера<br>( Например <b>http://192.168.0.122:8090/</b>, <b>http://localhost:8090/</b>.)<br><b>Примечание!</b> Возможна блокировка запросов со стороны<br>(uBlock, adblock и т.п. програм) при добавлении раздачи.<br>смотрите в описании скрипта</p>",
 					type: 'text',
 					default: "http://127.0.0.1:8090/"
-				}
+				},
+				TorrServerAuth:
+				{
+					title: "Авторизация",
+					label: "<p><b>ВКЛ</b> Обязательно укажите логин и пароль<br><b>ВЫКЛ</b> Можете ничего не вписывать</p>",
+					type: 'checkbox',
+					default: false
+				},
+				TorrServerLogin:
+				{
+					label: "<b>Логин</b>",
+					type: 'text',
+					default: ""
+				},
+				TorrServerPass:
+				{
+					label: "<b>Пароль</b>",
+					type: 'text',
+					default: ""
+				},
 			},
 			onSave: function (values)
 			{
@@ -794,9 +813,33 @@
 				},
 				ShowTorrServerButton:
 				{
-					label: "Кнопка \"<b>ДОБАВИТЬ РАЗДАЧУ В TORRSERVER</b>\"<p style=\"color:red\">При нажатии кнопки, смотрите что вы добавляете</b></p>",
+					label: "Кнопка \"<b>ДОБАВИТЬ РАЗДАЧУ В TORRSERVER</b>\"<p style=\"color:red\"><b>При нажатии кнопки, смотрите что вы добавляете</b></p>",
 					type: 'checkbox',
 					default: false
+				},
+				ShowPostImg:
+				{
+					title: "Обложка",
+					label: "<b>Обложка раздач</b>",
+					type: 'checkbox',
+					default: true
+				},
+				ShowPostImgWH:
+				{
+					label: "<b>Размер обложки</b>",
+					type: 'custom',
+					html: '<b>Ширина:</b> <input type="text" class="swal-settings-input" style="width: 50px;margin: 4px 0px;"><br><b>Высота:</b> <input type="text" class="swal-settings-input" style="width: 50px;margin: 4px 0px;">',
+					set: function (value, parent)
+					{
+						parent.querySelectorAll('input')[0].value = value[0];
+						parent.querySelectorAll('input')[1].value = value[1];
+					},
+					get: function (parent)
+					{
+						return [parent.querySelectorAll('input')[0].value,
+								parent.querySelectorAll('input')[1].value];
+					},
+					default: ["75px", "75px"]
 				},
 				SwalDetailedInfoWidth:
 				{
@@ -827,6 +870,9 @@
 			}
 		});
 	var TorrServerIP = TorrServerCFG.get('TorrServerIP'),
+		TSAuth = TorrServerCFG.get('TorrServerAuth'),
+		TSLogin = TorrServerCFG.get('TorrServerLogin'),
+		TSPass = TorrServerCFG.get('TorrServerPass'),
 		TSVersion = TorrServerCFG.get('TorrServerVersion'),
 		get_url = location.href,
 		get_full_url = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : ''),
@@ -836,14 +882,62 @@
 
 	function TS_POST(page, Data, getresponse)
 	{
-		fetch(TorrServerIP + page,
+		if (TSAuth && TSLogin !== null && TSPass !== null)
 		{
-			method: 'POST',
-			body: Data
-		}).then((response) => response.text()).then((text) => text.trim()).then(getresponse).catch((e) =>
+			fetch(TorrServerIP + page,
+			{
+				method: 'POST',
+				body: Data,
+				headers:
+				{
+					"Authorization": "Basic " + btoa(TSLogin + ":" + TSPass)
+				},
+			}).then(function (response)
+			{
+				if (response.ok)
+				{
+					let text = response.text().then((text) => text.trim()).then(getresponse)
+					return text;
+				}
+				else if (response.status === 401)
+				{
+					SwallAutoCloseMsg("Авторизация не удалась! Проверьте ( соединение / логин / пароль )", "5");
+				}
+				else
+				{
+					throw new SwallAutoCloseMsg("Не удалось отправить запрос на " + TorrServerIP, "5");
+				}
+			}).catch((e) =>
+			{
+				console.log(e)
+			});
+		}
+		else
 		{
-			SwallAutoCloseMsg("Не удалось отправить запрос на " + TorrServerIP, "5");
-		});
+			fetch(TorrServerIP + page,
+			{
+				method: 'POST',
+				body: Data,
+			}).then(function (response)
+			{
+				if (response.ok)
+				{
+					let text = response.text().then((text) => text.trim()).then(getresponse)
+					return text;
+				}
+				else if (response.status === 401)
+				{
+					SwallAutoCloseMsg("Авторизация не удалась! Проверьте ( соединение / логин / пароль )", "5");
+				}
+				else
+				{
+					throw new SwallAutoCloseMsg("Не удалось отправить запрос на " + TorrServerIP, "5");
+				}
+			}).catch((e) =>
+			{
+				console.log(e)
+			});
+		}
 	}
 	if (/kinozal(.me|.tv|.guru|.website|tv.life)\//.test(get_url) && !/kinozal(.me|.tv|.guru|.website|tv.life)\/get_srv_details.php/.test(get_url))
 	{
@@ -864,6 +958,14 @@
 			var KZ_SwalDetailedInfoWidth = KinozalCFG.get('SwalDetailedInfoWidth');
 			var KZ_ShowConfirmDownload = KinozalCFG.get('ShowConfirmDownload');
 			var KZ_DetailedInfoButtons = KinozalCFG.get('DetailedInfoButtons');
+			if (/(personsearch.php)/.test(get_url))
+			{
+				GM_addStyle('.prs a{height:282px;width:202px;cursor:pointer;float:left;margin:2px;position:relative;border:none}.prs a img{border:none;display:block;transition:50ms;height:280px;width:200px;filter:grayscale(40%);border-radius:7px}.prs a:hover span,.prs2 a:hover span{background:#fdcf75e3}.prs span{font-family:"Open Sans";text-transform:uppercase;position:absolute;font-weight:700;bottom:0;left:0;width:192px;background:rgba(255,255,255,.878) repeat-x scroll top;margin:1px;text-align:center;padding:4px;border-radius:0 0 6px 6px;font-size:19px;color:#000}');
+			}
+			if (/(persons.php.*torrtop$|novinki.php)/.test(get_url))
+			{
+				GM_addStyle('DIV.content DIV.bx2{border:0 solid #f1d29c00;padding:3px;font-size:12px}DIV.content DIV.mn1_content DIV.bx1.stable,DIV.content DIV.mn_wrap DIV.mn1_content DIV.bx2_0{padding:4px;background:0 0;font-size:12px;box-shadow:0 0 0 1px transparent;border:none}.mn1_content{padding:0}.content .mn1_content{margin-top:0!important}.mn1_menu{display:none}.stable img{height:296px;width:202px;cursor:pointer;float:left;margin:2px;position:relative;border:0 solid silver;display:block;border-radius:7px}');
+			}
 			if (KZ_SwalDefaultStyle == 1)
 			{
 				GM_addStyle('@import "https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css";');
@@ -960,7 +1062,7 @@ ${(KZ_ShowTorrServerButton === true ? '<li><a href="javascript:void(0);" id="tor
 			GM_addStyle('@import "https://cdn.jsdelivr.net/npm/@sweetalert2/theme-minimal/minimal.min.css";');
 		}
 	}
-	GM_addStyle(`@import url(https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css);@font-face{font-family:"Open Sans";font-style:normal;font-weight:400;src:local("Open Sans"),local(OpenSans),url(https://themes.googleusercontent.com/static/fonts/opensans/v6/K88pR3goAWT7BTt32Z01mz8E0i7KZn-EPnyo3HZu7kw.woff) format("woff")}.fa{font-family:FontAwesome}.checkboxToggle b{cursor:pointer;position:relative;display:inline-block;width:54px;height:29px;background:#f2f2f2;border:1px solid #d0d0d0;border-radius:23px;vertical-align:text-bottom;transition:all .2s linear}.checkboxToggle b::after{content:"";position:absolute;left:0;width:25px;height:25px;background-color:#fff;border-radius:30px;box-shadow:0 0 2px rgb(0 0 0 / 50%);transform:translate3d(2px,2px,0);transition:all .2s ease-in-out}.checkboxToggle:active b::after{width:35px;transform:translate3d(2px,2px,0)}.checkboxToggle:active input:checked+b::after{transform:translate3d(17px,2px,0)}.checkboxToggle input{display:none}.checkboxToggle input:checked+b{background-color:#4bd763;border-color:#3aa24c}.checkboxToggle input:checked+b::after{transform:translate3d(27px,2px,0)}.ScriptSettingsContainer tbody>tr:hover td:nth-child(1){background-color:#f5f5f58c;border-radius:10px 0 0 10px;border-top-color:#d0d0d0;border-top-style:solid;border-top-width:1px;border-right-color:#f5f5f58c;border-bottom-color:#d0d0d0;border-bottom-style:solid;border-bottom-width:1px;border-left-color:#d0d0d0;border-left-style:solid;border-left-width:1px}.ScriptSettingsContainer tbody>tr:hover td:nth-child(2){background-color:#f5f5f58c;border-radius:0 10px 10px 0;border-top-color:#d0d0d0;border-top-style:solid;border-top-width:1px;border-right-color:#d0d0d0;border-right-style:solid;border-right-width:1px;border-bottom-color:#d0d0d0;border-bottom-style:solid;border-bottom-width:1px;border-left-color:#f5f5f58c}.ScriptSettingsContainer tbody>tr td:nth-child(1){border:1px solid #fff}.ScriptSettingsContainer tbody>tr td:nth-child(2){border:1px solid #fff;padding:4px 0}.swal2-styled.swal2-cancel,.swal2-styled.swal2-confirm,.swal2-styled.swal2-deny{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;border:0;text-shadow:0 0 1px #000,1px 1px 1px #000}.swal2-content{font-style:normal;text-align:left;color:#000;padding:0}.fnm-title{margin:auto;font-weight:700;font-family:Open Sans;text-transform:uppercase;font-size:35px;margin:0 0 10px 0;color:rgb(221 60 60);text-shadow:1px 1px 1px rgb(92 0 0),2px 2px 1px rgb(92 0 0)}.fnm-ads-title{font-weight:700;font-family:Open Sans;text-transform:uppercase;font-size:28px;text-align:center;padding:0 0 4px 0}.fnm-no-ads{color:rgb(0 153 0);text-shadow:1px 1px 1px rgb(0 78 0)}.fnm-with-ads{color:rgb(255 0 0);text-shadow:1px 1px 1px rgb(78 0 0)}.btn_tiny{transition:border-color .3s,box-shadow .3s;font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:14px;border-radius:.25rem;transition:all .1s;color:#fff;border:0;text-shadow:0 0 1px #000,1px 1px 1px #000;padding:revert}.btn_small{transition:border-color .3s,box-shadow .3s;font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:18px;border-radius:.25rem;transition:all .1s;color:#fff;border:0;text-shadow:0 0 1px #000,1px 1px 1px #000;padding:revert}.btn_normal{transition:border-color .3s,box-shadow .3s;font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:24px;border-radius:.25rem;transition:all .1s;color:#fff;border:0;text-shadow:0 0 1px #000,1px 1px 1px #000;padding:revert}.btn_big{transition:border-color .3s,box-shadow .3s;font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:30px;border-radius:.25rem;transition:all .1s;color:#fff;border:0;text-shadow:0 0 1px #000,1px 1px 1px #000;padding:revert}.btn_cred{color:#fff;background-color:#d92638}.btn_cred:hover{color:#fff;background-color:#c32232;box-shadow:0 0 0 .1rem rgba(225,83,97,.5)}.btn_cred:active,.btn_cred:focus{color:#fff;background-color:#ad1f2d;box-shadow:0 0 0 .2rem rgba(225,83,97,.5)}.btn_cblue{color:#fff;background-color:#2778c4}.btn_cblue:hover{color:#fff;background-color:#236cb0;box-shadow:0 0 0 .1rem rgba(35,108,176,.5)}.btn_cblue:active,.btn_cblue:focus{color:#fff;background-color:#1f609d;box-shadow:0 0 0 .2rem rgba(35,108,176,.5)}.btn_cgreen{color:#fff;background-color:#4fc823}.btn_cgreen:hover{color:#fff;background-color:#47b41f;box-shadow:0 0 0 .1rem rgba(79,200,35,.5)}.btn_cgreen:active,.btn_cgreen:focus{color:#fff;background-color:#3fa01c;box-shadow:0 0 0 .2rem rgba(79,200,35,.5)}.btn_corange{color:#fff;background-color:#d99d26}.btn_corange:hover{color:#fff;background-color:#c38d22;box-shadow:0 0 0 .1rem rgba(199,144,35,.5)}.btn_corange:active,.btn_corange:focus{color:#fff;background-color:#a0741c;box-shadow:0 0 0 .2rem rgba(199,144,35,.5)}.MT2{margin:2px}.MT4{margin:4px}.MT6{margin:6px}.MT8{margin:8px}.MT10{margin:10px}`);
+	GM_addStyle(`@import url(https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css);@font-face{font-family:"Open Sans";font-style:normal;font-weight:400;src:local("Open Sans"),local(OpenSans),url(https://themes.googleusercontent.com/static/fonts/opensans/v6/K88pR3goAWT7BTt32Z01mz8E0i7KZn-EPnyo3HZu7kw.woff) format("woff")}.fa{font-family:FontAwesome}.checkboxToggle b{cursor:pointer;position:relative;display:inline-block;width:54px;height:29px;background:#f2f2f2;border:1px solid #d0d0d0;border-radius:23px;vertical-align:text-bottom;transition:all .2s linear}.checkboxToggle b::after{content:"";position:absolute;left:0;width:25px;height:25px;background-color:#fff;border-radius:30px;box-shadow:0 0 2px rgb(0 0 0 / 50%);transform:translate3d(2px,2px,0);transition:all .2s ease-in-out}.checkboxToggle:active b::after{width:35px;transform:translate3d(2px,2px,0)}.checkboxToggle:active input:checked+b::after{transform:translate3d(17px,2px,0)}.checkboxToggle input{display:none}.checkboxToggle input:checked+b{background-color:#4bd763;border-color:#3aa24c}.checkboxToggle input:checked+b::after{transform:translate3d(27px,2px,0)}.ScriptSettingsContainer tbody>tr:hover td:nth-child(1){background-color:#f5f5f58c;border-radius:10px 0 0 10px;border-top-color:#d0d0d0;border-top-style:solid;border-top-width:1px;border-right-color:#f5f5f58c;border-bottom-color:#d0d0d0;border-bottom-style:solid;border-bottom-width:1px;border-left-color:#d0d0d0;border-left-style:solid;border-left-width:1px}.ScriptSettingsContainer tbody>tr:hover td:nth-child(2){background-color:#f5f5f58c;border-radius:0 10px 10px 0;border-top-color:#d0d0d0;border-top-style:solid;border-top-width:1px;border-right-color:#d0d0d0;border-right-style:solid;border-right-width:1px;border-bottom-color:#d0d0d0;border-bottom-style:solid;border-bottom-width:1px;border-left-color:#f5f5f58c}.ScriptSettingsContainer tbody>tr td:nth-child(1){border:1px solid #fff}.ScriptSettingsContainer tbody>tr td:nth-child(2){border:1px solid #fff;padding:4px 0}.swal2-styled.swal2-cancel,.swal2-styled.swal2-confirm,.swal2-styled.swal2-deny{font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;padding:0 10px;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:1.7rem;border-radius:.25rem;transition:all .1s;color:#fff;border:0;text-shadow:0 0 1px #000,1px 1px 1px #000}.swal2-html-container{font-style:normal;text-align:left;color:#000;}.fnm-title{margin:auto;font-weight:700;font-family:Open Sans;text-transform:uppercase;font-size:35px;margin:0 0 10px 0;color:rgb(221 60 60);text-shadow:1px 1px 1px rgb(92 0 0),2px 2px 1px rgb(92 0 0)}.fnm-ads-title{font-weight:700;font-family:Open Sans;text-transform:uppercase;font-size:28px;text-align:center;padding:0 0 4px 0}.fnm-no-ads{color:rgb(0 153 0);text-shadow:1px 1px 1px rgb(0 78 0)}.fnm-with-ads{color:rgb(255 0 0);text-shadow:1px 1px 1px rgb(78 0 0)}.btn_tiny{transition:border-color .3s,box-shadow .3s;font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:14px;border-radius:.25rem;transition:all .1s;color:#fff;border:0;text-shadow:0 0 1px #000,1px 1px 1px #000;padding:revert}.btn_small{transition:border-color .3s,box-shadow .3s;font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:18px;border-radius:.25rem;transition:all .1s;color:#fff;border:0;text-shadow:0 0 1px #000,1px 1px 1px #000;padding:revert}.btn_normal{transition:border-color .3s,box-shadow .3s;font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:24px;border-radius:.25rem;transition:all .1s;color:#fff;border:0;text-shadow:0 0 1px #000,1px 1px 1px #000;padding:revert}.btn_big{transition:border-color .3s,box-shadow .3s;font-family:"Open Sans";text-transform:uppercase;cursor:pointer;outline:0;font-weight:700;text-align:center;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;line-height:1.5;font-size:30px;border-radius:.25rem;transition:all .1s;color:#fff;border:0;text-shadow:0 0 1px #000,1px 1px 1px #000;padding:revert}.btn_cred{color:#fff;background-color:#d92638}.btn_cred:hover{color:#fff;background-color:#c32232;box-shadow:0 0 0 .1rem rgba(225,83,97,.5)}.btn_cred:active,.btn_cred:focus{color:#fff;background-color:#ad1f2d;box-shadow:0 0 0 .2rem rgba(225,83,97,.5)}.btn_cblue{color:#fff;background-color:#2778c4}.btn_cblue:hover{color:#fff;background-color:#236cb0;box-shadow:0 0 0 .1rem rgba(35,108,176,.5)}.btn_cblue:active,.btn_cblue:focus{color:#fff;background-color:#1f609d;box-shadow:0 0 0 .2rem rgba(35,108,176,.5)}.btn_cgreen{color:#fff;background-color:#4fc823}.btn_cgreen:hover{color:#fff;background-color:#47b41f;box-shadow:0 0 0 .1rem rgba(79,200,35,.5)}.btn_cgreen:active,.btn_cgreen:focus{color:#fff;background-color:#3fa01c;box-shadow:0 0 0 .2rem rgba(79,200,35,.5)}.btn_corange{color:#fff;background-color:#d99d26}.btn_corange:hover{color:#fff;background-color:#c38d22;box-shadow:0 0 0 .1rem rgba(199,144,35,.5)}.btn_corange:active,.btn_corange:focus{color:#fff;background-color:#a0741c;box-shadow:0 0 0 .2rem rgba(199,144,35,.5)}.MT2{margin:2px}.MT4{margin:4px}.MT6{margin:6px}.MT8{margin:8px}.MT10{margin:10px}`);
 	async function ShowSweetAlertInfo(GetID, GetPage)
 	{
 		var GetCAT = "",
@@ -1420,10 +1522,7 @@ ${KZ_ShowDLButtons}</center>`,
 			GM_addStyle(".t_peer td.swalbtn{width:45px;text-align:center}");
 			if (KZ_ShowMarkTorrents)
 			{
-				if (!/(persons.php.*torr$|groupexreleaselist.php|groupex.php|groupextorrentlist.php)/i.test(get_url))
-				{
-					GM_addStyle("mark{" + (KZ_MarkBolder ? "text-shadow: -1px -1px 0px " + KZ_MarkBoldColorValue + ",0px -1px 0px " + KZ_MarkBoldColorValue + ",1px -1px 0px " + KZ_MarkBoldColorValue + ",1px 0px 0px " + KZ_MarkBoldColorValue + ",1px 1px 0px " + KZ_MarkBoldColorValue + ",0px 1px 0px " + KZ_MarkBoldColorValue + ",-1px 1px 0px " + KZ_MarkBoldColorValue + ",-1px 0px 0px " + KZ_MarkBoldColorValue + ";" : "") + "background: none;color: " + KZ_MarkColorValue + ";}");
-				}
+				GM_addStyle("mark{" + (KZ_MarkBolder ? "text-shadow: -1px -1px 0px " + KZ_MarkBoldColorValue + ",0px -1px 0px " + KZ_MarkBoldColorValue + ",1px -1px 0px " + KZ_MarkBoldColorValue + ",1px 0px 0px " + KZ_MarkBoldColorValue + ",1px 1px 0px " + KZ_MarkBoldColorValue + ",0px 1px 0px " + KZ_MarkBoldColorValue + ",-1px 1px 0px " + KZ_MarkBoldColorValue + ",-1px 0px 0px " + KZ_MarkBoldColorValue + ";" : "") + "background: none;color: " + KZ_MarkColorValue + ";}");
 				var mark_instance = new Mark(document.querySelectorAll("a.r0,a.r1,a.r2,a.r3,a.r4,a.r5,a.r6"));
 				mark_instance.mark(KZ_MarkTextValue);
 			}
@@ -1987,7 +2086,7 @@ ${KZ_ShowDLButtons}</center>`,
 		var RUTOR_ShowTorrServerButton = RutorCFG.get('ShowTorrServerButton');
 		var RUTOR_SwalDetailedInfoWidth = RutorCFG.get('SwalDetailedInfoWidth');
 		var RUTOR_FontSize = RutorCFG.get('FontSize');
-		GM_addStyle("div#ws div#content {position: relative;left: 0px;right: auto;}div#index tr a:visited {color: red;}tr.gai td:nth-child(1),tr.tum td:nth-child(1) {width: 110px;}tr.gai td:nth-child(5), tr.tum td:nth-child(5) {width: 160px;}div#index td {font-size: "+RUTOR_FontSize+";}div#index tr a, div#index tr a:hover {text-transform: uppercase;line-height: 1.8;font-weight: bold;text-decoration: none;text-align: left;}.btn_tiny {vertical-align: unset;}#menu {width: auto;height: 40px;background-image: none;background: #ffde02;border: 1px solid #464646;}#menu a {float: left;text-decoration: none;color: #FFFFFF;font-size: 18px;padding: 0px;margin: 4px 4px;}.menu_b div:hover {background-image: unset;color: #333333;text-decoration: none;background: #fff;}.menu_b div {display: block;float: left;color: #666;font-weight: normal;text-align: center;border: 1px solid #bbb;border-radius: 4px;background: #efefef;background: -moz-linear-gradient(top, #fff 0%, #efefef 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(100%, #efefef));background: -webkit-linear-gradient(top, #fff 0%, #efefef 100%);background: -o-linear-gradient(top, #fff 0%, #efefef 100%);padding: 4px 8px;width: auto;height: auto;cursor: pointer;vertical-align: middle;line-height: normal;}");
+		GM_addStyle("div#ws div#content {position: relative;left: 0px;right: auto;}div#index tr a:visited {color: red;}tr.gai td:nth-child(1),tr.tum td:nth-child(1) {width: 110px;}tr.gai td:nth-child(5), tr.tum td:nth-child(5) {width: 160px;}div#index td {font-size: " + RUTOR_FontSize + ";}div#index tr a, div#index tr a:hover {text-transform: uppercase;line-height: 1.8;font-weight: bold;text-decoration: none;text-align: left;}.btn_tiny {vertical-align: unset;}#menu {width: auto;height: 40px;background-image: none;background: #ffde02;border: 1px solid #464646;}#menu a {float: left;text-decoration: none;color: #FFFFFF;font-size: 18px;padding: 0px;margin: 4px 4px;}.menu_b div:hover {background-image: unset;color: #333333;text-decoration: none;background: #fff;}.menu_b div {display: block;float: left;color: #666;font-weight: normal;text-align: center;border: 1px solid #bbb;border-radius: 4px;background: #efefef;background: -moz-linear-gradient(top, #fff 0%, #efefef 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(100%, #efefef));background: -webkit-linear-gradient(top, #fff 0%, #efefef 100%);background: -o-linear-gradient(top, #fff 0%, #efefef 100%);padding: 4px 8px;width: auto;height: auto;cursor: pointer;vertical-align: middle;line-height: normal;}");
 		$('#menu').append('<a href="javascript:void(0);" id="rutor_settings" class="menu_b" title="Настройка скрипта"><div><i class="fa fa-cogs"></i> Настройки</div></a>' + (RUTOR_ShowTorrServerButton === true ? '<a href="javascript:void(0);" id="torrserver_settings" class="menu_b" title="Настройка TorrServer"><div><i class="fa fa-cogs"></i> TorrServer</div></a>' : ''));
 		$("#menu a#rutor_settings").click(function ()
 		{
@@ -2044,18 +2143,22 @@ ${KZ_ShowDLButtons}</center>`,
 						ads_result = '<div class="fnm-ads-title fnm-with-ads">ПРИСУТСТВУЕТ РЕКЛАМА</div>';
 					}
 					check_movie = get_data.find('#details > tbody > tr:nth-child(1)')[0].textContent.trim().toLowerCase().match(/(арт-хаус|биография|боевик|вестерн|военный|детектив|детский|драма|исторический|комедия|короткометражка|криминал|мелодрама|мистика|мюзикл|нуар|пародия|приключения|романтика|семейный|сказка|советское|кино|спорт|триллер|ужасы|фантастика|фэнтези|эротика)/);
-					youtube_link = (check_movie ? '<button type="button" class="btn_small btn_cred MT4" onclick="window.open(\'https://www.youtube.com/results?search_query=' + fixedEncodeURIComponent(GetTitle+' русский трейлер') + '\')" style="display: block;margin-left: auto;margin-right: auto;">YOUTUBE ТРЕЙЛЕР</button>' : '');
+					youtube_link = (check_movie ? '<button type="button" class="btn_small btn_cred MT4" onclick="window.open(\'https://www.youtube.com/results?search_query=' + fixedEncodeURIComponent(GetTitle + ' русский трейлер') + '\')" style="display: block;margin-left: auto;margin-right: auto;">YOUTUBE ТРЕЙЛЕР</button>' : '');
 					Swal.fire(
 					{
 						width: RUTOR_SwalDetailedInfoWidth,
 						html: `<h2 class="swal2-title fnm-title">ИНФОРМАЦИЯ</h2>${ads_result}` + get_info,
 						showConfirmButton: false,
 						showCancelButton: false,
-						footer: "<center>" +youtube_link+ (!RUTOR_ShowInfoButton ? '<button type="button" id="cancel" class="btn_small btn_cred MT4">ЗАКРЫТЬ</button>' : '<button type="button" onclick="window.open(\'' + get_full_url + '/torrent/' + GetURLID + '\',\'_self\')" class="btn_small btn_cblue MT4">ОТКРЫТЬ РАЗДАЧУ</button> <button type="button" id="cancel" class="btn_small btn_cred MT4">ЗАКРЫТЬ</button>') + "</center>",
+						footer: "<center>" + youtube_link + (!RUTOR_ShowInfoButton ? '<button type="button" id="cancel" class="btn_small btn_cred MT4">ЗАКРЫТЬ</button>' : '<button type="button" onclick="window.open(\'' + get_full_url + '/torrent/' + GetURLID + '\',\'_self\')" class="btn_small btn_cblue MT4">ОТКРЫТЬ РАЗДАЧУ</button> <button type="button" id="cancel" class="btn_small btn_cred MT4">ЗАКРЫТЬ</button>') + "</center>",
 						didOpen: () =>
 						{
 							Swal.getFooter().querySelector('button#cancel').focus();
 						}
+					});
+					$("#cancel").click(function ()
+					{
+						Swal.close();
 					});
 				});
 			});
@@ -2259,6 +2362,8 @@ ${KZ_ShowDLButtons}</center>`,
 	if (reg_rutracker.test(get_url))
 	{
 		GM_addStyle(".checkboxToggle {padding: 0px;}.btn_tiny {vertical-align: unset;}");
+		var RT_ShowPostImg = RuTrackerCFG.get('ShowPostImg');
+		var RT_ShowPostImgWH = RuTrackerCFG.get('ShowPostImgWH');
 		var RT_ShowConfirmDownload = RuTrackerCFG.get('ShowConfirmDownload');
 		var RT_ShowInfoButton = RuTrackerCFG.get('ShowInfoButton');
 		var RT_ShowTorrentButton = RuTrackerCFG.get('ShowTorrentButton');
@@ -2281,6 +2386,32 @@ ${KZ_ShowDLButtons}</center>`,
 		{
 			var url = $(el).find('.tt-text,.tLink').attr('href');
 			var GetURLID = url.match(/[0-9]+/g)[0];
+			if (RT_ShowPostImg)
+			{
+				fetch(get_full_url + "/forum/viewtopic.php?t=" + GetURLID,
+				{
+					method: "GET",
+				}).then(windows1251ResponseToUTF8Response).then(function (response)
+				{
+					if (!response.ok)
+					{
+						throw Error(response.statusText)
+					}
+					return response.text();
+				}).then(function (data)
+				{
+					var get_img_url = "",
+						get_data = $(data);
+					if (get_data.find('[data-topic_id="' + GetURLID + '"]').length == 1)
+					{
+						if (GetURLID, get_data.find('.postImg,.postImg.postImgAligned.img-right')[0])
+						{
+							get_img_url = get_data.find('.postImg,.postImg.postImgAligned.img-right')[0].title;
+						}
+						$(el).find('.topic_id, .vf-col-icon.vf-topic-icon-cell, .u-name').eq(0).html('<a href="' + url + '"><img style="width:' + RT_ShowPostImgWH[0] + ';height:' + RT_ShowPostImgWH[1] + '" src="' + get_img_url + '" alt="" /></a>');
+					}
+				});
+			}
 			if ($(el).find('td.vf-col-tor.tCenter.med.nowrap > div > div.small > a,td.row4.small.nowrap.tor-size > a').length == 1)
 			{
 				$(el).find('.tt,.t-title-col').prepend(`<div style="float:left;margin: 0px 9px 0px 0px">${(RT_ShowInfoButton ? '<button id="get_info_'+GetURLID+'" type="button" class="btn_tiny btn_corange MT2" style="padding: 0px 11px;font-size:18px;" title="ИНФОРМАЦИЯ О РАЗДАЧЕ"><i class="fa fa-info"></i></button>':"")}${(RT_ShowTorrentButton ? '<button id="download_torrent_'+GetURLID+'" type="button" class="btn_tiny btn_cgreen MT2" style="padding: 0px 6px;font-size:18px;" title="СКАЧАТЬ ТОРРЕНТ ФАЙЛ"><i class="fa fa-download"></i></button>':"")}${(RT_ShowMagnetButton ? '<button id="download_magnet_'+GetURLID+'" type="button" class="btn_tiny btn_cblue MT2" style="padding: 0px 6px;font-size:18px;" title="СКАЧАТЬ ЧЕРЕЗ MAGNET"><i class="fa fa-magnet"></i></button>':"")}${(RT_ShowCopyMagnetButton ? '<button id="copy_magnet_'+GetURLID+'" type="button" class="btn_tiny btn_cblue MT2" style="padding: 0px 6px;font-size:18px;" title="СКОПИРОВАТЬ MAGNET ССЫЛКУ"><i class="fa fa-copy"></i></button>':"")}${(RT_ShowTorrServerButton ? '<button id="add_torrserver_'+GetURLID+'" type="button" class="btn_tiny btn_cred MT2" style="padding: 0px 6px;font-size:18px;" title="ДОБАВИТЬ В TORRSERVER"><i class="fa fa-plus-square"></i></button>':"")}</div> `);
@@ -2303,11 +2434,16 @@ ${KZ_ShowDLButtons}</center>`,
 						get_data = $(data),
 						check_movie = "",
 						youtube_link = "",
+						get_img_url = "",
 						ads = "",
 						ads_result = "",
 						GetTitle = get_data.find('#soc-container').attr('data-share_title');
 					if (get_data.find('[data-topic_id="' + GetURLID + '"]').length == 1)
 					{
+						if (get_data.find('.postImg,.postImg.postImgAligned.img-right')[0])
+						{
+							get_img_url = "<img src=\""+get_data.find('.postImg,.postImg.postImgAligned.img-right')[0].title+"\" />";
+						}
 						get_info = get_data.find('.post_body')[0].outerHTML;
 						ads = get_data.find('.post_body')[0].textContent.trim().toLowerCase();
 						if (ads.match(match_no_ads))
@@ -2319,15 +2455,15 @@ ${KZ_ShowDLButtons}</center>`,
 							ads_result = '<div class="fnm-ads-title fnm-with-ads">ПРИСУТСТВУЕТ РЕКЛАМА</div>';
 						}
 						check_movie = get_data.find('.post_body')[0].textContent.trim().toLowerCase().match(/(арт-хаус|биография|боевик|вестерн|военный|детектив|детский|драма|исторический|комедия|короткометражка|криминал|мелодрама|мистика|мюзикл|нуар|пародия|приключения|романтика|семейный|сказка|советское|кино|спорт|триллер|ужасы|фантастика|фэнтези|эротика)/);
-						youtube_link = (check_movie ? '<button type="button" class="btn_small btn_cred MT4" onclick="window.open(\'https://www.youtube.com/results?search_query=' + fixedEncodeURIComponent(GetTitle+' русский трейлер') + '\')" style="display: block;margin-left: auto;margin-right: auto;">YOUTUBE ТРЕЙЛЕР</button>' : '');
+						youtube_link = (check_movie ? '<button type="button" class="btn_small btn_cred MT4" onclick="window.open(\'https://www.youtube.com/results?search_query=' + fixedEncodeURIComponent(GetTitle + ' русский трейлер') + '\')" style="display: block;margin-left: auto;margin-right: auto;">YOUTUBE ТРЕЙЛЕР</button>' : '');
 					}
 					Swal.fire(
 					{
 						width: RT_SwalDetailedInfoWidth,
-						html: `<h2 class="swal2-title fnm-title">ИНФОРМАЦИЯ</h2>${ads_result}` + get_info,
+						html: `<h2 class="swal2-title fnm-title">ИНФОРМАЦИЯ</h2>${ads_result}<center>${get_img_url}</center>` + get_info,
 						showConfirmButton: false,
 						showCancelButton: false,
-						footer: '<center>'+youtube_link+'<button type="button" id="cancel" class="btn_small btn_cred MT4">ЗАКРЫТЬ</button></center>',
+						footer: '<center>' + youtube_link + '<button type="button" id="cancel" class="btn_small btn_cred MT4">ЗАКРЫТЬ</button></center>',
 						didOpen: () =>
 						{
 							Swal.getFooter().querySelector('button#cancel').focus();
@@ -2394,6 +2530,10 @@ ${KZ_ShowDLButtons}</center>`,
 								});
 							};
 						}
+					});
+					$("#cancel").click(function ()
+					{
+						Swal.close();
 					});
 				});
 			});
